@@ -16,22 +16,22 @@ RUN apt-get update \
     && add-apt-repository -y ppa:ondrej/php \
     && apt-get update \
     && apt-get install -y php7.2 \
-    && apt-get install -y php7.2-common php7.2-pdo php7.2-bcmath  php7.2-opcache php7.2-fpm php7.2-cli php7.2-gd php7.2-mysql \
+    && apt-get install -y php7.2-pdo php7.2-bcmath php7.2-fpm php7.2-gd php7.2-mysql \
        php7.2-pgsql php7.2-imap php7.2-memcached php7.2-mbstring php7.2-xml php7.2-zip\
     && mkdir /run/php \
     && apt-get remove -y --purge software-properties-common \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    && mkdir -p /var/www/html/vendor /var/log/supervisor
 
 # composer install
 WORKDIR /var/www/html
 RUN wget https://getcomposer.org/composer.phar -O /usr/local/bin/composer \
     && chmod 755 /usr/local/bin/composer
-RUN mkdir -p /var/www/html /vendor
 
 # configurations
 COPY ./Dockerconfig/supervisord1.conf /etc/supervisor/supervisord.conf
 COPY ./Dockerconfig/supervisord2.conf /etc/supervisor/conf.d/supervisord.conf
 RUN a2enmod rewrite && service apache2 restart
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
