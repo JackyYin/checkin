@@ -6,4 +6,4 @@ larvata-checkin:
     - "7778:80"
   volumes:
     - ./:/var/www/html
-    - ./config/apache2.conf:/etc/apache2/apache2.conf
+    - ./Dockerconfig/apache2.conf:/etc/apache2/apache2.conf
