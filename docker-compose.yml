@@ -7,3 +7,4 @@ larvata-checkin:
   volumes:
     - ./:/var/www/html
     - ./Dockerconfig/apache2.conf:/etc/apache2/apache2.conf
+    - ./Dockerconfig/www.conf:/etc/php/7.2/fpm/pool.d/www.conf

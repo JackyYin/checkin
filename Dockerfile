@@ -22,7 +22,7 @@ RUN apt-get update \
     && apt-get remove -y --purge software-properties-common \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && mkdir -p /var/www/html/vendor /var/log/supervisor
+    && mkdir -p /var/www/html/vendor /var/log/supervisor /var/log/php-fpm
 
 # composer install
 WORKDIR /var/www/html
