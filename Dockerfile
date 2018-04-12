@@ -34,4 +34,4 @@ COPY ./Dockerconfig/supervisord1.conf /etc/supervisor/supervisord.conf
 COPY ./Dockerconfig/supervisord2.conf /etc/supervisor/conf.d/supervisord.conf
 RUN a2enmod rewrite && service apache2 restart
 
-ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
