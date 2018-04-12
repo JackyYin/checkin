@@ -32,6 +32,9 @@ RUN wget https://getcomposer.org/composer.phar -O /usr/local/bin/composer \
 # configurations
 COPY ./Dockerconfig/supervisord1.conf /etc/supervisor/supervisord.conf
 COPY ./Dockerconfig/supervisord2.conf /etc/supervisor/conf.d/supervisord.conf
-RUN a2enmod rewrite && service apache2 restart
+RUN sed -i '/DocumentRoot/ s#/html#/html/public#g' /etc/apache2/sites-available/000-default.conf \
+    && sed -i '/DocumentRoot/ s#/html#/html/public#g' /etc/apache2/sites-available/default-ssl.conf \
+    && a2enmod rewrite \
+    && service apache2 restart
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

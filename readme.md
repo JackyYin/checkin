@@ -6,3 +6,5 @@
 ## 複製設定檔
 - cp .env.sample .env
 
+## 更改權限
+- chmod -R 775 storage bootstrap/cache
