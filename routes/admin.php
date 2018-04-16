@@ -17,7 +17,7 @@ Route::group(['namespace' => 'Auth'], function () {
 
 
 Route::group(['middleware' => ['auth.admin']], function () {
-    Route::get('123', function () {
+    Route::get('default', function () {
         return view('welcome');
     });
 });
