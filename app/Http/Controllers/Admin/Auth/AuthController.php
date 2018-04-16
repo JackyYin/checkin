@@ -46,11 +46,7 @@ class AuthController extends Controller
         ], $messages);
 
         if ($validator->fails()) {
-            return response()->json([
-                'error' => [
-                    'message' => $validator->errors(),
-                ],
-            ],200,[], JSON_UNESCAPED_UNICODE);
+            return back()->withErrors($validator->errors()); 
         }
 
         $email    = $request->input('email');
@@ -62,29 +58,10 @@ class AuthController extends Controller
                 return redirect($this->redirectTo);
             }
 
-            return $this->errorResponse('not_admin');
+            return back()->with('danger', '權限不足,請以管理者身份登入.');
         }
           
-        return $this->errorResponse('incorrect');
+        return back()->with('danger', '帳號或密碼錯誤.');
     }
 
-    protected function errorResponse($code)
-    {
-        $typeMap = [
-            'incorrect' => [
-                'message' => '帳號或密碼錯誤.',
-            ],
-            'not_admin' => [
-                'message' => '權限不足,請以管理者身份登入.'
-            ]
-        ];
-
-        $errorType = $typeMap[$code];
-
-        return response()->json([
-            'error' => [
-                'message'    => $errorType['message'],
-            ],
-        ]);
-    }
 }

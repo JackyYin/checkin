@@ -1,4 +1,7 @@
-    <form action="{{ route('admin.authenticate') }}" method="post">
+@extends('admin.layouts.master')
+
+@section('content')  
+    <form id="form" action="{{ route('admin.authenticate') }}" method="post">
         <div class="modal show">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
@@ -8,10 +11,10 @@
                     <div class="modal-body">
                         <div>
                             <div>
-                                <p>帳號</p>
+                                <p>Email</p>
                             </div>
                             <div>
-                                <input type="email" name="email" required>
+                                <input type="email" name="email">
                             </div>
                         </div>
                         <div>
@@ -19,7 +22,7 @@
                                 <p>密碼</p>
                             </div>
                             <div>
-                                <input type="password" name="password" required>
+                                <input type="password" name="password">
                             </div>
                         </div>
                         <div>
@@ -41,3 +44,19 @@
             </div>
         </div>
     </form>
+@endsection
+@section('scripts')
+    <script>
+        var validator = $("#form").validate({
+          rules: {
+            email:{ required: true, email: true },
+            password:{ required: true, minlength: 6 }
+          },
+          messages: {
+            email: {required: "請輸入email", email: "請填入有效的email"},
+            password: {required: "請輸入密碼", minlength: "密碼請填入至少6個字元"}
+          }
+        });
+        validator.showErrors();
+    </script>
+@endsection
