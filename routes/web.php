@@ -10,7 +10,14 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::group(['namespace' => 'Auth'], function () {
+    Route::get('login',  ['as' => 'login', 'uses' => 'AuthController@login']);
+    Route::post('login', ['as' => 'authenticate', 'uses' => 'AuthController@authenticate']);
+});
 
-Route::get('/', function () {
-    return view('welcome');
+
+Route::group(['middleware' => ['auth.web']], function () {
+    Route::get('default', function () {
+        return view('welcome');
+    });
 });
