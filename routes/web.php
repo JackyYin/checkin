@@ -19,12 +19,12 @@ Route::group(['namespace' => 'Auth', 'prefix' => 'web'], function () {
 Route::group(['middleware' => ['auth.web']], function () {
 
     Route::get('/', function () {
-        return view('welcome');
+        return view('web.pages.default');
     });
 
     Route::group(['prefix' => 'web'], function () {
         Route::get('default', function () {
-            return view('welcome');
+            return view('web.pages.default');
         });
     });
 });

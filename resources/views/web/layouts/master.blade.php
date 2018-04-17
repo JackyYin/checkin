@@ -4,7 +4,11 @@
     </head>
     <body>
         <div class="container">
-            @include('admin.layouts.messages')
+            @if ($user)
+                @include('web.layouts.header')
+            @endif
+
+            @include('web.layouts.messages')
             @yield('content')
         </div>
 
