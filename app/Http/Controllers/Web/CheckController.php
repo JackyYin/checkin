@@ -20,16 +20,17 @@ class CheckController extends Controller
     {
         $user = Auth::guard('web')->user();
         
-        $checked = $user->checked_today();
+        $checked_in = $user->checked_in_today();
+        $checked_out = $user->checked_out_today();
    
-        return view('web.pages.check.index', compact('checked'));
+        return view('web.pages.check.index', compact('checked_in', 'checked_out'));
     }
 
     public function on()
     {
         $user = Auth::guard('web')->user();
 
-        if (!$user->checked_today()){
+        if (!$user->checked_in_today()){
             Check::create([
                 'user_id'     => $user->id,
                 'checkin_at'  => Carbon::now(),
@@ -45,14 +46,18 @@ class CheckController extends Controller
     {
         $user = Auth::guard('web')->user();
 
-        if ($user->checked_today()){
-            $check = $user->get_check_today();
-            $check->update([
-                'checkout_at'   =>  Carbon::now(),
-                'hours'         =>  Carbon::now()->diffInHours(Carbon::parse($check->checkin_at)),
-                'status'        =>  0
-            ]);
-            return redirect()->route('web.check.index')->with('success', '打卡下班成功！');
+        if ($user->checked_in_today()){
+            if (!$user->checked_out_today()) {
+                $check = $user->get_check_today();
+                $check->update([
+                    'checkout_at'   =>  Carbon::now(),
+                    'hours'         =>  Carbon::now()->diffInHours(Carbon::parse($check->checkin_at)),
+                    'status'        =>  0
+                ]);
+                return redirect()->route('web.check.index')->with('success', '打卡下班成功！');
+            }
+
+            return redirect()->route('web.check.index')->with('danger', '你想下班幾次？');
         }
 
         return redirect()->route('web.check.index')->with('danger', '還沒上班就想下班？');
