@@ -23,6 +23,8 @@ Route::group(['middleware' => ['auth.web']], function () {
 
         Route::group(['as' => 'check.'], function () {
             Route::get('check', ['as' => 'index', 'uses' => 'CheckController@index']);
+            Route::get('on',    ['as' => 'on', 'uses' => 'CheckController@on']);
+            Route::get('off',   ['as' => 'off', 'uses' => 'CheckController@off']);
         });
     });
 });

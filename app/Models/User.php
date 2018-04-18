@@ -33,10 +33,15 @@ class User extends Authenticatable
         return $this->hasMany(Check::class,'user_id','id');
     }
 
+    public function get_check_today()
+    {
+        return $this->get_check_list->where('checkin_at', '>=', date('Y-m-d').' 00:00:00')->first();
+    
+    }
+
     public function checked_today()
     {
-        $list = $this->get_check_list->where('checkin_at', '>=', date('Y-m-d').' 00:00:00');
-        $list->isNotEmpty() ? $checked = true : $checked = false;
+        $this->get_check_today() ? $checked = true : $checked = false;
         return $checked;
     }
 }
