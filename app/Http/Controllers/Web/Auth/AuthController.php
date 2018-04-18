@@ -15,7 +15,7 @@ class AuthController extends Controller
      * @var string
      */
     protected $guard = 'web';
-    protected $redirectTo = '/web/default';
+    protected $redirectTo = '/web/check';
 
     public function login()
     {

@@ -15,16 +15,14 @@ Route::group(['namespace' => 'Auth', 'prefix' => 'web'], function () {
     Route::post('login', ['as' => 'authenticate', 'uses' => 'AuthController@authenticate']);
 });
 
-
 Route::group(['middleware' => ['auth.web']], function () {
 
-    Route::get('/', function () {
-        return view('web.pages.default');
-    });
+    Route::get('/', ['uses' => 'CheckController@index']);
 
     Route::group(['prefix' => 'web'], function () {
-        Route::get('default', function () {
-            return view('web.pages.default');
+
+        Route::group(['as' => 'check.'], function () {
+            Route::get('check', ['as' => 'index', 'uses' => 'CheckController@index']);
         });
     });
 });

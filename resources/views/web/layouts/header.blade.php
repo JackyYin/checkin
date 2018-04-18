@@ -1,7 +1,7 @@
 <nav>
     <ul>
         <li>
-            <a>打卡</a>
+            <a href={{ route('web.check.index') }}>打卡</a>
         </li>
         <li>
             <a>請假</a>

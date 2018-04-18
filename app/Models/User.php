@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+
 class User extends Authenticatable
 {
     use Notifiable;
@@ -26,4 +27,15 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function get_check_list()
+    {
+        return $this->hasMany(Check::class,'user_id','id');
+    }
+
+    public function checked_today()
+    {
+        $this->get_check_list->where('checkin_at', '>=', date('Y-m-d').' 00:00:00') ? $checked = true : $checked = false;
+        return $checked;
+    }
 }
