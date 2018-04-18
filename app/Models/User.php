@@ -35,7 +35,8 @@ class User extends Authenticatable
 
     public function checked_today()
     {
-        $this->get_check_list->where('checkin_at', '>=', date('Y-m-d').' 00:00:00') ? $checked = true : $checked = false;
+        $list = $this->get_check_list->where('checkin_at', '>=', date('Y-m-d').' 00:00:00');
+        $list->isNotEmpty() ? $checked = true : $checked = false;
         return $checked;
     }
 }
