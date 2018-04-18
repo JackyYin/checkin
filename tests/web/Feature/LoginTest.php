@@ -28,7 +28,8 @@ class LoginTest extends TestCase
         $response = $this->post('/web/login', ['email' => 'jjyyg1123@gmail.co', 'password' => 'password']);
         $this->assertGuest('web')
             ->assertGuest('admin');
-        $response->assertSessionHas('danger','帳號或密碼錯誤.');
+        $response->assertSessionHas('danger','帳號或密碼錯誤.')
+            ->assertRedirect('/web/login');
     }
 
     public function testWrongPasswordLogin()
@@ -36,7 +37,8 @@ class LoginTest extends TestCase
         $response = $this->post('/web/login', ['email' => 'jjyyg1123@gmail.com', 'password' => 'passwor']);
         $this->assertGuest('web')
             ->assertGuest('admin');
-        $response->assertSessionHas('danger','帳號或密碼錯誤.');
+        $response->assertSessionHas('danger','帳號或密碼錯誤.')
+            ->assertRedirect('/web/login');
     }
 
     public function testInvalidEmailLogin()
@@ -45,28 +47,32 @@ class LoginTest extends TestCase
         $this->assertGuest('web')
             ->assertGuest('admin');
         $errors = session('errors');
-        $response->assertSessionHasErrors();
+        $response->assertSessionHasErrors()
+            ->assertRedirect('/web/login');
         $this->assertEquals($errors->get('email')[0],"請填入有效的email");
 
         $response = $this->post('/web/login', ['email' => '123g.123g', 'password' => 'password']);
         $this->assertGuest('web')
             ->assertGuest('admin');
         $errors = session('errors');
-        $response->assertSessionHasErrors();
+        $response->assertSessionHasErrors()
+            ->assertRedirect('/web/login');
         $this->assertEquals($errors->get('email')[0],"請填入有效的email");
 
         $response = $this->post('/web/login', ['email' => '123g@123g..123g', 'password' => 'password']);
         $this->assertGuest('web')
             ->assertGuest('admin');
         $errors = session('errors');
-        $response->assertSessionHasErrors();
+        $response->assertSessionHasErrors()
+            ->assertRedirect('/web/login');
         $this->assertEquals($errors->get('email')[0],"請填入有效的email");
 
         $response = $this->post('/web/login', ['email' => '123g.123g@123g.123g', 'password' => 'password']);
         $this->assertGuest('web')
             ->assertGuest('admin');
         $errors = session('errors');
-        $response->assertSessionHasErrors();
+        $response->assertSessionHasErrors()
+            ->assertRedirect('/web/login');
         $this->assertEquals($errors->get('email')[0],"請填入有效的email");
     }
 
@@ -76,7 +82,8 @@ class LoginTest extends TestCase
         $this->assertGuest('web')
             ->assertGuest('admin');
         $errors = session('errors');
-        $response->assertSessionHasErrors();
+        $response->assertSessionHasErrors()
+            ->assertRedirect('/web/login');
         $this->assertEquals($errors->get('password')[0],"密碼長度至少為6字元");
     }
 
@@ -86,7 +93,8 @@ class LoginTest extends TestCase
         $this->assertGuest('web')
             ->assertGuest('admin');
         $errors = session('errors');
-        $response->assertSessionHasErrors();
+        $response->assertSessionHasErrors()
+            ->assertRedirect('/web/login');
         $this->assertEquals($errors->get('email')[0],"請填入email");
     }
 
@@ -96,7 +104,8 @@ class LoginTest extends TestCase
         $this->assertGuest('web')
             ->assertGuest('admin');
         $errors = session('errors');
-        $response->assertSessionHasErrors();
+        $response->assertSessionHasErrors()
+            ->assertRedirect('/web/login');
         $this->assertEquals($errors->get('password')[0],"請填入密碼");
     }
 }

@@ -46,7 +46,7 @@ class AuthController extends Controller
         ], $messages);
 
         if ($validator->fails()) {
-            return back()->withErrors($validator->errors()); 
+            return redirect()->route('web.login')->withErrors($validator->errors()); 
         }
 
         $email    = $request->input('email');
@@ -57,7 +57,7 @@ class AuthController extends Controller
             return redirect($this->redirectTo);
         }
           
-        return back()->with('danger', '帳號或密碼錯誤.');
+        return redirect()->route('web.login')->with('danger', '帳號或密碼錯誤.');
     }
 
 }
