@@ -20,7 +20,7 @@ class LoginTest extends TestCase
         $user = User::where('email', 'jjyyg1123@gmail.com')->first();
         $this->assertAuthenticatedAs($user,'web')
             ->assertGuest('admin');
-        $response->assertRedirect('/web/default');
+        $response->assertRedirect('/web/check');
     }
 
     public function testWrongEmailLogin()
