@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddColumnUsers extends Migration
+class CreateStaffLineTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,12 @@ class AddColumnUsers extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_admin')->default(0);
-        });
+        if (!Schema::hasTable('staff_line')) {
+            Schema::create('staff_line', function (Blueprint $table) {
+                $table->unsignedInteger('staff_id');
+                $table->string('line_id');
+            });
+        }
     }
 
     /**
@@ -25,8 +28,6 @@ class AddColumnUsers extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('is_admin');
-        });
+        Schema::dropIfExists('staff_line');
     }
 }

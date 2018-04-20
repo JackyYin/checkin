@@ -17,8 +17,6 @@ Route::group(['namespace' => 'Auth', 'prefix' => 'web'], function () {
 
 Route::group(['middleware' => ['auth.web']], function () {
 
-    Route::get('/', ['uses' => 'CheckController@index']);
-
     Route::group(['prefix' => 'web'], function () {
 
         Route::group(['as' => 'check.'], function () {

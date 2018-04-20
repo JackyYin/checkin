@@ -8,12 +8,6 @@ use App\Models\User;
 
 class LoginTest extends TestCase
 {
-    public function testBasicTest()
-    {
-        $response = $this->get('/');
-        $response->assertRedirect('/web/login');
-    }
-
     public function testSuccessLogin()
     {
         $response = $this->post('/web/login', ['email' => 'jjyyg1123@gmail.com', 'password' => 'password']);
