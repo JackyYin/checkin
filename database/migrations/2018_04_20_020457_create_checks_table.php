@@ -20,6 +20,9 @@ class CreateChecksTable extends Migration
                 $table->dateTime('checkin_at');
                 $table->dateTime('checkout_at')->nullable();
                 $table->unsignedTinyInteger('type')->default(0);
+                $table->foreign('staff_id')
+                    ->references('id')->on('staffs')
+                    ->onDelete('cascade'); 
             });
         }    
     }
@@ -31,6 +34,9 @@ class CreateChecksTable extends Migration
      */
     public function down()
     {
+        Schema::table('checks', function (Blueprint $table) {
+            $table->dropForeign(['staff_id']);
+        });
         Schema::dropIfExists('checks');
     }
 }

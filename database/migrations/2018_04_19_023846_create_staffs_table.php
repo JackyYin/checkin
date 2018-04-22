@@ -16,9 +16,11 @@ class CreateStaffsTable extends Migration
         if (!Schema::hasTable('staffs')) {
             Schema::create('staffs', function (Blueprint $table) {
                 $table->increments('id');
-                $table->string('name', 10);
+                $table->string('name', 50);
+                $table->string('email')->unique();
                 $table->unsignedTinyInteger('active')->default(0);
                 $table->string('staff_code')->nullable();
+                $table->timestamps();
             });
         }
     }

@@ -20,6 +20,10 @@ class CreateAdminTable extends Migration
                 $table->string('name', 10);
                 $table->string('email')->unique();
                 $table->string('password');
+                $table->timestamps();
+                $table->foreign('staff_id')
+                    ->references('id')->on('staffs')
+                    ->onDelete('cascade');
             });
         }
     }
@@ -31,6 +35,9 @@ class CreateAdminTable extends Migration
      */
     public function down()
     {
+        Schema::table('admin', function (Blueprint $table) {
+            $table->dropForeign(['staff_id']);
+        });
         Schema::dropIfExists('admin');
     }
 }

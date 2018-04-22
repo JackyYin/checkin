@@ -26,3 +26,8 @@ Route::group(['middleware' => ['auth.web']], function () {
         });
     });
 });
+
+Route::group(['prefix' => 'swagger'], function () {
+    Route::get('json', 'SwaggerController@getJSON');
+    Route::get('my-data', 'SwaggerController@getMyData');
+});

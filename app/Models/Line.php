@@ -4,19 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Check extends Model
+class Line extends Model
 {
+    protected $table = 'staff_line';
     /**
-     * The attributes that are mass assignable.
+     * the attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'staff_id', 'checkin_at', 'checkout_at', 'type'
+        'staff_id', 'line_id'
     ];
 
     /**
-     * The attributes that should be hidden for arrays.
+     * the attributes that should be hidden for arrays.
      *
      * @var array
      */

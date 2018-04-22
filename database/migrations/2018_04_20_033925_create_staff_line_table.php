@@ -17,6 +17,10 @@ class CreateStaffLineTable extends Migration
             Schema::create('staff_line', function (Blueprint $table) {
                 $table->unsignedInteger('staff_id');
                 $table->string('line_id');
+
+                $table->foreign('staff_id')
+                    ->references('id')->on('staffs')
+                    ->onDelete('cascade');
             });
         }
     }
@@ -28,6 +32,9 @@ class CreateStaffLineTable extends Migration
      */
     public function down()
     {
+        Schema::table('staff_line', function (Blueprint $table) {
+            $table->dropForeign(['staff_id']);
+        });
         Schema::dropIfExists('staff_line');
     }
 }

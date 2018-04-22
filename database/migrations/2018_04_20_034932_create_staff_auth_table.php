@@ -17,6 +17,11 @@ class CreateStaffAuthTable extends Migration
             Schema::create('staff_auth', function (Blueprint $table) {
                 $table->unsignedInteger('staff_id');
                 $table->string('auth_code');
+
+                
+                $table->foreign('staff_id')
+                    ->references('id')->on('staffs')
+                    ->onDelete('cascade');
             });
         }
     }
@@ -28,6 +33,9 @@ class CreateStaffAuthTable extends Migration
      */
     public function down()
     {
+        Schema::table('staff_auth', function (Blueprint $table) {
+            $table->dropForeign(['staff_id']);
+        });
         Schema::dropIfExists('staff_auth');
     }
 }
