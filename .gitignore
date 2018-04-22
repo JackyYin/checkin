@@ -6,6 +6,8 @@
 /.idea
 /.vscode
 /.vagrant
+/resources/views/vendor/l5-swagger
+/storage/api-docs
 Homestead.json
 Homestead.yaml
 .env

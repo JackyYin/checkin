@@ -8,3 +8,6 @@
 
 ## 更改權限
 - chmod -R 775 storage bootstrap/cache
+
+## Swagger-ui
+- localhost:7778/swagger-ui
