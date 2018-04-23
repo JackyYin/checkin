@@ -15,6 +15,7 @@ class CreateStaffLineTable extends Migration
     {
         if (!Schema::hasTable('staff_line')) {
             Schema::create('staff_line', function (Blueprint $table) {
+                $table->increments('id');
                 $table->unsignedInteger('staff_id');
                 $table->string('line_id');
 

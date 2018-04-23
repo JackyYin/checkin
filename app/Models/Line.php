@@ -23,4 +23,9 @@ class Line extends Model
      */
     protected $hidden = [];
     public $timestamps = false;
+
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class, 'staff_id', 'id');
+    }
 }

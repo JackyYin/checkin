@@ -13,13 +13,12 @@ use App\Models\AuthCode;
 
 class RegisterController extends Controller
 {
-/**
-     * 假设是项目中的一个API
+    /**
      *
-     * @SWG\Post(path="/api/register",
+     * @SWG\Get(path="/api/register",
      *   tags={"project"},
      *   summary="註冊手續",
-     *   operationId="getMyData",
+     *   operationId="register",
      *   produces={"application/json"},
      *   @SWG\Parameter(
      *     in="query",
@@ -97,6 +96,49 @@ class RegisterController extends Controller
             ->to($staff->email, $staff->name)
             ->subject("您好,您的驗證碼為".$auth_code);
         } );
-
     }
+
+    /**
+     *
+     * @SWG\Get(path="/api/active",
+     *   tags={"project"},
+     *   summary="註冊驗證手續",
+     *   operationId="active",
+     *   produces={"application/json"},
+     *   @SWG\Parameter(
+     *     in="query",
+     *     name="auth_code",
+     *     type="string",
+     *     required=true,
+     *   ),
+     *   @SWG\Parameter(
+     *     in="query",
+     *     name="line_id",
+     *     type="string",
+     *     required=true,
+     *   ),
+     *   @SWG\Response(response="default", description="操作成功")
+     * )
+     */
+    public function active(Request $request)
+    {
+        $line = Line::where('line_id', $request->input('line_id'))->first();
+
+        if (!$line) {
+            return "不存在的line_id";
+        }
+
+        $staff = $line->staff;
+
+        if ($staff->authcode->matchCode($request->input('auth_code'))) {
+            $staff->authcode->delete();
+            $staff->active = Staff::ACTIVE;
+            $staff->save();
+
+            return "帳號已啟用";
+        }
+
+        return "驗證碼不符合";
+    }
+
 }

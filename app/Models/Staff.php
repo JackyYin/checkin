@@ -29,9 +29,14 @@ class Staff extends Model
      */
     protected $hidden = [];
 
-    public function line_id()
+    public function line()
     {
         return $this->hasOne(Line::class,'staff_id','id');
+    }
+
+    public function authcode()
+    {
+        return $this->hasOne(AuthCode::class,'staff_id','id');
     }
 
     public function get_check_list()

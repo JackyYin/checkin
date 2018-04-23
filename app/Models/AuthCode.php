@@ -23,4 +23,18 @@ class AuthCode extends Model
      */
     protected $hidden = [];
     public $timestamps = false;
+
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class, 'staff_id', 'id');
+    }
+
+    public function matchCode($auth_code)
+    {
+        if ($this->auth_code == $auth_code) {
+            return true;
+        }
+        
+        return false;
+    }
 }

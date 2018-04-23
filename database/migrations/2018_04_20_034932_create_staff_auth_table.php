@@ -15,6 +15,7 @@ class CreateStaffAuthTable extends Migration
     {
         if (!Schema::hasTable('staff_auth')) {
             Schema::create('staff_auth', function (Blueprint $table) {
+                $table->increments('id');
                 $table->unsignedInteger('staff_id');
                 $table->string('auth_code');
 

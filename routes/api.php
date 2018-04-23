@@ -13,3 +13,4 @@ use Illuminate\Http\Request;
 |
 */
 Route::get('register', ['uses' => 'RegisterController@register']);
+Route::get('active', ['uses' => 'RegisterController@active']);
