@@ -39,15 +39,19 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $messages = [
-            'email.required'     => '請填入email',
-            'email'              => '請填入有效的email',
+            'email.required'   => '請填入email',
+            'email'            => '請填入有效的email',
+            'email.unique'     => '此email已註冊',
+            'line_id.required' => '請填入line_id',
         ];
         $validator = Validator::make($request->all(), [
-            'email'    => 'required|email',
+            'email'    => 'required|email|unique:staffs,email',
+            'line_id'  => 'required'
         ], $messages);
 
         if ($validator->fails()) {
-            return $validator->errors()->all()[0];
+            $array = $validator->errors()->all();
+            return implode(",",$array);
         }
 
         if (!$name = $this->getMMName($request->input('email'))) {
@@ -122,6 +126,22 @@ class RegisterController extends Controller
      */
     public function active(Request $request)
     {
+        $messages = [
+            'auth_code.required' => '請填入驗證碼',
+            'auth_code.exists'   => '不符合的驗證碼',
+            'line_id.required'   => '請填入line_id',
+            'line_id.exists'     => '不存在的line_id'
+        ];
+        $validator = Validator::make($request->all(), [
+            'auth_code' => 'required|exists:staff_auth,auth_code',
+            'line_id'   => 'required|exists:staff_line,line_id'
+        ], $messages);
+
+        if ($validator->fails()) {
+            $array = $validator->errors()->all();
+            return implode(",",$array);
+        }
+
         $line = Line::where('line_id', $request->input('line_id'))->first();
 
         if (!$line) {
