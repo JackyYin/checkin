@@ -18,6 +18,8 @@ Route::get('login',  ['as' => 'login', 'uses' => 'Auth\AuthController@login']);
 Route::group(['namespace' => 'Api'], function () {
     Route::get('register', ['uses' => 'RegisterController@register']);
     Route::get('active', ['uses' => 'RegisterController@active']);
+    Route::get('checkin', ['uses' => 'CheckController@checkIn']);
+    Route::get('checkout', ['uses' => 'CheckController@checkOut']);
 });
 
 Route::group(['middleware' => ['client'], 'namespace' => 'Api'], function () {

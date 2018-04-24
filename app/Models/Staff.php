@@ -63,4 +63,22 @@ class Staff extends Model
         $list ? $checked = true : $checked = false;
         return $checked;
     }
+
+    public function count_checkin_today()
+    {
+        return $this->get_check_list->where('checkin_at', '>=', date('Y-m-d').' 00:00:00')->count();
+    }
+
+    public function count_checkout_today()
+    {
+        return $this->get_check_list
+            ->where('checkin_at', '>=', date('Y-m-d').' 00:00:00')
+            ->where('checkout_at', '>=', date('Y-m-d').' 00:00:00')
+            ->count();
+    }
+
+    public function count_check_diff_today()
+    {
+        return $this->count_checkin_today() - $this->count_checkout_today();
+    }
 }
