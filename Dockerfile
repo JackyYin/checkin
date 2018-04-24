@@ -12,7 +12,7 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
 RUN apt-get update \
-    && apt-get install -y curl wget zip unzip git tar vim tmux sudo software-properties-common apache2 supervisor\
+    && apt-get install -y curl wget zip unzip git tar vim tmux sudo software-properties-common apache2 supervisor cron\
     && add-apt-repository -y ppa:ondrej/php \
     && apt-get update \
     && apt-get install -y php7.2 \
@@ -33,7 +33,15 @@ WORKDIR /var/www/html
 RUN wget https://getcomposer.org/composer.phar -O /usr/local/bin/composer \
     && chmod 755 /usr/local/bin/composer
 
+#cronjobs
+COPY crontab /etc/cron.d/laravel-cron
+RUN touch /var/log/cron.log \
+    && crontab /etc/cron.d/laravel-cron \
+    && chmod 600 /etc/crontab
+
 # configurations
+COPY ./Dockerconfig/apache2.conf       /etc/apache2/apache2.conf
+COPY ./Dockerconfig/www.conf           /etc/php/7.2/fpm/pool.d/www.conf
 COPY ./Dockerconfig/supervisord1.conf  /etc/supervisor/supervisord.conf
 COPY ./Dockerconfig/supervisord2.conf  /etc/supervisor/conf.d/supervisord.conf
 COPY ./Dockerconfig/xdebug.ini         /etc/php/7.2/mods-available/xdebug.ini
