@@ -29,4 +29,15 @@ class Check extends Model
      */
     protected $hidden = [];
     public $timestamps = false;
+
+    public function scopeTwo_days_ago($query)
+    {
+        return $query->where('checkin_at', '<=', date('Y-m-d', strtotime('-1 day')))
+            ->where('checkin_at', '>=', date('Y-m-d', strtotime('-2 days')));
+    }
+
+    public function scopeNot_checked_out($query)
+    {
+        return $query->whereNull('checkout_at');
+    }
 }
