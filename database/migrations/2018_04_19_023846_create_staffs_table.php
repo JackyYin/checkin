@@ -19,7 +19,7 @@ class CreateStaffsTable extends Migration
                 $table->string('name', 50);
                 $table->string('email')->unique();
                 $table->unsignedTinyInteger('active')->default(0);
-                $table->string('staff_code')->nullable();
+                $table->string('staff_code')->unique()->nullable();
                 $table->timestamps();
             });
         }
