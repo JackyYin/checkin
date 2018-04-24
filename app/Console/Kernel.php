@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Carbon\Carbon;
+use App\Models\Check;
 
 class Kernel extends ConsoleKernel
 {
@@ -24,8 +26,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        date_default_timezone_set('Asia/Taipei'); 
+        $schedule->call(function () {
+            $checks = Check::two_days_ago()->not_checked_out()->get();
+            foreach ($checks as $check) {
+                $check->update([
+                    'checkout_at' => Carbon::now()->subDays(1)->subHours(5)->subMinutes(30),
+                ]);
+            }   
+        })->daily();
     }
 
     /**
