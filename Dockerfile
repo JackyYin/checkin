@@ -17,7 +17,7 @@ RUN apt-get update \
     && apt-get update \
     && apt-get install -y php7.2 \
     && apt-get install -y php7.2-pdo php7.2-bcmath php7.2-fpm php7.2-gd php7.2-mysql \
-       php7.2-pgsql php7.2-imap php7.2-memcached php7.2-mbstring php7.2-xml php7.2-zip\
+       php7.2-pgsql php7.2-imap php7.2-memcached php7.2-mbstring php7.2-xml php7.2-zip php7.2-curl\
        php-pear php7.2-dev\ 
     && mkdir /run/php \
     && apt-get remove -y --purge software-properties-common \
