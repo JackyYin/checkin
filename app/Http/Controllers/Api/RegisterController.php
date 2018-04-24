@@ -54,15 +54,11 @@ class RegisterController extends Controller
             return implode(",",$array);
         }
 
-        if (!$name = $this->getMMName($request->input('email'))) {
-            return "請先在MatterMost註冊email";
-        }
+        $new_staff = Staff::where('email', $request->input('email'))->first();
 
-        $new_staff = Staff::create([
-            'name'    => $name,
-            'email'   => $request->input('email'),
-            'active'  => Staff::NON_ACTIVE
-        ]);
+        if (!$new_staff) {
+            return "不存在的email,請先登錄員工個人資料";
+        }
 
         Line::create([
             'staff_id' => $new_staff->id,
@@ -78,19 +74,6 @@ class RegisterController extends Controller
         $this->sendAuthCodeEmail($new_staff, $auth_code);
 
         return "請至信箱確認驗證碼.";
-    }
-
-    private function getMMName($email)
-    {
-        $driver = Mattermost::server('default');
-
-        $result = $driver->getUserModel()->getUserByEmail($email);
-
-        if ($result->getStatusCode() == 200) {
-            return json_decode($result->getBody())->nickname;
-        } else {
-            return false;
-        }
     }
 
     private function sendAuthCodeEmail(Staff $staff, $auth_code)
@@ -161,4 +144,16 @@ class RegisterController extends Controller
         return "驗證碼不符合";
     }
 
+    private function getMMName($email)
+    {
+        $driver = Mattermost::server('default');
+
+        $result = $driver->getUserModel()->getUserByEmail($email);
+
+        if ($result->getStatusCode() == 200) {
+            return json_decode($result->getBody())->nickname;
+        } else {
+            return false;
+        }
+    }
 }

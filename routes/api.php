@@ -14,8 +14,11 @@ use Illuminate\Http\Request;
 */
 
 Route::get('login',  ['as' => 'login', 'uses' => 'Auth\AuthController@login']);
-Route::get('register', ['uses' => 'RegisterController@register']);
-Route::get('active', ['uses' => 'RegisterController@active']);
+
+Route::group(['namespace' => 'Api'], function () {
+    Route::get('register', ['uses' => 'RegisterController@register']);
+    Route::get('active', ['uses' => 'RegisterController@active']);
+});
 
 Route::group(['middleware' => ['client'], 'namespace' => 'Api'], function () {
 //放入要驗證的api
