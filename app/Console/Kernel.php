@@ -26,7 +26,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        date_default_timezone_set('Asia/Taipei'); 
         $schedule->call(function () {
             $checks = Check::two_days_ago()->not_checked_out()->get();
             foreach ($checks as $check) {
