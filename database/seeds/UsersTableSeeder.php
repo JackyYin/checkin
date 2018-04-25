@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Models\Staff;
 
 class UsersTableSeeder extends Seeder
 {
@@ -11,11 +12,16 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-		DB::table('users')->insert([
-            'name' => 'jackyyin',
+        $staff = Staff::create([
+            'name'     => 'root',
+            'email'    => 'jjyyg1123@gmail.com',
+            'active'   => 1,
+        ]);
+        DB::table('admin')->insert([
+            'staff_id' => $staff->id,
+            'name' => 'root',
             'email' => 'jjyyg1123@gmail.com',
-            'password' => bcrypt('password'),
-            'is_admin' => true,
+            'password' => bcrypt('12345678'),
         ]);
     }
 }
