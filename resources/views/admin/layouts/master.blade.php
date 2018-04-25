@@ -4,6 +4,10 @@
     </head>
     <body>
         <div class="container">
+            @if ($admin)
+                @include('admin.layouts.header')
+            @endif
+
             @include('admin.layouts.messages')
             @yield('content')
         </div>

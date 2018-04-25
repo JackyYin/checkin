@@ -15,7 +15,7 @@ class AuthController extends Controller
      * @var string
      */
     protected $guard = 'admin';
-    protected $redirectTo = '/admin/default';
+    protected $redirectTo = '/admin/staff/index';
 
     public function login()
     {
@@ -54,11 +54,7 @@ class AuthController extends Controller
         $remember = $request->input('remember');
 
         if (Auth::guard($this->guard)->attempt(['email' => $email, 'password' => $pass], $remember)) {
-            if (Auth::guard($this->guard)->user()->is_admin) {
-                return redirect($this->redirectTo);
-            }
-
-            return back()->with('danger', '權限不足,請以管理者身份登入.');
+            return redirect($this->redirectTo);
         }
           
         return back()->with('danger', '帳號或密碼錯誤.');

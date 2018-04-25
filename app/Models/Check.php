@@ -8,9 +8,9 @@ class Check extends Model
 {
 
     const TYPE_NORMAL          = 0;
-    const TYPE_PERSONAL_LEAVE  = 1;
-    const TYPE_ANNUAL_LEAVE    = 2;
-    const TYPE_OFFICIAL_LEAVE  = 3;
+    const TYPE_PERSONAL_LEAVE  = 1; //事假
+    const TYPE_ANNUAL_LEAVE    = 2; //特休
+    const TYPE_OFFICIAL_LEAVE  = 3; //公假
 
     protected $table = 'checks';
     /**

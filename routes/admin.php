@@ -17,7 +17,7 @@ Route::group(['namespace' => 'Auth'], function () {
 
 
 Route::group(['middleware' => ['auth.admin']], function () {
-    Route::get('default', function () {
-        return view('welcome');
+    Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
+        Route::get('index', ['as' => 'index', 'uses' => 'StaffController@index']);
     });
 });
