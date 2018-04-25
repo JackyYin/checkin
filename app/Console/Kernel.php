@@ -33,7 +33,7 @@ class Kernel extends ConsoleKernel
                     'checkout_at' => Carbon::now()->subDays(1)->subHours(5)->subMinutes(30),
                 ]);
             }   
-        })->daily();
+        })->dailyAt('0:01');
     }
 
     /**
