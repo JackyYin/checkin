@@ -2,12 +2,10 @@ version: '3'
 
 services:
 
-  larvata-2018-checkin:
+  checkin:
     image: checkin
     container_name: checkin
     restart: always
-    expose:
-      - "80"
     volumes:
       - ./:/var/www/html
       - /www/checkin/shared:/www/checkin/shared
