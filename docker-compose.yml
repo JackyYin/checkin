@@ -1,8 +1,31 @@
-larvata-checkin:
-  image: larvata-checkin
-  container_name: larvata-checkin
-  restart: always
-  ports: 
-    - "7778:80"
-  volumes:
-    - ./:/var/www/html
+version: '3'
+services:
+  larvata-2018-checkin:
+    build:
+      context: .
+    image: larvata-checkin
+    container_name: larvata-2018-checkin
+    restart: always
+    ports:
+      - "7778:80"
+    expose:
+      - "80"
+    volumes:
+      - ./:/var/www/html
+  larvata-2018-checkin-linebot:
+    build:
+      context: ./larvata-2018-checkin-linebot
+    image: larvata-2018-checkin-linebot
+    container_name: larvata-2018-checkin-linebot
+    restart: always
+    ports:
+      - "8080:80"
+    links:
+      - larvata-2018-checkin
+    env_file:
+      - ./larvata-2018-checkin-linebot/.env
+    volumes:
+      - ./larvata-2018-checkin-linebot/:/home/app
+      - ./larvata-2018-checkin-linebot/shared:/www/larvata-2018-checkin-linebot/shared
+    working_dir: /home/app
+    command: ["/bin/sh", "run.sh"]
