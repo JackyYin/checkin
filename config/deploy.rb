@@ -18,9 +18,8 @@ set :default_env, { path: "/usr/local/bin:$PATH" }
 # set :use_sudo, true
 # set :sudo, "sudo -u root -i"
 
-### Shared files for Yii
-# append :linked_files, '.env'
-# append :linked_dirs, 'log', 'tmp'
+append :linked_files, '.env'
+append :linked_dirs, 'log', 'vendor'
 
 ### Custom your deploy flow
 namespace :deploy do
@@ -36,7 +35,7 @@ namespace :deploy do
   after 'docker:build', 'docker:compose'
 
   ### Yii (base on Docker) flow
-  # after 'docker:compose', 'php:composer'
+  after 'docker:compose', 'custom:post_setup'
 
   ### Rollback flow
   # after :rollback, "docker:compose"

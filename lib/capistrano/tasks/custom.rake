@@ -10,7 +10,7 @@ namespace :custom do
   desc '自訂的後置任務。'
   task :post_setup do
     on roles(:all) do
-      # do something after deploy finished
+      execute :docker, "exec checkin composer install"
     end
   end
 
