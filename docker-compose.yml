@@ -1,17 +1,19 @@
 version: '3'
+
 services:
+
   larvata-2018-checkin:
-    build:
-      context: .
-    image: larvata-checkin
-    container_name: larvata-2018-checkin
+    image: checkin
+    container_name: checkin
     restart: always
-    ports:
-      - "7778:80"
     expose:
       - "80"
     volumes:
       - ./:/var/www/html
+      - /www/checkin/shared:/www/checkin/shared
+    env_file:
+      - .env
+
   larvata-2018-checkin-linebot:
     build:
       context: ./larvata-2018-checkin-linebot
@@ -21,7 +23,7 @@ services:
     ports:
       - "8080:80"
     links:
-      - larvata-2018-checkin
+      - checkin
     env_file:
       - ./larvata-2018-checkin-linebot/.env
     volumes:
@@ -29,3 +31,8 @@ services:
       - ./larvata-2018-checkin-linebot/shared:/www/larvata-2018-checkin-linebot/shared
     working_dir: /home/app
     command: ["/bin/sh", "run.sh"]
+
+networks:
+  default:
+    external:
+      name: proxy_network

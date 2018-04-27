@@ -18,7 +18,7 @@ RUN apt-get update \
     && apt-get install -y php7.2 \
     && apt-get install -y php7.2-pdo php7.2-bcmath php7.2-fpm php7.2-gd php7.2-mysql \
        php7.2-pgsql php7.2-imap php7.2-memcached php7.2-mbstring php7.2-xml php7.2-zip php7.2-curl\
-       php-pear php7.2-dev\ 
+       php-pear php7.2-dev\
     && mkdir /run/php \
     && apt-get remove -y --purge software-properties-common \
     && apt-get clean \
@@ -48,7 +48,7 @@ COPY ./Dockerconfig/xdebug.ini         /etc/php/7.2/mods-available/xdebug.ini
 RUN sed -i '/DocumentRoot/ s#/html#/html/public#g' /etc/apache2/sites-available/000-default.conf \
     && sed -i '/DocumentRoot/ s#/html#/html/public#g' /etc/apache2/sites-available/default-ssl.conf \
     && a2enmod rewrite \
-    && phpenmod xdebug \ 
+    && phpenmod xdebug \
     && service apache2 restart
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
