@@ -14,24 +14,6 @@ services:
     env_file:
       - .env
 
-  larvata-2018-checkin-linebot:
-    build:
-      context: ./larvata-2018-checkin-linebot
-    image: larvata-2018-checkin-linebot
-    container_name: larvata-2018-checkin-linebot
-    restart: always
-    ports:
-      - "8080:80"
-    links:
-      - checkin
-    env_file:
-      - ./larvata-2018-checkin-linebot/.env
-    volumes:
-      - ./larvata-2018-checkin-linebot/:/home/app
-      - ./larvata-2018-checkin-linebot/shared:/www/larvata-2018-checkin-linebot/shared
-    working_dir: /home/app
-    command: ["/bin/sh", "run.sh"]
-
 networks:
   default:
     external:
