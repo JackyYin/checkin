@@ -22,4 +22,8 @@ Route::group(['middleware' => ['auth.admin']], function () {
     Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
         Route::get('import', ['as' => 'import', 'uses' => 'StaffController@import']);
     });
+    Route::group(['prefix' => 'check', 'as' => 'check.'], function () {
+        Route::get('export_page', ['as' => 'export_page', 'uses' => 'CheckController@export_page']);
+        Route::post('export', ['as' => 'export', 'uses' => 'CheckController@export']);
+    });
 });
