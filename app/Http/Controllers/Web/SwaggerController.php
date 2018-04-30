@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 /**
  * @SWG\Swagger(
  *   @SWG\Info(
- *     title="我的`Swagger`API文档",
+ *     title="我的`Swagger`API",
  *     version="1.0.0"
  *   )
  * )

@@ -22,7 +22,7 @@ class CheckController extends Controller
      *   tags={"project"},
      *   summary="打卡上班",
      *   operationId="checkin",
-     *   produces={"application/json"},
+     *   produces={"text/plain"},
      *   @SWG\Parameter(
      *     in="query",
      *     name="line_id",
@@ -88,7 +88,7 @@ class CheckController extends Controller
      *   tags={"project"},
      *   summary="打卡下班",
      *   operationId="checkout",
-     *   produces={"application/json"},
+     *   produces={"text/plain"},
      *   @SWG\Parameter(
      *     in="query",
      *     name="line_id",

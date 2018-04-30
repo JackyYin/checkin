@@ -19,7 +19,7 @@ class RegisterController extends Controller
      *   tags={"project"},
      *   summary="註冊手續",
      *   operationId="register",
-     *   produces={"application/json"},
+     *   produces={"text/plain"},
      *   @SWG\Parameter(
      *     in="query",
      *     name="email",
@@ -91,7 +91,7 @@ class RegisterController extends Controller
      *   tags={"project"},
      *   summary="註冊驗證手續",
      *   operationId="active",
-     *   produces={"application/json"},
+     *   produces={"text/plain"},
      *   @SWG\Parameter(
      *     in="query",
      *     name="auth_code",
