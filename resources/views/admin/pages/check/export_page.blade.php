@@ -10,6 +10,10 @@
     {{ Form::select('id', $options['name']) }}
     {{ Form::label('date-range', '時間範圍') }}
     {{ Form::text('date-range') }}
+    {{ Form::checkbox("has[work_time]", 1) }}
+    {{ Form::label('work_time', '工作時間') }}
+    {{ Form::select("op[work_time]", $options['operators'], 2) }}
+    {{ Form::number('value[work_time]', 9)}}
 
     {{ Form::submit('送出') }}
     {{ Form::close() }}
