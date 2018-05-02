@@ -21,8 +21,8 @@ class CheckController extends Controller
 
     public function export_page()
     {
-        $options['name'] = Staff::all()->pluck('name', 'id')->toArray();
-        array_unshift($options['name'], '所有人');
+        $options['name'] = array(0 => "所有人");
+        $options['name'] = $options['name'] + Staff::all()->pluck('name', 'id')->toArray();
         $options['operators'] = array([
             0   => "等於",
             1   => "大於等於",

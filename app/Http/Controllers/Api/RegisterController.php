@@ -41,11 +41,11 @@ class RegisterController extends Controller
         $messages = [
             'email.required'   => '請填入email',
             'email'            => '請填入有效的email',
-            'email.unique'     => '此email已註冊',
+            'email.exists'     => '不存在的email,請先登錄員工個人資料',
             'line_id.required' => '請填入line_id',
         ];
         $validator = Validator::make($request->all(), [
-            'email'    => 'required|email|unique:staffs,email',
+            'email'    => 'required|email|exists:staffs,email',
             'line_id'  => 'required'
         ], $messages);
 
