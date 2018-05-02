@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
@@ -13,9 +14,9 @@ use App\Models\Profile;
 class CheckController extends Controller
 {
     private $OPERATOR = [
-            '==' => 0,
-            '>=' => 1,
-            '<=' => 2
+        0 => "=",
+        1 => ">=",
+        2 => "<=",
     ];
 
     public function export_page()
@@ -62,26 +63,66 @@ class CheckController extends Controller
 
     private function getDataRows($from, $to, $id, $conditions)
     {
+        if ($id == 0) {
+            $mysql =
+                "SELECT DATE(c.checkin_at) as date, s.name,
+                SUM(TIMESTAMPDIFF(HOUR,checkin_at,checkout_at)) as work_time,
+                SUM(IF(c.type != 0, timestampdiff(hour,checkin_at,checkout_at), 0)) as leave_time
+                FROM checks c left join  staffs s on s.id = c.staff_id
+                WHERE checkin_at >= '".$from." 00:00:00'"
+                ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'
+                GROUP BY c.staff_id, DATE(c.checkin_at)\n";
+
+        }
+        else {
+            $mysql =
+                "SELECT DATE(c.checkin_at) as date, s.name,
+                SUM(TIMESTAMPDIFF(HOUR,checkin_at,checkout_at)) as work_time,
+                SUM(IF(c.type != 0, timestampdiff(hour,checkin_at,checkout_at), 0)) as leave_time
+                FROM checks c left join  staffs s on s.id = c.staff_id
+                WHERE checkin_at >= '".$from." 00:00:00'"
+                ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'"
+                ." AND c.staff_id = ".$id."
+                GROUP BY c.staff_id, DATE(c.checkin_at)\n";
+        }
+
+        if (array_key_exists('has', $conditions) && $conditions['has']['work_time']) {
+            $mysql =
+                $mysql." HAVING SUM(TIMESTAMPDIFF(HOUR,checkin_at,checkout_at)) ".$this->OPERATOR[$conditions['op']['work_time']]." ".$conditions['value']['work_time']."\n".
+                " ORDER BY DATE(c.checkin_at)";
+        }
+        else {
+            $mysql =
+                $mysql." ORDER BY DATE(c.checkin_at)";
+        }
+
+        $rows = DB::select($mysql);
+        return $rows;
+    }
+
+    private function old_getDataRows($from, $to, $id, $conditions)
+    {
         $data = array();
 
-        while (strtotime($from) <= strtotime($to)) {
-
-            if ($id == 0) {
+        if ($id == 0) {
+            while (strtotime($from) <= strtotime($to)) {
                 $staffs = Staff::all();
-
                 foreach ($staffs as $staff) {
                     $data[] = $this->getSingleStaffRow($from, $staff->id, $conditions);
                 }
+                $from = date ("y-m-d", strtotime("+1 day", strtotime($from)));
             }
-            else {
+        }
+        else {
+            while (strtotime($from) <= strtotime($to)) {
                 $data[] = $this->getSingleStaffRow($from, $id, $conditions);
+                $from = date ("y-m-d", strtotime("+1 day", strtotime($from)));
             }
-            $from = date ("y-m-d", strtotime("+1 day", strtotime($from)));
         }
         return $data;
     }
 
-    private function getSingleStaffRow($from, $id, $conditions)
+    private function old_getSingleStaffRow($from, $id, $conditions)
     {
         $staff = Staff::find($id);
         $row = array();
@@ -123,7 +164,7 @@ class CheckController extends Controller
         return $row;
     }
 
-    private function parseOperator($value1, $operator, $value2)
+    private function old_parseOperator($value1, $operator, $value2)
     {
         switch ($operator) {
             case 0:
