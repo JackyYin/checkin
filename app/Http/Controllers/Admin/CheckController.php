@@ -26,7 +26,6 @@ class CheckController extends Controller
             0   => "等於",
             1   => "大於等於",
             2   => "小於等於",
-            3   => "任意一個",
         ]);
         return view('admin.pages.check.export_page', compact('options'));
     }
@@ -45,110 +44,97 @@ class CheckController extends Controller
         $to   = explode(" - ", $request->input('date-range'))[1];
 
         $columns = array("日期", "姓名", "工作時數", "請假時數");
-        $staffs  = $this->getStaffRows($from , $to, $request->input('id'), $request->only(['has', 'op', 'value']));
-        $callback = function() use ($columns, $staffs)
+        $all_rows  = $this->getDataRows($from , $to, $request->input('id'), $request->only(['has', 'op', 'value']));
+        $callback = function() use ($columns, $all_rows)
         {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
 
-            foreach($staffs as $staff) {
-                fputcsv($file, $staff);
+            foreach($all_rows as $row) {
+                if (!empty($row)) {
+                    fputcsv($file, $row);
+                }
             }
             fclose($file);
         };
         return response()->stream($callback, 200, $headers); 
     }
 
-    private function getStaffRows($from, $to, $id, $conditions)
+    private function getDataRows($from, $to, $id, $conditions)
     {
-        $staff_array = array();
+        $data = array();
 
-        if ($id == 0) {
-            $staffs = Staff::all();
-            
-            foreach ($staffs as $staff) {
-                $staff_array[] = $this->getSingleStaffRow($from, $to, $staff->id, $conditions);
-            } 
-        }
-        else {
-            $staff_array[] = $this->getSingleStaffRow($from, $to, $id, $conditions);
-        }
-
-        return $staff_array;
-    }
-
-    private function getSingleStaffRow($from, $to, $id, $conditions)
-    {
-        $staff = Staff::find($id);
-        $row = array();
         while (strtotime($from) <= strtotime($to)) {
-            $work_time = 0;
-            $leave_time = 0;
-            $checks = $staff->range_one_day($from);
 
-            foreach ($checks as $item) {
-                switch ($item->type) {
-                
-                    case Check::TYPE_NORMAL:
-                        $work_time += round((strtotime($item->checkout_at) - strtotime($item->checkin_at))/3600, 1);
-                        break;
-                    default:
-                        $leave_time += round((strtotime($item->checkout_at) - strtotime($item->checkin_at))/3600, 1);
-                        break;
-                }
-            }
+            if ($id == 0) {
+                $staffs = Staff::all();
 
-            if ($conditions['has']['work_time']) {
-                switch ($conditions['op']['work_time']) {
-
-                    case 0:
-                        if ($work_time == $conditions['value']['work_time']) {
-                            $row[] =  $from;
-                            $row[] =  $staff->name;
-                            $row[] = $work_time;
-                            $row[] = $leave_time;
-                        }
-                        break;
-                    case 1:
-                        if ($work_time >= $conditions['value']['work_time']) {
-                            $row[] =  $from;
-                            $row[] =  $staff->name;
-                            $row[] = $work_time;
-                            $row[] = $leave_time;
-                        }
-                        break;
-                    case 2:
-                        if ($work_time <= $conditions['value']['work_time']) {
-                            $row[] =  $from;
-                            $row[] =  $staff->name;
-                            $row[] = $work_time;
-                            $row[] = $leave_time;
-                        }
-                        break;
+                foreach ($staffs as $staff) {
+                    $data[] = $this->getSingleStaffRow($from, $staff->id, $conditions);
                 }
             }
             else {
+                $data[] = $this->getSingleStaffRow($from, $id, $conditions);
+            }
+            $from = date ("y-m-d", strtotime("+1 day", strtotime($from)));
+        }
+        return $data;
+    }
+
+    private function getSingleStaffRow($from, $id, $conditions)
+    {
+        $staff = Staff::find($id);
+        $row = array();
+        $work_time = 0;
+        $leave_time = 0;
+        $checks = $staff->range_one_day($from);
+
+        foreach ($checks as $item) {
+            switch ($item->type) {
+
+                case Check::TYPE_NORMAL:
+                    $work_time += round((strtotime($item->checkout_at) - strtotime($item->checkin_at))/3600, 1);
+                    break;
+                default:
+                    $leave_time += round((strtotime($item->checkout_at) - strtotime($item->checkin_at))/3600, 1);
+                    break;
+            }
+        }
+
+        if ($work_time == 0 && $leave_time == 0) {
+            return $row;
+        }
+
+        if (array_key_exists('has', $conditions) && $conditions['has']['work_time']) {
+            if ($this->parseOperator($work_time, $conditions['op']['work_time'], $conditions['value']['work_time'])) {
                 $row[] =  $from;
                 $row[] =  $staff->name;
                 $row[] = $work_time;
                 $row[] = $leave_time;
             }
-            $from = date ("y-m-d", strtotime("+1 day", strtotime($from)));
+        }
+        else {
+            $row[] =  $from;
+            $row[] =  $staff->name;
+            $row[] = $work_time;
+            $row[] = $leave_time;
         }
 
         return $row;
     }
 
-    private function getFirstRow($from , $to)
+    private function parseOperator($value1, $operator, $value2)
     {
-        $columns = array();
-        $columns[] = "姓名\日期";
-        while (strtotime($from) <= strtotime($to)) {
-            $columns[] = $from;
-            $from = date ("Y-m-d", strtotime("+1 day", strtotime($from)));
+        switch ($operator) {
+            case 0:
+                return $value1 == $value2;
+                break;
+            case 1:
+                return $value1 >= $value2;
+                break;
+            case 2:
+                return $value1 <= $value2;
+                break;
         }
-
-        return $columns;
     }
-
 }
