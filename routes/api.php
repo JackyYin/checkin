@@ -20,6 +20,7 @@ Route::group(['namespace' => 'Api'], function () {
     Route::get('active', ['uses' => 'RegisterController@active']);
     Route::get('checkin', ['uses' => 'CheckController@checkIn']);
     Route::get('checkout', ['uses' => 'CheckController@checkOut']);
+    Route::get('get-leave-type', ['uses' => 'LeaveController@getLeaveType']);
 });
 
 Route::group(['middleware' => ['client'], 'namespace' => 'Api'], function () {
