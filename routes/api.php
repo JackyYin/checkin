@@ -20,6 +20,8 @@ Route::group(['namespace' => 'Api'], function () {
     Route::post('active', ['uses' => 'RegisterController@active']);
     Route::post('checkin', ['uses' => 'CheckController@checkIn']);
     Route::post('checkout', ['uses' => 'CheckController@checkOut']);
+    Route::post('get-check-type', ['uses' => 'CheckController@getCheckType']);
+    Route::post('get-check-list', ['uses' => 'CheckController@getCheckList']);
     Route::post('get-leave-type', ['uses' => 'LeaveController@getLeaveType']);
     Route::post('request-leave', ['uses' => 'LeaveController@requestLeave']);
 });

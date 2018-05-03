@@ -32,7 +32,6 @@ class CheckController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-
     public function checkIn(Request $request)
     {
         $messages = [
@@ -98,7 +97,6 @@ class CheckController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-
     public function checkOut(Request $request)
     {
         $messages = [
@@ -148,5 +146,128 @@ class CheckController extends Controller
         }
 
         return $response;
+    }
+    /**
+     *
+     * @SWG\Post(path="/api/get-check-type",
+     *   tags={"project"},
+     *   summary="取得請假與打卡列表",
+     *   operationId="get-check-list",
+     *   produces={"application/json"},
+     *   @SWG\Parameter(
+     *       name="line_id",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Response(response="default", description="操作成功")
+     * )
+     */
+    public function getCheckType(Request $request)
+    {
+
+        $messages = [
+            'line_id.required'    => '請填入line_id',
+            'line_id.exists'      => '不存在的line_id',
+        ];
+        $validator = Validator::make($request->all(), [
+            'line_id'    => 'required|exists:staff_line,line_id',
+        ], $messages);
+
+        if ($validator->fails()) {
+            $array = $validator->errors()->all();
+            return implode(",",$array);
+        }
+
+        $staff = Line::where('line_id', $request->input('line_id'))->first()->staff;
+
+        if ($staff->active == Staff::NON_ACTIVE) {
+            return "帳號未驗證";
+        }
+
+        return response()->json([
+            Check::TYPE_NORMAL          => '打卡',
+            Check::TYPE_PERSONAL_LEAVE  => '事假',
+            Check::TYPE_ANNUAL_LEAVE    => '特休',
+            Check::TYPE_OFFICIAL_LEAVE  => '公假',
+            99                          => '所有',
+        ], JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     *
+     * @SWG\Post(path="/api/get-check-list",
+     *   tags={"project"},
+     *   summary="取得請假或打卡紀錄",
+     *   operationId="get-check-list",
+     *   produces={"application/json"},
+     *   @SWG\Parameter(
+     *       name="line_id",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Parameter(
+     *       name="check_type",
+     *       in="formData",
+     *       type="number",
+     *       required=true,
+     *   ),
+     *   @SWG\Parameter(
+     *       name="start_date",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Parameter(
+     *       name="end_date",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Response(response="default", description="操作成功")
+     * )
+     */
+    public function getCheckList(Request $request)
+    {
+
+        $messages = [
+            'line_id.required'       => '請填入line_id',
+            'line_id.exists'         => '不存在的line_id',
+            'check_type.required'    => '請填入類別',
+            'start_date.required'    => '請填入開始日期',
+            'start_date.date_format' => '請填入格式： YYYY-MM-DD',
+            'end_date.required'      => '請填入結束日期',
+            'end_date.date_format'   => '請填入格式： YYYY-MM-DD',
+        ];
+        $validator = Validator::make($request->all(), [
+            'line_id'    => 'required|exists:staff_line,line_id',
+            'check_type' => 'required|numeric',
+            'start_date' => 'required|date_format:Y-m-d',
+            'end_date'   => 'required|date_format:Y-m-d',
+        ], $messages);
+
+        if ($validator->fails()) {
+            $array = $validator->errors()->all();
+            return implode(",",$array);
+        }
+
+        $staff = Line::where('line_id', $request->input('line_id'))->first()->staff;
+
+        if ($staff->active == Staff::NON_ACTIVE) {
+            return "帳號未驗證";
+        }
+
+        $lists = $staff->get_check_list
+            ->filter(function($item) use ($request) {
+                if ($request->input('check_type') != 99) {
+                    return $item->type == $request->input('check_type');
+                }
+                return $item;
+            })
+            ->where('checkin_at', '>=', $request->input('start_date')." 00:00:00")
+            ->where('checkin_at', '<=', $request->input('end_date')." 23:59:59")->values()->toArray();
+
+        return response()->json($lists);
     }
 }
