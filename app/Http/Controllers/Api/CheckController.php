@@ -67,7 +67,7 @@ class CheckController extends Controller
                     'checkin_at' => Carbon::now(),
                     'type'       => Check::TYPE_NORMAL, 
                 ]);
-                $response = $check->checkin_at."打卡上班成功！";
+                $response = $check->checkin_at." 打卡上班成功！";
                 break; 
 
             case 1:
@@ -139,7 +139,7 @@ class CheckController extends Controller
                 $check->update([
                     'checkout_at' => Carbon::now()
                 ]);
-                $response = $check->checkout_at."打卡下班成功！";
+                $response = $check->checkout_at." 打卡下班成功！";
                 break;
 
             default:
