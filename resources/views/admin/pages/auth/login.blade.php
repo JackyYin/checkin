@@ -1,8 +1,8 @@
 @extends('admin.layouts.master')
 
 @section('content')  
-    <form id="form" action="{{ route('admin.authenticate') }}" method="post">
-        <div class="modal show">
+    <form id="login-form" action="{{ route('admin.authenticate') }}" method="post">
+        <div class="modal show" id="login-modal">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -47,7 +47,8 @@
 @endsection
 @section('scripts')
     <script>
-        var validator = $("#form").validate({
+        $('#login-modal').modal({backdrop: 'static', keyboard: false});
+        var validator = $("#login-form").validate({
           rules: {
             email:{ required: true, email: true },
             password:{ required: true, minlength: 6 }
