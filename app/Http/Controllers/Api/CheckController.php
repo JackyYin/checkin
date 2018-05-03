@@ -62,12 +62,12 @@ class CheckController extends Controller
         switch ($staff->count_check_diff_today()) {
 
             case 0:
-                Check::create([
+                $check = Check::create([
                     'staff_id'   => $staff->id,
                     'checkin_at' => Carbon::now(),
                     'type'       => Check::TYPE_NORMAL, 
                 ]);
-                $response = "打卡上班成功！";
+                $response = $check->checkin_at."打卡上班成功！";
                 break; 
 
             case 1:
@@ -139,7 +139,7 @@ class CheckController extends Controller
                 $check->update([
                     'checkout_at' => Carbon::now()
                 ]);
-                $response = "打卡下班成功!";
+                $response = $check->checkout_at."打卡下班成功！";
                 break;
 
             default:

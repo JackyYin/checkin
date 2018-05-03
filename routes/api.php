@@ -16,11 +16,12 @@ use Illuminate\Http\Request;
 Route::get('login',  ['as' => 'login', 'uses' => 'Auth\AuthController@login']);
 
 Route::group(['namespace' => 'Api'], function () {
-    Route::get('register', ['uses' => 'RegisterController@register']);
-    Route::get('active', ['uses' => 'RegisterController@active']);
-    Route::get('checkin', ['uses' => 'CheckController@checkIn']);
-    Route::get('checkout', ['uses' => 'CheckController@checkOut']);
-    Route::get('get-leave-type', ['uses' => 'LeaveController@getLeaveType']);
+    Route::post('register', ['uses' => 'RegisterController@register']);
+    Route::post('active', ['uses' => 'RegisterController@active']);
+    Route::post('checkin', ['uses' => 'CheckController@checkIn']);
+    Route::post('checkout', ['uses' => 'CheckController@checkOut']);
+    Route::post('get-leave-type', ['uses' => 'LeaveController@getLeaveType']);
+    Route::post('request-leave', ['uses' => 'LeaveController@requestLeave']);
 });
 
 Route::group(['middleware' => ['client'], 'namespace' => 'Api'], function () {
