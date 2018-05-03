@@ -12,6 +12,11 @@ use App\Models\Check;
 
 class LeaveController extends Controller
 {
+    private $CHECK_TYPE = [
+        1 => "事假",
+        2 => "特休",
+        3 => "公假",
+    ];
     public function getLeaveType(Request $request)
     {
         $messages = [
@@ -69,13 +74,15 @@ class LeaveController extends Controller
             return "帳號未驗證";
         }
 
-        Check::create([
+        $check = Check::create([
             'staff_id'    => $staff->id,
             'checkin_at'  => $request->input('start_time'),
             'checkout_at' => $request->input('end_time'),
             'type'        => $request->input('leave_type'),
         ]);
 
-        return "請假成功";
+        return $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
+                ."假別： ".$this->CHECK_TYPE[$check->type].",\n"
+                ."編號： ".$check->id;
     }
 }
