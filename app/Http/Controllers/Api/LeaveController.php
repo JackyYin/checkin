@@ -33,7 +33,7 @@ class LeaveController extends Controller
             return "帳號未驗證";
         }
 
-        return json_encode([
+        return response()->json([
             Check::TYPE_PERSONAL_LEAVE  => '事假',
             Check::TYPE_ANNUAL_LEAVE    => '特休',
             Check::TYPE_OFFICIAL_LEAVE  => '公假'
