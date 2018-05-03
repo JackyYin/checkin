@@ -18,16 +18,16 @@ class CheckController extends Controller
     }
     /**
      *
-     * @SWG\Get(path="/api/checkin",
+     * @SWG\Post(path="/api/checkin",
      *   tags={"project"},
      *   summary="打卡上班",
      *   operationId="checkin",
      *   produces={"text/plain"},
      *   @SWG\Parameter(
-     *     in="query",
-     *     name="line_id",
-     *     type="string",
-     *     required=true,
+     *       name="line_id",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
      *   ),
      *   @SWG\Response(response="default", description="操作成功")
      * )
@@ -84,16 +84,16 @@ class CheckController extends Controller
 
     /**
      *
-     * @SWG\Get(path="/api/checkout",
+     * @SWG\Post(path="/api/checkout",
      *   tags={"project"},
      *   summary="打卡下班",
      *   operationId="checkout",
      *   produces={"text/plain"},
      *   @SWG\Parameter(
-     *     in="query",
-     *     name="line_id",
-     *     type="string",
-     *     required=true,
+     *       name="line_id",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
      *   ),
      *   @SWG\Response(response="default", description="操作成功")
      * )

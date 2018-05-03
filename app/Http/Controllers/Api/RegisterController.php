@@ -15,22 +15,22 @@ class RegisterController extends Controller
 {
     /**
      *
-     * @SWG\Get(path="/api/register",
+     * @SWG\Post(path="/api/register",
      *   tags={"project"},
      *   summary="註冊手續",
      *   operationId="register",
      *   produces={"text/plain"},
      *   @SWG\Parameter(
-     *     in="query",
-     *     name="email",
-     *     type="string",
-     *     required=true,
+     *       name="email",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
      *   ),
      *   @SWG\Parameter(
-     *     in="query",
-     *     name="line_id",
-     *     type="string",
-     *     required=true,
+     *       name="line_id",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
      *   ),
      *   @SWG\Response(response="default", description="操作成功")
      * )
@@ -87,22 +87,22 @@ class RegisterController extends Controller
 
     /**
      *
-     * @SWG\Get(path="/api/active",
+     * @SWG\Post(path="/api/active",
      *   tags={"project"},
      *   summary="註冊驗證手續",
      *   operationId="active",
      *   produces={"text/plain"},
      *   @SWG\Parameter(
-     *     in="query",
-     *     name="auth_code",
-     *     type="string",
-     *     required=true,
+     *       name="auth_code",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
      *   ),
      *   @SWG\Parameter(
-     *     in="query",
-     *     name="line_id",
-     *     type="string",
-     *     required=true,
+     *       name="line_id",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
      *   ),
      *   @SWG\Response(response="default", description="操作成功")
      * )

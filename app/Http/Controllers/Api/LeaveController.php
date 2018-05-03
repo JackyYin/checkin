@@ -17,6 +17,22 @@ class LeaveController extends Controller
         2 => "特休",
         3 => "公假",
     ];
+    /**
+     *
+     * @SWG\Post(path="/api/get-leave-type",
+     *   tags={"project"},
+     *   summary="取得假別列表",
+     *   operationId="get-leave-type",
+     *   produces={"text/plain"},
+     *   @SWG\Parameter(
+     *       name="line_id",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Response(response="default", description="操作成功")
+     * )
+     */
     public function getLeaveType(Request $request)
     {
         $messages = [
@@ -45,6 +61,40 @@ class LeaveController extends Controller
         ], JSON_UNESCAPED_UNICODE);
     }
 
+    /**
+     *
+     * @SWG\Post(path="/api/request-leave",
+     *   tags={"project"},
+     *   summary="申請請假",
+     *   operationId="request-leave",
+     *   produces={"application/json"},
+     *   @SWG\Parameter(
+     *       name="line_id",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Parameter(
+     *       name="leave_type",
+     *       in="formData",
+     *       type="number",
+     *       required=true,
+     *   ),
+     *   @SWG\Parameter(
+     *       name="start_time",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Parameter(
+     *       name="end_time",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Response(response="default", description="操作成功")
+     * )
+     */
     public function requestLeave(Request $request)
     {
         $messages = [
@@ -52,15 +102,15 @@ class LeaveController extends Controller
             'line_id.exists'         => '不存在的line_id',
             'leave_type.required'    => '請填入假別',
             'start_time.required'    => '請填入起始時間',
-            'start_time.date_format' => '請輸入格式： YYYY-MM-DD',
+            'start_time.date_format' => '請輸入格式： YYYY-MM-DD hh:mm',
             'end_time.required'      => '請填入結束時間',
-            'end_time.date_format'   => '請輸入格式： YYYY-MM-DD',
+            'end_time.date_format'   => '請輸入格式： YYYY-MM-DD hh:mm',
         ];
         $validator = Validator::make($request->all(), [
             'line_id'    => 'required|exists:staff_line,line_id',
             'leave_type' => 'required|numeric',
-            'start_time' => 'required|date_format:Y-m-d',
-            'end_time'   => 'required|date_format:Y-m-d',
+            'start_time' => 'required|date_format:Y-m-d H:i',
+            'end_time'   => 'required|date_format:Y-m-d H:i',
         ], $messages);
 
         if ($validator->fails()) {
@@ -76,8 +126,8 @@ class LeaveController extends Controller
 
         $check = Check::create([
             'staff_id'    => $staff->id,
-            'checkin_at'  => $request->input('start_time'),
-            'checkout_at' => $request->input('end_time'),
+            'checkin_at'  => $request->input('start_time').":00",
+            'checkout_at' => $request->input('end_time').":00",
             'type'        => $request->input('leave_type'),
         ]);
 
