@@ -23,11 +23,11 @@ class CheckController extends Controller
     {
         $options['name'] = array(0 => "所有人");
         $options['name'] = $options['name'] + Staff::all()->pluck('name', 'id')->toArray();
-        $options['operators'] = array([
+        $options['operators'] = array(
             0   => "等於",
             1   => "大於等於",
             2   => "小於等於",
-        ]);
+        );
         return view('admin.pages.check.export_page', compact('options'));
     }
 
