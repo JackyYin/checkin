@@ -44,7 +44,7 @@ class CheckController extends Controller
         $from = explode(" - ", $request->input('date-range'))[0];
         $to   = explode(" - ", $request->input('date-range'))[1];
 
-        $columns = array("日期", "姓名", "工作時數", "請假時數");
+        $columns = array("日期", "姓名", "工作時數", "事假時數", "特休時數", "公假時數", "病假時數");
         $all_rows  = $this->getDataRows($from , $to, $request->input('id'), $request->only(['has', 'op', 'value']));
         $callback = function() use ($columns, $all_rows)
         {
@@ -66,8 +66,11 @@ class CheckController extends Controller
         if ($id == 0) {
             $mysql =
                 "SELECT DATE(c.checkin_at) as date, s.name,
-                SUM(TIMESTAMPDIFF(HOUR,checkin_at,checkout_at)) as work_time,
-                SUM(IF(c.type != 0, timestampdiff(hour,checkin_at,checkout_at), 0)) as leave_time
+                SUM(IF(c.type = 0, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as work_time,
+                SUM(IF(c.type = 1, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as personal_leave_time,
+                SUM(IF(c.type = 2, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as annual_leave_time,
+                SUM(IF(c.type = 3, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as official_leave_time,
+                SUM(IF(c.type = 4, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as sick_leave_time
                 FROM checks c left join  staffs s on s.id = c.staff_id
                 WHERE checkin_at >= '".$from." 00:00:00'"
                 ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'
@@ -77,8 +80,11 @@ class CheckController extends Controller
         else {
             $mysql =
                 "SELECT DATE(c.checkin_at) as date, s.name,
-                SUM(TIMESTAMPDIFF(HOUR,checkin_at,checkout_at)) as work_time,
-                SUM(IF(c.type != 0, timestampdiff(hour,checkin_at,checkout_at), 0)) as leave_time
+                SUM(IF(c.type = 0, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as work_time,
+                SUM(IF(c.type = 1, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as personal_leave_time,
+                SUM(IF(c.type = 2, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as annual_leave_time,
+                SUM(IF(c.type = 3, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as official_leave_time,
+                SUM(IF(c.type = 4, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as sick_leave_time
                 FROM checks c left join  staffs s on s.id = c.staff_id
                 WHERE checkin_at >= '".$from." 00:00:00'"
                 ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'"
