@@ -4,11 +4,10 @@
             {{ Html::style('https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css') }}
     </head>
     <body>
-        <div class="container">
             @if ($admin)
                 @include('admin.layouts.header')
             @endif
-
+        <div class="container">
             @include('admin.layouts.messages')
             @yield('content')
         </div>
