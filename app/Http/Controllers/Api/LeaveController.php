@@ -57,7 +57,8 @@ class LeaveController extends Controller
         return response()->json([
             Check::TYPE_PERSONAL_LEAVE  => '事假',
             Check::TYPE_ANNUAL_LEAVE    => '特休',
-            Check::TYPE_OFFICIAL_LEAVE  => '公假'
+            Check::TYPE_OFFICIAL_LEAVE  => '公假',
+            Check::TYPE_SICK_LEAVE      => '病假',
         ], JSON_UNESCAPED_UNICODE);
     }
 
