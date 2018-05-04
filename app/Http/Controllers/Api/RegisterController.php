@@ -60,10 +60,13 @@ class RegisterController extends Controller
             return "不存在的email,請先登錄員工個人資料";
         }
 
-        Line::create([
-            'staff_id' => $new_staff->id,
-            'line_id'  => $request->input('line_id'),
-        ]);
+        if (!$new_staff->line) {
+            Line::create([
+                'staff_id' => $new_staff->id,
+                'line_id'  => $request->input('line_id'),
+            ]);
+        }
+
         //驗證碼
         $auth_code = "AU".str_random(4);
         AuthCode::create([
@@ -133,8 +136,8 @@ class RegisterController extends Controller
 
         $staff = $line->staff;
 
-        if ($staff->authcode->matchCode($request->input('auth_code'))) {
-            $staff->authcode->delete();
+        if ($staff->authcode->contains('auth_code', $request->input('auth_code'))) {
+            $staff->authcode()->delete();
             $staff->active = Staff::ACTIVE;
             $staff->save();
 

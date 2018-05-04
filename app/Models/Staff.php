@@ -36,7 +36,7 @@ class Staff extends Model
 
     public function authcode()
     {
-        return $this->hasOne(AuthCode::class,'staff_id','id');
+        return $this->hasMany(AuthCode::class,'staff_id','id');
     }
 
     public function get_check_list()
