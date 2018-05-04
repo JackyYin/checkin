@@ -16,6 +16,7 @@ class LeaveController extends Controller
         1 => "事假",
         2 => "特休",
         3 => "公假",
+        4 => '病假',
     ];
     /**
      *
