@@ -137,7 +137,11 @@ class CheckController extends Controller
                 $check->update([
                     'checkout_at' => Carbon::now()
                 ]);
-                $response = $check->checkout_at." 打卡下班成功！";
+                $datetime1 = date_create($check->checkin_at);
+                $datetime2 = date_create($check->checkout_at);
+                $interval  = date_diff($datetime1, $datetime2);
+                $response = $check->checkout_at." 打卡下班成功！\n"
+                    ."已上班時數： ".$interval->format('%H:%I');
                 break;
 
             default:
@@ -235,16 +239,18 @@ class CheckController extends Controller
             'line_id.required'       => '請填入line_id',
             'line_id.exists'         => '不存在的line_id',
             'check_type.required'    => '請填入類別',
-            'start_date.required'    => '請填入開始日期',
+            'start_date.required'    => '請填入起始日期',
             'start_date.date_format' => '請填入格式： YYYY-MM-DD',
+            'start_date.before'      => '起始日期必須在結束時間之前',
             'end_date.required'      => '請填入結束日期',
             'end_date.date_format'   => '請填入格式： YYYY-MM-DD',
+            'end_date.after'         => '結束時間必須在起始時間之後',
         ];
         $validator = Validator::make($request->all(), [
             'line_id'    => 'required|exists:staff_line,line_id',
             'check_type' => 'required|numeric',
-            'start_date' => 'required|date_format:Y-m-d',
-            'end_date'   => 'required|date_format:Y-m-d',
+            'start_date' => 'required|date_format:Y-m-d|before:end_date',
+            'end_date'   => 'required|date_format:Y-m-d|after:start_date',
         ], $messages);
 
         if ($validator->fails()) {
@@ -268,6 +274,6 @@ class CheckController extends Controller
             ->where('checkin_at', '>=', $request->input('start_date')." 00:00:00")
             ->where('checkin_at', '<=', $request->input('end_date')." 23:59:59")->values()->toArray();
 
-        return response()->json($lists);
+        return $lists;
     }
 }

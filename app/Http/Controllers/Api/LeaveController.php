@@ -103,14 +103,16 @@ class LeaveController extends Controller
             'leave_type.required'    => '請填入假別',
             'start_time.required'    => '請填入起始時間',
             'start_time.date_format' => '請輸入格式： YYYY-MM-DD hh:mm',
+            'start_time.before'      => '起始時間必須在結束時間之前',
             'end_time.required'      => '請填入結束時間',
             'end_time.date_format'   => '請輸入格式： YYYY-MM-DD hh:mm',
+            'end_time.after'         => '結束時間必須在起始時間之後',
         ];
         $validator = Validator::make($request->all(), [
             'line_id'    => 'required|exists:staff_line,line_id',
             'leave_type' => 'required|numeric',
-            'start_time' => 'required|date_format:Y-m-d H:i',
-            'end_time'   => 'required|date_format:Y-m-d H:i',
+            'start_time' => 'required|date_format:Y-m-d H:i|before:end_time',
+            'end_time'   => 'required|date_format:Y-m-d H:i|after:start_time',
         ], $messages);
 
         if ($validator->fails()) {
