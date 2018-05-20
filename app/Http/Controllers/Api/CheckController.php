@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Validator;
 use Carbon\Carbon;
+use SVGGraph;
 use App\Models\Staff;
 use App\Models\Line;
 use App\Models\Check;
@@ -212,12 +215,6 @@ class CheckController extends Controller
      *       required=true,
      *   ),
      *   @SWG\Parameter(
-     *       name="check_type",
-     *       in="formData",
-     *       type="number",
-     *       required=true,
-     *   ),
-     *   @SWG\Parameter(
      *       name="start_date",
      *       in="formData",
      *       type="string",
@@ -234,11 +231,9 @@ class CheckController extends Controller
      */
     public function getCheckList(Request $request)
     {
-
         $messages = [
             'line_id.required'       => '請填入line_id',
             'line_id.exists'         => '不存在的line_id',
-            'check_type.required'    => '請填入類別',
             'start_date.required'    => '請填入起始日期',
             'start_date.date_format' => '請填入格式： YYYY-MM-DD',
             'start_date.before'      => '起始日期必須在結束時間之前',
@@ -248,7 +243,6 @@ class CheckController extends Controller
         ];
         $validator = Validator::make($request->all(), [
             'line_id'    => 'required|exists:staff_line,line_id',
-            'check_type' => 'required|numeric',
             'start_date' => 'required|date_format:Y-m-d|before:end_date',
             'end_date'   => 'required|date_format:Y-m-d|after:start_date',
         ], $messages);
@@ -264,16 +258,52 @@ class CheckController extends Controller
             return "帳號未驗證";
         }
 
-        $lists = $staff->get_check_list
-            ->filter(function($item) use ($request) {
-                if ($request->input('check_type') != 99) {
-                    return $item->type == $request->input('check_type');
-                }
-                return $item;
-            })
-            ->where('checkin_at', '>=', $request->input('start_date')." 00:00:00")
-            ->where('checkin_at', '<=', $request->input('end_date')." 23:59:59")->values()->toArray();
+        //mysql query
+        $from = $request->input('start_date');
+        $to   = $request->input('end_date');
+        $mysql =
+            "SELECT
+            SUM(IF(c.type = 0, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as work_time,
+            SUM(IF(c.type = 1, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as personal_leave_time,
+            SUM(IF(c.type = 2, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as annual_leave_time,
+            SUM(IF(c.type = 3, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as official_leave_time,
+            SUM(IF(c.type = 4, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as sick_leave_time
+            FROM checks c left join  staffs s on s.id = c.staff_id
+            WHERE checkin_at >= '".$from." 00:00:00'"
+            ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'"
+            ." AND c.staff_id = ".$staff->id;
+        $row = DB::select($mysql);
 
-        return $lists;
+        $salt = $this->saveSVGGraph($row);
+        return response(Storage::get('/public/'.$salt.".png"))
+            ->header('Content-Type', 'image/png');
+    }
+
+    private function saveSVGGraph($row)
+    {
+        //make svg graph
+        $settings = array(
+            'label_x' => 'types',
+            'label_y' => 'hours',
+        );
+        $graph = new SVGGraph(500, 500, $settings);
+        $colours = array('yellow');
+        $values = array(
+            'work'     => $row[0]['work_time'],
+            'personal' => $row[0]['personal_leave_time'],
+            'annual'   => $row[0]['annual_leave_time'],
+            'official' => $row[0]['official_leave_time'],
+            'sick'     => $row[0]['sick_leave_time']);
+        $graph->colours = $colours;
+        $graph->Values($values);
+        $svg = $graph->FETCH('BarGraph',FALSE, FALSE);
+        
+        //save graph
+        $salt = str_random(30);
+        file_put_contents(storage_path('/app/public/').$salt.".svg", $svg);
+        $command = "inkscape ".storage_path('app/public/').$salt.".svg -e ".storage_path('app/public/'.$salt.".png");
+        exec($command);
+    
+        return $salt;
     }
 }

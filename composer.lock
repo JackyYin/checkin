@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d8b617a202c4fe0ee36080a6b3fb2988",
+    "content-hash": "86f7db4f0de066c3710ad9f35e582846",
     "packages": [
         {
             "name": "darkaonline/l5-swagger",
@@ -702,6 +702,38 @@
                 "chat"
             ],
             "time": "2018-04-17T12:07:40+00:00"
+        },
+        {
+            "name": "goat1000/svggraph",
+            "version": "2.27.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/goat1000/SVGGraph.git",
+                "reference": "9e051bfdc40f9f0318ecc431260598f9ed14a9c0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/goat1000/SVGGraph/zipball/9e051bfdc40f9f0318ecc431260598f9ed14a9c0",
+                "reference": "9e051bfdc40f9f0318ecc431260598f9ed14a9c0",
+                "shasum": ""
+            },
+            "require": {
+                "lib-pcre": "*",
+                "php": ">=5.2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "SVGGraph.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "description": "Generates SVG graphs",
+            "homepage": "http://www.goat1000.com/svggraph.php",
+            "time": "2018-03-29T14:29:39+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",

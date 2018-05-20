@@ -9,6 +9,7 @@
         "darkaonline/l5-swagger": "5.6.*",
         "fideloper/proxy": "^4.0",
         "gnello/laravel-mattermost-driver": "^1.0",
+        "goat1000/svggraph": "^2.27",
         "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "5.6.*",
         "laravel/passport": "^6.0",
