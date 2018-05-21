@@ -68,7 +68,7 @@ class RegisterController extends Controller
         }
 
         //驗證碼
-        $auth_code = "AU".str_random(4);
+        $auth_code = "AU".rand(0,9).rand(0,9).rand(0,9).rand(0,9);
         AuthCode::create([
             'staff_id'  => $new_staff->id,
             'auth_code' => $auth_code
