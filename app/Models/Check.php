@@ -41,4 +41,9 @@ class Check extends Model
     {
         return $query->whereNull('checkout_at');
     }
+
+    public function leave_reason()
+    {
+        return $this->hasOne(LeaveReason::class, 'check_id', 'id');
+    }
 }

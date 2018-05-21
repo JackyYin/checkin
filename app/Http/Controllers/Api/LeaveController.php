@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use App\Models\Staff;
 use App\Models\Line;
 use App\Models\Check;
+use App\Models\LeaveReason;
 
 class LeaveController extends Controller
 {
@@ -83,6 +84,12 @@ class LeaveController extends Controller
      *       required=true,
      *   ),
      *   @SWG\Parameter(
+     *       name="leave_reason",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Parameter(
      *       name="start_time",
      *       in="formData",
      *       type="string",
@@ -109,12 +116,14 @@ class LeaveController extends Controller
             'end_time.required'      => '請填入結束時間',
             'end_time.date_format'   => '請輸入格式： YYYY-MM-DD hh:mm',
             'end_time.after'         => '結束時間必須在起始時間之後',
+            'leave_reason.required'  => '請填入請假原因',
         ];
         $validator = Validator::make($request->all(), [
-            'line_id'    => 'required|exists:staff_line,line_id',
-            'leave_type' => 'required|numeric',
-            'start_time' => 'required|date_format:Y-m-d H:i|before:end_time',
-            'end_time'   => 'required|date_format:Y-m-d H:i|after:start_time',
+            'line_id'      => 'required|exists:staff_line,line_id',
+            'leave_type'   => 'required|numeric',
+            'start_time'   => 'required|date_format:Y-m-d H:i|before:end_time',
+            'end_time'     => 'required|date_format:Y-m-d H:i|after:start_time',
+            'leave_reason' => 'required',
         ], $messages);
 
         if ($validator->fails()) {
@@ -135,8 +144,14 @@ class LeaveController extends Controller
             'type'        => $request->input('leave_type'),
         ]);
 
+        $reason = LeaveReason::create([
+            'check_id' => $check->id,
+            'reason'   => $request->input('leave_reason'),
+        ]);
+
         return $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
                 ."假別： ".$this->CHECK_TYPE[$check->type].",\n"
+                ."原因： ".$reason->reason.",\n"
                 ."編號： ".$check->id;
     }
 }
