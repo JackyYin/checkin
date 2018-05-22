@@ -128,13 +128,13 @@ class LeaveController extends Controller
 
         if ($validator->fails()) {
             $array = $validator->errors()->all();
-            return implode(",",$array);
+            return response(implode(",",$array), 400);
         }
 
         $staff = Line::where('line_id', $request->input('line_id'))->first()->staff;
 
         if ($staff->active == Staff::NON_ACTIVE) {
-            return "帳號未驗證";
+            return response("帳號未驗證", 400);
         }
 
         $check = Check::create([
@@ -154,9 +154,13 @@ class LeaveController extends Controller
                 ."原因： ".$reason->reason.",\n"
                 ."編號： ".$check->id;
 
-        $subscribers = Staff::where('subscribed', 1)->get()->map(function ($item) {
+        $subscribers = Staff::where('subscribed', STAFF::SUBSCRIBED)->where('active', STAFF::ACTIVE)->get()->map(function ($item) {
            return  $item->line;
-        });
+        })->pluck('line_id');
 
+        return response()->json([
+            'reply_message' => $reply_message,
+            'subscribers'   => $subscribers,
+        ]);
     }
 }

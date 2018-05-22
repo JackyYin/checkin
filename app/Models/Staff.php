@@ -12,6 +12,9 @@ class Staff extends Model
     const NON_ACTIVE = 0;
     const ACTIVE     = 1;
 
+    const NOT_SUBSCRIBED = 0;
+    const SUBSCRIBED     = 1;
+
     protected $table = 'staffs';
     /**
      * The attributes that are mass assignable.
