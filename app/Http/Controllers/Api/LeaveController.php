@@ -61,7 +61,7 @@ class LeaveController extends Controller
             Check::TYPE_ANNUAL_LEAVE    => '特休',
             Check::TYPE_OFFICIAL_LEAVE  => '公假',
             Check::TYPE_SICK_LEAVE      => '病假',
-        ], JSON_UNESCAPED_UNICODE);
+        ], 200);
     }
 
     /**
@@ -149,9 +149,14 @@ class LeaveController extends Controller
             'reason'   => $request->input('leave_reason'),
         ]);
 
-        return $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
+        $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
                 ."假別： ".$this->CHECK_TYPE[$check->type].",\n"
                 ."原因： ".$reason->reason.",\n"
                 ."編號： ".$check->id;
+
+        $subscribers = Staff::where('subscribed', 1)->get()->map(function ($item) {
+           return  $item->line;
+        });
+
     }
 }
