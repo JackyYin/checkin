@@ -35,7 +35,7 @@ class Kernel extends ConsoleKernel
             }   
         })->dailyAt('0:01');
 
-        $schedule->exec('rm -rf /var/www/html/storage/app/public/chart/*')->everyMinute();
+        $schedule->exec('rm -rf /var/www/html/storage/app/chart/*')->everyMinute();
     }
 
     /**
