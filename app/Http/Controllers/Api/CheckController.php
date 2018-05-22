@@ -275,7 +275,7 @@ class CheckController extends Controller
         $row = DB::select($mysql);
 
         $salt = $this->saveSVGGraph($row);
-        return response(Storage::get('/public/'.$salt.".png"))
+        return response(Storage::get('/public/chart/'.$salt.".png"))
             ->header('Content-Type', 'image/png');
     }
 
@@ -300,8 +300,8 @@ class CheckController extends Controller
         
         //save graph
         $salt = str_random(30);
-        file_put_contents(storage_path('/app/public/').$salt.".svg", $svg);
-        $command = "inkscape ".storage_path('app/public/').$salt.".svg -e ".storage_path('app/public/'.$salt.".png");
+        file_put_contents(storage_path('app/public/chart/').$salt.".svg", $svg);
+        $command = "inkscape ".storage_path('app/public/chart/').$salt.".svg -e ".storage_path('app/public/chart/'.$salt.".png");
         exec($command);
     
         return $salt;
