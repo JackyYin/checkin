@@ -19,7 +19,7 @@ set :default_env, { path: "/usr/local/bin:$PATH" }
 # set :sudo, "sudo -u root -i"
 
 append :linked_files, '.env'
-append :linked_dirs, 'log', 'vendor', 'storage/logs', 'storage/framework', 'storage/debugbar'
+append :linked_dirs, 'log', 'vendor', 'storage/logs', 'storage/framework', 'storage/debugbar', 'storage/app'
 
 ### Custom your deploy flow
 namespace :deploy do
