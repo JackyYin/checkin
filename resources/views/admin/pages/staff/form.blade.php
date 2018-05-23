@@ -19,7 +19,7 @@
         {{ Form::text('staff_code', null, ['class' => 'form-control']) }}
     </div>
     <div class="form-group">
-        {{ Form::label('ID_card_number', '身分證字號') }}
+        {{ Form::label('ID_card_number', '身分證字號/居留證號碼') }}
         {{ Form::text('ID_card_number', null, ['id' => 'ID_card_number', 'class' => 'form-control']) }}
     </div>
     <div class="form-check">
@@ -139,7 +139,7 @@
                 messages: {
                     email: {required: "請輸入email", email: "請填入有效的email"},
                     name:  {required: "請輸入姓名"},
-                    ID_card_number: {required: "請輸入身分證字號"}
+                    ID_card_number: {required: "請輸入身分證字號或居留證號碼"}
                 }
             });
             $.validator.addMethod(
@@ -150,9 +150,11 @@
                     }
             );
             staff_form.find("#ID_card_number").rules("add", { 
-                regex: "^[a-zA-Z]{1}[1-2]{1}[0-9]{8}$",
+                regex: function () {
+                    return "(^[a-zA-Z]{1}[abcdABCD]{1}[0-9]{8}$|^[a-zA-Z]{1}[1-2]{1}[0-9]{8}$)"; 
+                },
                 messages: {
-                    regex: "請填入有效的身分證字號"
+                    regex: "請填入有效的身分證字號或居留證號碼"
                 }
              });
             validator.showErrors();
