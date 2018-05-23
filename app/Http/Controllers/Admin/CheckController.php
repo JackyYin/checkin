@@ -49,6 +49,7 @@ class CheckController extends Controller
         $callback = function() use ($columns, $all_rows)
         {
             $file = fopen('php://output', 'w');
+            fwrite($file, "\xEF\xBB\xBF");
             fputcsv($file, $columns);
 
             foreach($all_rows as $row) {
