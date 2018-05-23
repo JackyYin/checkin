@@ -17,8 +17,7 @@ Route::group(['namespace' => 'Auth'], function () {
 
 
 Route::group(['middleware' => ['auth.admin']], function () {
-    Route::resource('staff', 'StaffController',
-                    ['only' => ['index', 'create', 'store']]);
+    Route::resource('staff', 'StaffController', ['except' => ['show', 'destroy']]);
     Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
         Route::get('import', ['as' => 'import', 'uses' => 'StaffController@import']);
     });

@@ -7,7 +7,7 @@
             @if ($admin)
                 @include('admin.layouts.header')
             @endif
-        <div class="container">
+        <div class="container" style="padding-top: 20px">
             @include('admin.layouts.messages')
             @yield('content')
         </div>

@@ -42,6 +42,11 @@ class Staff extends Model
         return $this->hasMany(AuthCode::class,'staff_id','id');
     }
 
+    public function profile()
+    {
+        return $this->hasOne(Profile::class,'staff_id','id');
+    }
+
     public function get_check_list()
     {
         return $this->hasMany(Check::class,'staff_id','id');

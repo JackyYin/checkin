@@ -1,10 +1,28 @@
 @extends('admin.layouts.master')
 
 @section('content')
+    <style>
+        #staffForm .bottom-navbar {
+           padding: unset;
+        }
+
+        #staffForm .bottom-navbar li {
+            margin-right: 10px;
+        }
+
+    </style>
+    @if( isset($staff) )
+        {!! Form::model($staff, [
+        'id'     => 'staffForm',
+        'method' => 'PUT',
+        'url' => route('admin.staff.update', [$staff->id] + request()->query())
+    ]) !!}
+    @else
     {{ Form::open([
         'id'  => 'staffForm',
         'url' => route('admin.staff.store')
     ]) }}
+    @endif
     
     <div class="form-group">
         {{ Form::label('name', '姓名') }}
@@ -20,7 +38,7 @@
     </div>
     <div class="form-group">
         {{ Form::label('ID_card_number', '身分證字號/居留證號碼') }}
-        {{ Form::text('ID_card_number', null, ['id' => 'ID_card_number', 'class' => 'form-control']) }}
+        {{ Form::text('ID_card_number',  isset($staff->profile) ? $staff->profile->ID_card_number : null, ['id' => 'ID_card_number', 'class' => 'form-control']) }}
     </div>
     <div class="form-check">
         {{ Form::radio('gender', 1, true, ['class' => 'form-check-input']) }}
@@ -32,68 +50,79 @@
     </div>
     <div class="form-group">
         {{ Form::label('phone_number', '電話號碼') }}
-        {{ Form::text('phone_number', null, ['class' => 'form-control']) }}
+        {{ Form::text('phone_number', isset($staff->profile) ? $staff->profile->phone_number : null, ['class' => 'form-control']) }}
     </div>
     <div class="form-group">
         {{ Form::label('home_address', '戶籍地址') }}
-        {{ Form::text('home_address', null, ['class' => 'form-control']) }}
+        {{ Form::text('home_address', isset($staff->profile) ? $staff->profile->home_address : null, ['class' => 'form-control']) }}
     </div>
     <div class="form-group">
         {{ Form::label('mailing_address', '通訊地址') }}
-        {{ Form::text('mailing_address', null, ['class' => 'form-control']) }}
+        {{ Form::text('mailing_address', isset($staff->profile) ? $staff->profile->mailing_address : null, ['class' => 'form-control']) }}
     </div>
     <div class="form-group">
         {{ Form::label('bank_account', '銀行帳號') }}
-        {{ Form::text('bank_account', null, ['class' => 'form-control']) }}
+        {{ Form::text('bank_account', isset($staff->profile) ? $staff->profile->bank_account : null, ['class' => 'form-control']) }}
     </div>
     <div class="form-group">
         {{ Form::label('emergency_contact', '緊急聯絡人/關係') }}
-        {{ Form::text('emergency_contact', null, ['class' => 'form-control']) }}
+        {{ Form::text('emergency_contact', isset($staff->profile) ? $staff->profile->emergency_contact : null, ['class' => 'form-control']) }}
     </div>
     <div class="form-group">
         {{ Form::label('emergency_contact_phone', '緊急聯絡電話') }}
-        {{ Form::text('emergency_contact_phone', null, ['class' => 'form-control']) }}
+        {{ Form::text('emergency_contact_phone', isset($staff->profile) ? $staff->profile->emergency_contact_phone : null, ['class' => 'form-control']) }}
     </div>
     <div class="form-group">
         {{ Form::label('position', '職稱') }}
-        {{ Form::text('position', null, ['class' => 'form-control']) }}
+        {{ Form::text('position', isset($staff->profile) ? $staff->profile->position : null, ['class' => 'form-control']) }}
     </div>
     <div class="form-group">
         {{ Form::label('on_board_date', '到職日') }}
-        {{ Form::text('on_board_date', null, ['class' => 'form-control']) }}
+        {{ Form::text('on_board_date', isset($staff->profile) ? $staff->profile->on_board_date : null, ['class' => 'form-control']) }}
     </div>
     <div class="form-group">
         {{ Form::label('birth', '生日') }}
-        {{ Form::text('birth', null, ['class' => 'form-control']) }}
+        {{ Form::text('birth', isset($staff->profile) ? $staff->profile->birth : null, ['class' => 'form-control']) }}
     </div>
     <div class="form-group">
         {{ Form::label('salary', '月支薪俸') }}
-        {{ Form::number('salary', null, ['class' => 'form-control']) }}
+        {{ Form::number('salary', isset($staff->profile) ? $staff->profile->salary : null, ['class' => 'form-control']) }}
     </div>
     <div class="form-row">
         <div class="col">
             {{ Form::label('add_insurance_date', '加保日期') }}
-            {{ Form::text('add_insurance_date', null, ['class' => 'form-control']) }}
+            {{ Form::text('add_insurance_date', isset($staff->profile) ? $staff->profile->add_insurance_date : null, ['class' => 'form-control']) }}
         </div>
         <div class="col">
             {{ Form::label('cancel_insurance_date', '退保日期') }}
-            {{ Form::text('cancel_insurance_date', null, ['class' => 'form-control']) }}
+            {{ Form::text('cancel_insurance_date', isset($staff->profile) ? $staff->profile->cancel_insurance_date : null, ['class' => 'form-control']) }}
         </div>
     </div>
     <div class="form-group">
         {{ Form::label('highest_education', '最高學歷') }}
-        {{ Form::text('highest_education', null, ['class' => 'form-control']) }}
+        {{ Form::text('highest_education', isset($staff->profile) ? $staff->profile->highest_education : null, ['class' => 'form-control']) }}
     </div>
     <div class="form-group">
         {{ Form::label('experience', '經歷') }}
-        {{ Form::text('experience', null, ['class' => 'form-control']) }}
+        {{ Form::text('experience', isset($staff->profile) ? $staff->profile->experience : null, ['class' => 'form-control']) }}
     </div>
     <div class="form-group">
         {{ Form::label('group', '組別') }}
-        {{ Form::text('group', null, ['class' => 'form-control']) }}
+        {{ Form::text('group', isset($staff->profile) ? $staff->profile->group : null, ['class' => 'form-control']) }}
     </div>
 
-    {{ Form::submit('送出', ['class' => 'btn btn-primary']) }}
+    <nav class="navbar navbar-expand-lg bottom-navbar">
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link btn btn-secondary" href="{{ route('admin.staff.index') }}">返回</a>
+                </li>
+                <li class="nav-item">
+                    {{ Form::submit('送出', ['class' => 'nav-link btn btn-primary']) }}
+                </li>
+            </ul>
+        </div>
+    </nav>
     {{ Form::close() }}
 @endsection
 @section('scripts')
