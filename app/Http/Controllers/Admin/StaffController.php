@@ -64,7 +64,7 @@ class StaffController extends Controller
             'active'     => 0,
         ]);
 
-        $profile = Profile::create(array_merge($request->all(),['staff_id' => $new_staff->id]));
+        $profile = Profile::create(array_merge($request->except('cancel_insurance_date'),['staff_id' => $new_staff->id]));
 
         return redirect()->route('admin.staff.create')->with('success', '員工創建成功!'); 
     }
