@@ -150,11 +150,14 @@ class LeaveController extends Controller
         ]);
 
         $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
+                ."姓名： ".$staff->name.",\n"
                 ."假別： ".$this->CHECK_TYPE[$check->type].",\n"
                 ."原因： ".$reason->reason.",\n"
                 ."編號： ".$check->id;
 
-        $subscribers = Staff::where('subscribed', STAFF::SUBSCRIBED)->where('active', STAFF::ACTIVE)->get()->map(function ($item) {
+        $subscribers = Staff::where('subscribed', STAFF::SUBSCRIBED)
+            ->where('active', STAFF::ACTIVE)
+            ->where('id', '!=', $staff->id)->get()->map(function ($item) {
            return  $item->line;
         })->pluck('line_id');
 
