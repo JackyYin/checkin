@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Models\Staff;
+use App\Models\Profile;
 
 class UsersTableSeeder extends Seeder
 {
@@ -12,10 +13,13 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        $staff = Staff::create([
-            'name'     => 'jacky',
+        $jacky = Staff::create([
+            'name'     => '殷豪',
             'email'    => 'jjyyg1123@gmail.com',
             'active'   => 0,
+        ]);
+        Profile::create([
+            'staff_id'  => $jacky->id,
         ]);
         DB::table('admin')->insert([
             'staff_id' => $staff->id,
@@ -23,10 +27,13 @@ class UsersTableSeeder extends Seeder
             'email' => 'jjyyg1123@gmail.com',
             'password' => bcrypt('12345678'),
         ]);
-        Staff::create([
-            'name'     => 'joe',
+        $joe = Staff::create([
+            'name'     => '江承諭',
             'email'    => 't9590345@gmail.com',
             'active'   => 0,
+        ]);
+        Profile::create([
+            'staff_id'  => $joe->id,
         ]);
     }
 }
