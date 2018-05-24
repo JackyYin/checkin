@@ -19,7 +19,10 @@ class UsersTableSeeder extends Seeder
             'active'   => 0,
         ]);
         Profile::create([
-            'staff_id'  => $jacky->id,
+            'staff_id'       => $jacky->id,
+            'name'           => '殷豪',
+            'email'          => 'jjyyg1123@gmail.com',
+            'ID_card_number' => 'A111111111',
         ]);
         DB::table('admin')->insert([
             'staff_id' => $jacky->id,
@@ -33,7 +36,10 @@ class UsersTableSeeder extends Seeder
             'active'   => 0,
         ]);
         Profile::create([
-            'staff_id'  => $joe->id,
+            'staff_id'       => $joe->id,
+            'name'           => '江承諭',
+            'email'          => 't9590345@gmail.com',
+            'ID_card_number' => 'B111111111',
         ]);
     }
 }
