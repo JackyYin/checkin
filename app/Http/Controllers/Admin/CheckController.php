@@ -194,6 +194,7 @@ class CheckController extends Controller
             WHERE c.staff_id IN (".implode(',', $id).")"
             ." AND checkin_at >= '".$from." 00:00:00'"
             ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'"
+            ." AND c.type = 0"
             ." GROUP BY c.staff_id, DATE(c.checkin_at)\n";
 
         $mysql =
