@@ -11,6 +11,10 @@
         {{ Form::select('id[]', $options['name'], null, ['class' => 'form-control','multiple', 'id' => 'nameSelect']) }}
     </div>
     <div class="form-group">
+        {{ Form::label('type[]', '類別') }}
+        {{ Form::select('type[]', $options['type'], null, ['class' => 'form-control','multiple', 'id' => 'typeSelect']) }}
+    </div>
+    <div class="form-group form-inline">
         {{ Form::label('date-range', '時間範圍') }}
         {{ Form::text('date-range', null, ['class' => 'form-control']) }}
     </div>
@@ -63,8 +67,35 @@
                     }
                 },
                 includeSelectAllOption: true,
-                selectAllValue: 0,
                 selectAllText: '全選',
+                maxHeight: 400,
+            });
+
+            check_export_form.find('#typeSelect').multiselect({
+                buttonClass: 'btn btn-outline-secondary',
+                buttonText: function(options, select) {
+                    if (options.length === 0) {
+                       return '請選擇類別';
+                    }
+                    else if (options.length > 5) {
+                        return '已選擇超過五類';
+                    }
+                    else {
+                        var labels = [];
+                        options.each(function() {
+                            if ($(this).attr('label') !== undefined) {
+                                labels.push($(this).attr('label'));
+                            }
+                            else {
+                                labels.push($(this).html());
+                            }
+                        });
+                        return labels.join(', ') + '';
+                    }
+                },
+                includeSelectAllOption: true,
+                selectAllText: '全選',
+                maxHeight: 400,
             });
         });
     </script>

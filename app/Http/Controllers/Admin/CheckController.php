@@ -19,6 +19,21 @@ class CheckController extends Controller
         2 => "<=",
     ];
 
+    private $CHECK_TYPE = [
+        1 => "事假",
+        2 => "特休",
+        3 => "公假",
+        4 => '病假',
+        5 => 'Online',
+    ];
+
+    private $CHECK_ENG_TYPE = [
+        1 => "personal_leave",
+        2 => "annual_leave",
+        3 => "official_leave",
+        4 => 'sick_leave',
+        5 => 'online',
+    ];
     public function export_page()
     {
         $options['name'] =Staff::all()->pluck('name', 'id')->toArray();
@@ -27,6 +42,14 @@ class CheckController extends Controller
             1   => "大於等於",
             2   => "小於等於",
         );
+        $options['type'] = array(
+            Check::TYPE_PERSONAL_LEAVE => '事假',
+            Check::TYPE_ANNUAL_LEAVE   => '特休',
+            Check::TYPE_OFFICIAL_LEAVE => '公假',
+            Check::TYPE_SICK_LEAVE     => '病假',
+            Check::TYPE_ONLINE         => 'Online',
+        );
+
         return view('admin.pages.check.export_page', compact('options'));
     }
 
@@ -43,8 +66,13 @@ class CheckController extends Controller
         $from = explode(" - ", $request->input('date-range'))[0];
         $to   = explode(" - ", $request->input('date-range'))[1];
 
-        $columns = array("日期", "姓名", "工作時數", "事假時數", "特休時數", "公假時數", "病假時數");
-        $all_rows  = $this->getDataRows($from , $to, $request->input('id'), $request->only(['has', 'op', 'value']));
+        //第一列
+        $columns = array("日期", "姓名");
+        foreach ($request->input('type') as $type) {
+            $columns[] = $this->CHECK_TYPE[$type]."時數";
+        }
+
+        $all_rows  = $this->getDataRows($from , $to, $request->input('id'), $request->only(['has', 'op', 'value', 'type']));
         $callback = function() use ($columns, $all_rows)
         {
             $file = fopen('php://output', 'w');
@@ -64,13 +92,15 @@ class CheckController extends Controller
     private function getDataRows($from, $to, $id, $conditions)
     {
         $mysql =
-            "SELECT DATE(c.checkin_at) as date, s.name,
-            SUM(IF(c.type = 0, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as work_time,
-            SUM(IF(c.type = 1, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as personal_leave_time,
-            SUM(IF(c.type = 2, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as annual_leave_time,
-            SUM(IF(c.type = 3, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as official_leave_time,
-            SUM(IF(c.type = 4, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as sick_leave_time
-            FROM checks c left join  staffs s on s.id = c.staff_id
+            "SELECT DATE(c.checkin_at) as date, s.name";
+
+        foreach ($conditions['type'] as $type) {
+            $mysql =
+                $mysql.", SUM(IF(c.type = ".$type.", TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as ".$this->CHECK_ENG_TYPE[$type];
+        }
+
+        $mysql =
+            $mysql." FROM checks c left join  staffs s on s.id = c.staff_id
             WHERE c.staff_id IN (".implode(',', $id).")"
             ." AND checkin_at >= '".$from." 00:00:00'"
             ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'"
