@@ -22,7 +22,7 @@ class UsersTableSeeder extends Seeder
             'staff_id'  => $jacky->id,
         ]);
         DB::table('admin')->insert([
-            'staff_id' => $staff->id,
+            'staff_id' => $jacky->id,
             'name' => 'root',
             'email' => 'jjyyg1123@gmail.com',
             'password' => bcrypt('12345678'),
