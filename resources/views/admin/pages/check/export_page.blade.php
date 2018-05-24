@@ -44,6 +44,19 @@
                 }
             });
 
+            var validator = check_export_form.validate({
+                errorClass: "alert alert-danger",
+                rules: {
+                    "id[]":   { required: true},
+                    "type[]": { required: true}
+                },
+                messages: {
+                    "id[]":   {required: "請選擇姓名"},
+                    "type[]": {required: "請選擇類型"},
+                }
+            });
+            validator.showErrors();
+
             check_export_form.find('#nameSelect').multiselect({
                 buttonClass: 'btn btn-outline-secondary',
                 buttonText: function(options, select) {

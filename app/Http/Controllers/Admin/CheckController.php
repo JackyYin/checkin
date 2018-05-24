@@ -55,6 +55,19 @@ class CheckController extends Controller
 
     public function export(Request $request)
     {
+        $messages = [
+            'id.required'   => '請選擇姓名',
+            'type.required' => '請選擇類別',
+        ];
+        $validator = Validator::make($request->all(), [
+            'id'   => 'required',
+            'type' => 'required',
+        ], $messages);
+
+        if ($validator->fails()) {
+            return redirect()->route('admin.check.export_page')->withErrors($validator->errors());
+        }
+
         $headers = array(
             "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename=file.csv",
