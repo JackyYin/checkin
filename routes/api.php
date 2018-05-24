@@ -24,6 +24,8 @@ Route::group(['namespace' => 'Api'], function () {
     Route::post('get-check-list', ['uses' => 'CheckController@getCheckList']);
     Route::post('get-leave-type', ['uses' => 'LeaveController@getLeaveType']);
     Route::post('request-leave', ['uses' => 'LeaveController@requestLeave']);
+    Route::post('request-late', ['uses' => 'LeaveController@requestLate']);
+    Route::post('request-online', ['uses' => 'LeaveController@requestOnline']);
 });
 
 Route::group(['middleware' => ['client'], 'namespace' => 'Api'], function () {

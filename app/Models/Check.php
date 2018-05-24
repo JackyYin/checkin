@@ -12,6 +12,7 @@ class Check extends Model
     const TYPE_ANNUAL_LEAVE    = 2; //特休
     const TYPE_OFFICIAL_LEAVE  = 3; //公假
     const TYPE_SICK_LEAVE      = 4; //病假
+    const TYPE_ONLINE          = 5;
 
     protected $table = 'checks';
     /**

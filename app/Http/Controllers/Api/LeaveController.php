@@ -18,6 +18,7 @@ class LeaveController extends Controller
         2 => "特休",
         3 => "公假",
         4 => '病假',
+        5 => 'Online',
     ];
     /**
      *
@@ -165,5 +166,194 @@ class LeaveController extends Controller
             'reply_message' => $reply_message,
             'subscribers'   => $subscribers,
         ]);
+    }
+    /**
+     *
+     * @SWG\Post(path="/api/request-late",
+     *   tags={"project"},
+     *   summary="申請晚到",
+     *   operationId="request-late",
+     *   produces={"application/json"},
+     *   @SWG\Parameter(
+     *       name="line_id",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Parameter(
+     *       name="leave_reason",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Parameter(
+     *       name="start_time",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Parameter(
+     *       name="end_time",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Response(response="default", description="操作成功")
+     * )
+     */
+    public function requestLate(Request $request)
+    {
+        $messages = [
+            'line_id.required'       => '請填入line_id',
+            'line_id.exists'         => '不存在的line_id',
+            'start_time.required'    => '請填入起始時間',
+            'start_time.date_format' => '請輸入格式： YYYY-MM-DD hh:mm',
+            'start_time.before'      => '起始時間必須在結束時間之前',
+            'end_time.required'      => '請填入結束時間',
+            'end_time.date_format'   => '請輸入格式： YYYY-MM-DD hh:mm',
+            'end_time.after'         => '結束時間必須在起始時間之後',
+            'leave_reason.required'  => '請填入請假原因',
+        ];
+        $validator = Validator::make($request->all(), [
+            'line_id'      => 'required|exists:staff_line,line_id',
+            'start_time'   => 'required|date_format:Y-m-d H:i|before:end_time',
+            'end_time'     => 'required|date_format:Y-m-d H:i|after:start_time',
+            'leave_reason' => 'required',
+        ], $messages);
+
+        if ($validator->fails()) {
+            $array = $validator->errors()->all();
+            return response(implode(",",$array), 400);
+        }
+
+        $staff = Line::where('line_id', $request->input('line_id'))->first()->staff;
+
+        if ($staff->active == Staff::NON_ACTIVE) {
+            return response("帳號未驗證", 400);
+        }
+
+        $check = Check::create([
+            'staff_id'    => $staff->id,
+            'checkin_at'  => $request->input('start_time').":00",
+            'checkout_at' => $request->input('end_time').":00",
+            'type'        => Check::TYPE_ANNUAL_LEAVE,
+        ]);
+
+        $reason = LeaveReason::create([
+            'check_id' => $check->id,
+            'reason'   => $request->input('leave_reason'),
+        ]);
+
+        $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
+                ."姓名： ".$staff->name.",\n"
+                ."假別： ".$this->CHECK_TYPE[$check->type].",\n"
+                ."原因： ".$reason->reason.",\n"
+                ."編號： ".$check->id;
+
+        $subscribers = Staff::where('subscribed', STAFF::SUBSCRIBED)
+            ->where('active', STAFF::ACTIVE)
+            ->where('id', '!=', $staff->id)->get()->map(function ($item) {
+           return  $item->line;
+        })->pluck('line_id');
+
+        return response()->json([
+            'reply_message' => $reply_message,
+            'subscribers'   => $subscribers,
+        ]);
+    }
+    /**
+     *
+     * @SWG\Post(path="/api/request-online",
+     *   tags={"project"},
+     *   summary="申請online",
+     *   operationId="request-online",
+     *   produces={"application/json"},
+     *   @SWG\Parameter(
+     *       name="line_id",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Parameter(
+     *       name="leave_reason",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Parameter(
+     *       name="start_time",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Parameter(
+     *       name="end_time",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Response(response="default", description="操作成功")
+     * )
+     */
+    public function requestOnline(Request $request)
+    {
+        $messages = [
+            'line_id.required'       => '請填入line_id',
+            'line_id.exists'         => '不存在的line_id',
+            'start_time.required'    => '請填入起始時間',
+            'start_time.date_format' => '請輸入格式： YYYY-MM-DD hh:mm',
+            'start_time.before'      => '起始時間必須在結束時間之前',
+            'end_time.required'      => '請填入結束時間',
+            'end_time.date_format'   => '請輸入格式： YYYY-MM-DD hh:mm',
+            'end_time.after'         => '結束時間必須在起始時間之後',
+            'leave_reason.required'  => '請填入請假原因',
+        ];
+        $validator = Validator::make($request->all(), [
+            'line_id'      => 'required|exists:staff_line,line_id',
+            'start_time'   => 'required|date_format:Y-m-d H:i|before:end_time',
+            'end_time'     => 'required|date_format:Y-m-d H:i|after:start_time',
+            'leave_reason' => 'required',
+        ], $messages);
+
+        if ($validator->fails()) {
+            $array = $validator->errors()->all();
+            return response(implode(",",$array), 400);
+        }
+
+        $staff = Line::where('line_id', $request->input('line_id'))->first()->staff;
+
+        if ($staff->active == Staff::NON_ACTIVE) {
+            return response("帳號未驗證", 400);
+        }
+
+        $check = Check::create([
+            'staff_id'    => $staff->id,
+            'checkin_at'  => $request->input('start_time').":00",
+            'checkout_at' => $request->input('end_time').":00",
+            'type'        => Check::TYPE_ONLINE,
+        ]);
+
+        $reason = LeaveReason::create([
+            'check_id' => $check->id,
+            'reason'   => $request->input('leave_reason'),
+        ]);
+
+        $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
+                ."姓名： ".$staff->name.",\n"
+                ."假別： ".$this->CHECK_TYPE[$check->type].",\n"
+                ."原因： ".$reason->reason.",\n"
+                ."編號： ".$check->id;
+
+        $subscribers = Staff::where('subscribed', STAFF::SUBSCRIBED)
+            ->where('active', STAFF::ACTIVE)
+            ->where('id', '!=', $staff->id)->get()->map(function ($item) {
+           return  $item->line;
+        })->pluck('line_id');
+
+        return response()->json([
+            'reply_message' => $reply_message,
+            'subscribers'   => $subscribers,
+        ]);
+
     }
 }
