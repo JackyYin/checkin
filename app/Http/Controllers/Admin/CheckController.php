@@ -21,8 +21,7 @@ class CheckController extends Controller
 
     public function export_page()
     {
-        $options['name'] = array(0 => "所有人");
-        $options['name'] = $options['name'] + Staff::all()->pluck('name', 'id')->toArray();
+        $options['name'] =Staff::all()->pluck('name', 'id')->toArray();
         $options['operators'] = array(
             0   => "等於",
             1   => "大於等於",
@@ -64,34 +63,18 @@ class CheckController extends Controller
 
     private function getDataRows($from, $to, $id, $conditions)
     {
-        if ($id == 0) {
-            $mysql =
-                "SELECT DATE(c.checkin_at) as date, s.name,
-                SUM(IF(c.type = 0, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as work_time,
-                SUM(IF(c.type = 1, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as personal_leave_time,
-                SUM(IF(c.type = 2, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as annual_leave_time,
-                SUM(IF(c.type = 3, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as official_leave_time,
-                SUM(IF(c.type = 4, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as sick_leave_time
-                FROM checks c left join  staffs s on s.id = c.staff_id
-                WHERE checkin_at >= '".$from." 00:00:00'"
-                ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'
-                GROUP BY c.staff_id, DATE(c.checkin_at)\n";
-
-        }
-        else {
-            $mysql =
-                "SELECT DATE(c.checkin_at) as date, s.name,
-                SUM(IF(c.type = 0, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as work_time,
-                SUM(IF(c.type = 1, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as personal_leave_time,
-                SUM(IF(c.type = 2, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as annual_leave_time,
-                SUM(IF(c.type = 3, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as official_leave_time,
-                SUM(IF(c.type = 4, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as sick_leave_time
-                FROM checks c left join  staffs s on s.id = c.staff_id
-                WHERE checkin_at >= '".$from." 00:00:00'"
-                ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'"
-                ." AND c.staff_id = ".$id."
-                GROUP BY c.staff_id, DATE(c.checkin_at)\n";
-        }
+        $mysql =
+            "SELECT DATE(c.checkin_at) as date, s.name,
+            SUM(IF(c.type = 0, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as work_time,
+            SUM(IF(c.type = 1, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as personal_leave_time,
+            SUM(IF(c.type = 2, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as annual_leave_time,
+            SUM(IF(c.type = 3, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as official_leave_time,
+            SUM(IF(c.type = 4, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as sick_leave_time
+            FROM checks c left join  staffs s on s.id = c.staff_id
+            WHERE c.staff_id IN (".implode(',', $id).")"
+            ." AND checkin_at >= '".$from." 00:00:00'"
+            ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'"
+            ." GROUP BY c.staff_id, DATE(c.checkin_at)\n";
 
         if (array_key_exists('has', $conditions) && $conditions['has']['work_time']) {
             $mysql =

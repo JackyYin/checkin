@@ -14,3 +14,4 @@ Homestead.yaml
 *.log
 *.pid
 *.swp
+public/swagger-ui/index.html

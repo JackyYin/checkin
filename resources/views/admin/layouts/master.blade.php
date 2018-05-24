@@ -2,6 +2,7 @@
     <head>
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
             {{ Html::style('https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css') }}
+            <link href="{!! asset('css/bootstrap-multiselect.css') !!}" media="all" rel="stylesheet" type="text/css" />
     </head>
     <body>
             @if ($admin)
@@ -19,6 +20,7 @@
         {{ Html::script('https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.min.js') }}
         {{ Html::script('https://cdn.jsdelivr.net/momentjs/latest/moment.min.js') }}
         {{ Html::script('https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js') }}
+        <script type="text/javascript" src="{!! asset('js/bootstrap-multiselect.js') !!}"></script>
         @yield('scripts')
     </body>
 </html>
