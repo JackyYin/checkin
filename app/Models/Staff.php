@@ -47,6 +47,11 @@ class Staff extends Model
         return $this->hasOne(Profile::class,'staff_id','id');
     }
 
+    public function admin()
+    {
+        return $this->hasOne(Admin::class,'staff_id','id');
+    }
+
     public function get_check_list()
     {
         return $this->hasMany(Check::class,'staff_id','id');

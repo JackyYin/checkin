@@ -127,6 +127,9 @@ class StaffController extends Controller
 
         $staff->update($request->only(['name', 'email', 'staff_code']));
         $staff->profile->update($request->all());
+        if ($staff->admin) {
+            $staff->admin->update($request->only(['name', 'email']));
+        }
 
         return redirect()->route('admin.staff.index')->with('success', '員工編輯成功！');
     }

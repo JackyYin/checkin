@@ -8,6 +8,7 @@
               <th scope="col">姓名</th>
               <th scope="col">email</th>
               <th scope="col">員工編號</th>
+              <th scope="col">權限</th>
               <th scope="col">啟用狀態</th>
               <th scope="col">訂閱狀態</th>
               <th scope="col">動作</th>
@@ -19,6 +20,13 @@
               <td>{{$staff->name}}</td>
               <td>{{$staff->email}}</td>
               <td>{{$staff->staff_code}}</td>
+              <td>
+                @if ($staff->admin)
+                    Admin
+                @else
+                    一般
+                @endif
+              </td>
               <td>
                 {!! strtr($staff->active, [
                    '1' => '<span class="badge badge-success">已啟用</span>',
