@@ -2,8 +2,8 @@
 
 @section('content')
     {{ Form::open([
-        'id'  => 'checkExportForm',
-        'url' => route('admin.check.export')
+        'id'  => 'STExportForm',
+        'url' => route('admin.check.exportST')
     ]) }}
 
     <div class="form-group">
@@ -37,14 +37,14 @@
 @section('scripts')
     <script>
         $(document).ready( function () {
-            var check_export_form = $('#checkExportForm');
-            check_export_form.find('input[name="date-range"]').daterangepicker({
+            var statistic_export_form = $('#STExportForm');
+            statistic_export_form.find('input[name="date-range"]').daterangepicker({
                 locale: {
                     format: 'YYYY-MM-DD'
                 }
             });
 
-            var validator = check_export_form.validate({
+            var validator = statistic_export_form.validate({
                 errorClass: "alert alert-danger",
                 rules: {
                     "id[]":   { required: true},
@@ -57,7 +57,7 @@
             });
             validator.showErrors();
 
-            check_export_form.find('#nameSelect').multiselect({
+            statistic_export_form.find('#nameSelect').multiselect({
                 buttonClass: 'btn btn-outline-secondary',
                 buttonText: function(options, select) {
                     if (options.length === 0) {
@@ -84,7 +84,7 @@
                 maxHeight: 400,
             });
 
-            check_export_form.find('#typeSelect').multiselect({
+            statistic_export_form.find('#typeSelect').multiselect({
                 buttonClass: 'btn btn-outline-secondary',
                 buttonText: function(options, select) {
                     if (options.length === 0) {

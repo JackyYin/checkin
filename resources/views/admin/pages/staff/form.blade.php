@@ -41,11 +41,11 @@
         {{ Form::text('ID_card_number',  isset($staff->profile) ? $staff->profile->ID_card_number : null, ['id' => 'ID_card_number', 'class' => 'form-control']) }}
     </div>
     <div class="form-check">
-        {{ Form::radio('gender', 1, true, ['class' => 'form-check-input']) }}
+        {{ Form::radio('gender', 1, isset($staff->profile) ? $staff->profile->gender : true, ['class' => 'form-check-input']) }}
         {{ Form::label('gender', '男', ['class' => 'form-check-label']) }}
     </div>
     <div class="form-check">
-        {{ Form::radio('gender', 0, false, ['class' => 'form-check-input']) }}
+        {{ Form::radio('gender', 0, isset($staff->profile) ? !$staff->profile->gender : false, ['class' => 'form-check-input']) }}
         {{ Form::label('gender', '女', ['class' => 'form-check-label']) }}
     </div>
     <div class="form-group">

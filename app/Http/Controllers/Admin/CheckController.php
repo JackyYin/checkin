@@ -34,7 +34,7 @@ class CheckController extends Controller
         4 => 'sick_leave',
         5 => 'online',
     ];
-    public function export_page()
+    public function export_statistic_page()
     {
         $options['name'] =Staff::all()->pluck('name', 'id')->toArray();
         $options['operators'] = array(
@@ -53,7 +53,7 @@ class CheckController extends Controller
         return view('admin.pages.check.export_page', compact('options'));
     }
 
-    public function export(Request $request)
+    public function exportST(Request $request)
     {
         $messages = [
             'id.required'   => '請選擇姓名',
@@ -133,82 +133,74 @@ class CheckController extends Controller
         return $rows;
     }
 
-    private function old_getDataRows($from, $to, $id, $conditions)
+    public function export_check_page()
     {
-        $data = array();
+        $options['name'] =Staff::all()->pluck('name', 'id')->toArray();
 
-        if ($id == 0) {
-            while (strtotime($from) <= strtotime($to)) {
-                $staffs = Staff::all();
-                foreach ($staffs as $staff) {
-                    $data[] = $this->getSingleStaffRow($from, $staff->id, $conditions);
+        return view('admin.pages.check.export_check_page', compact('options'));
+    }
+
+    public function exportCheck(Request $request)
+    {
+        $messages = [
+            'id.required'   => '請選擇姓名',
+        ];
+        $validator = Validator::make($request->all(), [
+            'id'   => 'required',
+        ], $messages);
+
+        if ($validator->fails()) {
+            return redirect()->route('admin.check.export_check_page')->withErrors($validator->errors());
+        }
+
+        $headers = array(
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=file.csv",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        );
+
+        $from = explode(" - ", $request->input('date-range'))[0];
+        $to   = explode(" - ", $request->input('date-range'))[1];
+
+        //第一列
+        $columns = array("日期", "姓名", "上班時間", "下班時間");
+
+        $all_rows  = $this->getCheckTimeRows($from , $to, $request->input('id'));
+        $callback = function() use ($columns, $all_rows)
+        {
+            $file = fopen('php://output', 'w');
+            fwrite($file, "\xEF\xBB\xBF");
+            fputcsv($file, $columns);
+
+            foreach($all_rows as $row) {
+                if (!empty($row)) {
+                    fputcsv($file, $row);
                 }
-                $from = date ("y-m-d", strtotime("+1 day", strtotime($from)));
             }
-        }
-        else {
-            while (strtotime($from) <= strtotime($to)) {
-                $data[] = $this->getSingleStaffRow($from, $id, $conditions);
-                $from = date ("y-m-d", strtotime("+1 day", strtotime($from)));
-            }
-        }
-        return $data;
+            fclose($file);
+        };
+        return response()->stream($callback, 200, $headers); 
     }
 
-    private function old_getSingleStaffRow($from, $id, $conditions)
+    private function getCheckTimeRows($from ,$to, $id)
     {
-        $staff = Staff::find($id);
-        $row = array();
-        $work_time = 0;
-        $leave_time = 0;
-        $checks = $staff->range_one_day($from);
+        $mysql =
+            "SELECT DATE(c.checkin_at) as date, s.name,
+            DATE_FORMAT(c.checkin_at,'%H:%i:%s') as checkin_at,
+            DATE_FORMAT(c.checkout_at,'%H:%i:%s') as checkout_at 
+            FROM checks c left join  staffs s on s.id = c.staff_id
+            WHERE c.staff_id IN (".implode(',', $id).")"
+            ." AND checkin_at >= '".$from." 00:00:00'"
+            ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'"
+            ." GROUP BY c.staff_id, DATE(c.checkin_at)\n";
 
-        foreach ($checks as $item) {
-            switch ($item->type) {
+        $mysql =
+            $mysql." ORDER BY DATE(c.checkin_at)";
 
-                case Check::TYPE_NORMAL:
-                    $work_time += round((strtotime($item->checkout_at) - strtotime($item->checkin_at))/3600, 1);
-                    break;
-                default:
-                    $leave_time += round((strtotime($item->checkout_at) - strtotime($item->checkin_at))/3600, 1);
-                    break;
-            }
-        }
+        $rows = DB::select($mysql);
+        return $rows;
 
-        if ($work_time == 0 && $leave_time == 0) {
-            return $row;
-        }
-
-        if (array_key_exists('has', $conditions) && $conditions['has']['work_time']) {
-            if ($this->parseOperator($work_time, $conditions['op']['work_time'], $conditions['value']['work_time'])) {
-                $row[] =  $from;
-                $row[] =  $staff->name;
-                $row[] = $work_time;
-                $row[] = $leave_time;
-            }
-        }
-        else {
-            $row[] =  $from;
-            $row[] =  $staff->name;
-            $row[] = $work_time;
-            $row[] = $leave_time;
-        }
-
-        return $row;
-    }
-
-    private function old_parseOperator($value1, $operator, $value2)
-    {
-        switch ($operator) {
-            case 0:
-                return $value1 == $value2;
-                break;
-            case 1:
-                return $value1 >= $value2;
-                break;
-            case 2:
-                return $value1 <= $value2;
-                break;
-        }
     }
 }

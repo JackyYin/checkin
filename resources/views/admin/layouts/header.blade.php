@@ -13,7 +13,10 @@
                 <a class="nav-link" href={{ route('admin.staff.create') }}>手動輸入資料</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href={{ route('admin.check.export_page') }}>輸出打卡資料</a>
+                <a class="nav-link" href={{ route('admin.check.export_statistic_page') }}>輸出統計資料</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href={{ route('admin.check.export_check_page') }}>輸出打卡時間</a>
             </li>
         </ul>
     </div>
