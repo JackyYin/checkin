@@ -136,4 +136,34 @@ class StaffController extends Controller
 
         return redirect()->route('admin.staff.index')->with('success', '員工編輯成功！');
     }
+
+    public function assignSubscription (Request $request)
+    {
+        $messages = [
+            'staff_id.required' => '請輸入姓名',
+            'staff_id.exists'   => '不存在的使用者',
+        ];
+        $validator = Validator::make($request->all(), [
+            'staff_id'   => array(
+                'required',
+                'exists:staffs,id',
+            ),
+        ], $messages);
+
+        if ($validator->fails()) {
+            $array = $validator->errors()->all();
+            return response(implode(",",$array), 400);
+        }
+
+        $staff = Staff::find($request->input('staff_id'));
+
+        if ($staff->subscribed) {
+            return response("此員工已訂閱", 400);
+        }
+
+        $staff->subscribed = 1;
+        $staff->save();
+
+        return response("訂閱成功", 200);
+    }
 }

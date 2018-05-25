@@ -34,7 +34,7 @@
                    '1' => '<span class="badge badge-success">已啟用</span>',
                    '0' => '<span class="badge badge-warning">未啟用</span>']) !!}
               </td>
-              <td>
+              <td class="subscription">
                 {!! strtr($staff->subscribed, [
                    '1' => '<span class="badge badge-success">已訂閱</span>',
                    '0' => '<span class="badge badge-warning">未訂閱</span>']) !!}
@@ -44,7 +44,9 @@
                 @if ($admin && !$staff->admin && !$staff->manager)
                   <a class="btn btn-secondary btn-assign-manager"  href="#">指派管理員</a>
                 @endif
-                <a class="btn btn-secondary" href="#">訂閱</a>
+                @if (!$staff->subscribed)
+                    <a class="btn btn-secondary btn-assign-subscription" href="#">訂閱</a>
+                @endif
               </td>
             </tr>
           @endforeach
@@ -57,6 +59,7 @@
         $(document).ready( function () {
             var staff_index = $('#staffIndex');
 
+            //指派管理員功能
             var btn_assign_manager = staff_index.find('.btn-assign-manager');
             btn_assign_manager.click(function () {
                 var assign_btn = $(this);
@@ -75,6 +78,34 @@
                     setTimeout(function() { $('#alert-message').remove();}, 3000);
                     //change html content
                     assign_btn.parent().siblings('.authority').html('管理者');
+                    assign_btn.remove();
+                })
+                .fail(function (result) {
+                    console.log(result.responseText);
+                    $('.container').prepend('<div id="alert-message" class="alert alert-danger">' + result.responseText + '</div>');
+                    setTimeout(function() { $('#alert-message').remove();}, 3000);
+                });
+            }); 
+            //指派訂閱功能
+            var btn_assign_subscription = staff_index.find('.btn-assign-subscription');
+            btn_assign_subscription.click(function () {
+                var assign_btn = $(this);
+                var staff_id = $(this).closest('tr').data('id');
+                $.ajax({
+                    type: 'post',
+                    url: '{{ route('admin.staff.assignSubscription') }}',
+                    data: {
+                        staff_id: staff_id,
+                    }, 
+                })
+                .done(function (result) {
+                    console.log(result);
+                    //alert message
+                    $('.container').prepend('<div id="alert-message" class="alert alert-success">' + result + '</div>');
+                    setTimeout(function() { $('#alert-message').remove();}, 3000);
+                    //change html content
+                    assign_btn.parent().siblings('.subscription').html('<span class="badge badge-success">已訂閱</span>');
+                    assign_btn.remove();
                 })
                 .fail(function (result) {
                     console.log(result.responseText);

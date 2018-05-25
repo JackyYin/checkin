@@ -21,6 +21,7 @@ Route::group(['middleware' => ['auth.admin']], function () {
     Route::resource('staff', 'StaffController', ['except' => ['show', 'destroy']]);
     Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
         Route::get('import', ['as' => 'import', 'uses' => 'StaffController@import']);
+        Route::post('assignSubscription', ['as' => 'assignSubscription', 'uses' => 'StaffController@assignSubscription']);
     });
     Route::group(['prefix' => 'check', 'as' => 'check.'], function () {
         Route::get('export_statistic_page', ['as' => 'export_statistic_page', 'uses' => 'CheckController@export_statistic_page']);
