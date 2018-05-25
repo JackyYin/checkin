@@ -17,6 +17,7 @@ class AdminViewServiceProvider extends ServiceProvider
     {
         View::composer('admin.pages.*', function ($view) {
             $view->with('admin', Auth::guard('admin')->user());
+            $view->with('manager', Auth::guard('manager')->user());
         });
     }
 
