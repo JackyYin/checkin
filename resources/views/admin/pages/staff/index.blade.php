@@ -41,7 +41,7 @@
               </td>
               <td>
                 <a class="btn btn-secondary" href="{{ route('admin.staff.edit', ['staff' => $staff->id]) }}">編輯</a>
-                @if (!$staff->admin && !$staff->manager)
+                @if ($admin && !$staff->admin && !$staff->manager)
                   <a class="btn btn-secondary btn-assign-manager"  href="#">指派管理員</a>
                 @endif
                 <a class="btn btn-secondary" href="#">訂閱</a>
