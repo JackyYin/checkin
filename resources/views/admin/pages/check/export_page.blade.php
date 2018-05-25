@@ -2,8 +2,9 @@
 
 @section('content')
     {{ Form::open([
-        'id'  => 'STExportForm',
-        'url' => route('admin.check.exportST')
+        'id'     => 'STExportForm',
+        'method' => 'get',
+        'url'    => route('admin.check.export_statistic_page')
     ]) }}
 
     <div class="form-group">
@@ -33,6 +34,35 @@
 
     {{ Form::submit('送出', ['class' => 'btn btn-primary']) }}
     {{ Form::close() }}
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">日期</th>
+              <th scope="col">姓名</th>
+              <th scope="col">事假時數</th>
+              <th scope="col">特休時數</th>
+              <th scope="col">公假時數</th>
+              <th scope="col">病假時數</th>
+              <th scope="col">Online時數</th>
+            </tr>
+          </thead>
+          <tbody>
+          @foreach ($rows as $row)
+            <tr>
+              <td>{{$row->date}}</td>
+              <td>{{$row->name}}</td>
+              <td>{{$row->personal_leave_time}}</td>
+              <td>{{$row->annual_leave_time}}</td>
+              <td>{{$row->official_leave_time}}</td>
+              <td>{{$row->sick_leave_time}}</td>
+              <td>{{$row->online_time}}</td>
+            </tr>
+          @endforeach
+          </tbody>
+        </table>
+    </div>
 @endsection
 @section('scripts')
     <script>
