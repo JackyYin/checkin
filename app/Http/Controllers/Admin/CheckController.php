@@ -45,6 +45,9 @@ class CheckController extends Controller
         else {
             $rows = [];
         }
+        $rows = array_where($rows, function($value,$key) {
+            return $value['personal_leave'] + $value['annual_leave'] + $value['official_leave'] + $value['sick_leave'] + $value['online'] != 0;
+        });
 
         //form options
         $options['name'] =Staff::all()->pluck('name', 'id')->toArray();
