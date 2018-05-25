@@ -36,7 +36,7 @@ class CheckController extends Controller
     ];
     public function export_statistic_page(Request $request)
     {
-        if ($request->has(['from', 'to', 'id'])) {
+        if ($request->has(['date-range', 'id'])) {
             $from = explode(" - ", $request->input('date-range'))[0];
             $to =   explode(" - ", $request->input('date-range'))[1];
 

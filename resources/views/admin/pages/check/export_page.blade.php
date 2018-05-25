@@ -51,13 +51,13 @@
           <tbody>
           @foreach ($rows as $row)
             <tr>
-              <td>{{$row->date}}</td>
-              <td>{{$row->name}}</td>
-              <td>{{$row->personal_leave_time}}</td>
-              <td>{{$row->annual_leave_time}}</td>
-              <td>{{$row->official_leave_time}}</td>
-              <td>{{$row->sick_leave_time}}</td>
-              <td>{{$row->online_time}}</td>
+              <td>{{$row['date']}}</td>
+              <td>{{$row['name']}}</td>
+              <td>{{$row['personal_leave_time']}}</td>
+              <td>{{$row['annual_leave_time']}}</td>
+              <td>{{$row['official_leave_time']}}</td>
+              <td>{{$row['sick_leave_time']}}</td>
+              <td>{{$row['online_time']}}</td>
             </tr>
           @endforeach
           </tbody>
