@@ -14,15 +14,16 @@ class AuthController extends Controller
      *
      * @var string
      */
-    protected $guard = 'admin';
     protected $redirectTo = '/admin/staff';
 
     public function login()
     {
-        if (Auth::guard($this->guard)->check()) {
+        if (Auth::guard('admin')->check()) {
             return redirect($this->redirectTo);
         }
-
+        if (Auth::guard('manager')->check()) {
+            return redirect($this->redirectTo);
+        }
         return view('admin.pages.auth.login');
     }
   
@@ -53,11 +54,26 @@ class AuthController extends Controller
         $pass     = $request->input('password');
         $remember = $request->input('remember');
 
-        if (Auth::guard($this->guard)->attempt(['email' => $email, 'password' => $pass], $remember)) {
+        if (Auth::guard('admin')->attempt(['email' => $email, 'password' => $pass], $remember)) {
             return redirect($this->redirectTo);
         }
-          
+        if (Auth::guard('manager')->attempt(['email' => $email, 'password' => $pass], $remember)) {
+            return redirect($this->redirectTo);
+        }
+
         return back()->with('danger', '帳號或密碼錯誤.');
+    }
+
+    public function logout()
+    {
+        if (Auth::guard('admin')->check()) {
+            Auth::guard('admin')->logout();
+        }
+        if (Auth::guard('manager')->check()) {
+            Auth::guard('manager')->logout();
+        }
+
+        return redirect()->route('admin.login');
     }
 
 }

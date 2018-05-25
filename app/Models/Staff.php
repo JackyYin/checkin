@@ -52,6 +52,11 @@ class Staff extends Model
         return $this->hasOne(Admin::class,'staff_id','id');
     }
 
+    public function manager()
+    {
+        return $this->hasOne(Manager::class,'staff_id','id');
+    }
+
     public function get_check_list()
     {
         return $this->hasMany(Check::class,'staff_id','id');

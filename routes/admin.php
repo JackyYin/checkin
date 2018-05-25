@@ -17,6 +17,7 @@ Route::group(['namespace' => 'Auth'], function () {
 
 
 Route::group(['middleware' => ['auth.admin']], function () {
+    Route::get('logout',  ['as' => 'logout', 'uses' => 'Auth\AuthController@logout']);
     Route::resource('staff', 'StaffController', ['except' => ['show', 'destroy']]);
     Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
         Route::get('import', ['as' => 'import', 'uses' => 'StaffController@import']);
@@ -26,5 +27,8 @@ Route::group(['middleware' => ['auth.admin']], function () {
         Route::post('exportST', ['as' => 'exportST', 'uses' => 'CheckController@exportST']);
         Route::get('export_check_page', ['as' => 'export_check_page', 'uses' => 'CheckController@export_check_page']);
         Route::post('exportCheck', ['as' => 'exportCheck', 'uses' => 'CheckController@exportCheck']);
+    });
+    Route::group(['prefix' => 'manager', 'as' => 'manager.'], function () {
+        Route::post('assign', ['as' => 'assign', 'uses' => 'ManagerController@assign']);
     });
 });

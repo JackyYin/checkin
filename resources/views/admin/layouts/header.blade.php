@@ -18,6 +18,9 @@
             <li class="nav-item">
                 <a class="nav-link" href={{ route('admin.check.export_check_page') }}>輸出打卡時間</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href={{ route('admin.logout') }}>登出</a>
+            </li>
         </ul>
     </div>
 </nav>
