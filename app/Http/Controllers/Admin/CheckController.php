@@ -46,7 +46,7 @@ class CheckController extends Controller
             $rows = [];
         }
         $rows = array_where($rows, function($value,$key) {
-            return $value['personal_leave_time'] + $value['annual_leave_time'] + $value['official_leave_time'] + $value['sick_leave_time'] + $value['online'] != 0;
+            return $value['personal_leave_time'] + $value['annual_leave_time'] + $value['official_leave_time'] + $value['sick_leave_time'] + $value['online_time'] != 0;
         });
 
         //form options
