@@ -2,6 +2,14 @@
 
 @section('content')
     <div class="table-responsive" id="staffIndex">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <form class="form-inline my-2 my-lg-0" action="{{ route('admin.staff.index') }}" method="get">
+              <input class="form-control mr-sm-2" type="search" placeholder="姓名、email..." aria-label="Search" name="keyword">
+              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">搜尋</button>
+            </form>
+            <a class="btn btn-outline-secondary" href="{{ route('admin.staff.index') }}" style="margin-left: 10px">返回</a>
+          </div>
+        </nav>
         <table class="table table-bordered">
           <thead>
             <tr>

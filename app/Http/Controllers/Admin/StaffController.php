@@ -11,9 +11,19 @@ use App\Models\Profile;
 
 class StaffController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $staffs = Staff::all();
+        $staffs = Staff::where(function ($query) use ($request) {
+            $keyword = $request->input('keyword');
+
+            if (!empty($keyword)) {
+                $search = "%{$keyword}%";
+
+                $query->where("name", "LIKE", $search)
+                    ->orWhere("email", "LIKE", $search);
+            }
+
+        })->get();
 
         return view('admin.pages.staff.index', compact('staffs'));
     }
