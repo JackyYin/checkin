@@ -36,18 +36,23 @@ class CheckController extends Controller
     ];
     public function export_statistic_page(Request $request)
     {
-        if ($request->has(['date-range', 'id'])) {
-            $from = explode(" - ", $request->input('date-range'))[0];
-            $to =   explode(" - ", $request->input('date-range'))[1];
+        switch ($request->input('action_type')) {
 
-            $rows  = $this->getStatisticRows($from , $to, $request->input('id'), $request->only(['has', 'op', 'value']));
+            case 'lookup':
+                if ($request->has(['date-range', 'id'])) {
+                    $from = explode(" - ", $request->input('date-range'))[0];
+                    $to =   explode(" - ", $request->input('date-range'))[1];
+
+                    $rows  = $this->getStatisticRows($from , $to, $request->input('id'), $request->only(['has', 'op', 'value']));
+                }
+                break;
+
+            case 'export':
+                return $this->exportST($request);
+                break;
         }
-        else {
-            $rows = [];
-        }
-        $rows = array_where($rows, function($value,$key) {
-            return $value['personal_leave_time'] + $value['annual_leave_time'] + $value['official_leave_time'] + $value['sick_leave_time'] + $value['online_time'] != 0;
-        });
+
+        $rows = isset($rows) ? $rows : [];
 
         //form options
         $options['name'] =Staff::all()->pluck('name', 'id')->toArray();
@@ -100,7 +105,7 @@ class CheckController extends Controller
         return $rows;
     }
 
-    public function exportST(Request $request)
+    private function exportST(Request $request)
     {
         $messages = [
             'id.required'   => '請選擇姓名',

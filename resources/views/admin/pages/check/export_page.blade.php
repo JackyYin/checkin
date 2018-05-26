@@ -32,7 +32,8 @@
         </div>
     </div>
 
-    {{ Form::submit('送出', ['class' => 'btn btn-primary']) }}
+    <button class="btn btn-primary" name="action_type" value="lookup" type="submit">查看</button>
+    <button class="btn btn-primary" name="action_type" value="export" type="submit">匯出</button>
     {{ Form::close() }}
 
     <div class="table-responsive">
