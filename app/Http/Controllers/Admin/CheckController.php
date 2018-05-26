@@ -94,6 +94,9 @@ class CheckController extends Controller
         }
 
         $rows = DB::select($mysql);
+        $rows = array_where($rows, function($value,$key) {
+            return $value['personal_leave_time'] + $value['annual_leave_time'] + $value['official_leave_time'] + $value['sick_leave_time'] + $value['online_time'] != 0;
+        });
         return $rows;
     }
 
@@ -174,6 +177,9 @@ class CheckController extends Controller
         }
 
         $rows = DB::select($mysql);
+        $rows = array_where($rows, function($value,$key) {
+            return $value['personal_leave_time'] + $value['annual_leave_time'] + $value['official_leave_time'] + $value['sick_leave_time'] + $value['online_time'] != 0;
+        });
         return $rows;
     }
 
