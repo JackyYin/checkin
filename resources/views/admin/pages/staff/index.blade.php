@@ -8,7 +8,6 @@
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">搜尋</button>
             </form>
             <a class="btn btn-outline-secondary" href="{{ route('admin.staff.index') }}" style="margin-left: 10px">返回</a>
-          </div>
         </nav>
         <table class="table table-bordered">
           <thead>
