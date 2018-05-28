@@ -75,7 +75,11 @@ class Kernel extends ConsoleKernel
         foreach ($staffs as $staff) {
             $checkin_time =  date("Y-m-d H:i:s",$checkin_start + mt_rand(0,$checkin_diff));
             $checkout_time =  date("Y-m-d H:i:s",$checkout_start + mt_rand(0,$checkout_diff));
-            $leaves = $staff->get_check_list->where('checkin_at', '>=', Carbon::today())->where('checkout_at', '<=', Carbon::tomorrow());
+            $leaves = $staff->get_check_list
+                ->where('type', '!=', 0)
+                ->where('checkin_at', '>=', Carbon::today()->addHours(9))
+                ->where('checkin_at', '<=', Carbon::today()->addHours(19))
+                ->where('checkout_at', '<=', Carbon::today()->addHours(19));
             if ($leaves->isEmpty()) {
                     Check::create([
                             'staff_id'    => $staff->id,
