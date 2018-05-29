@@ -13,7 +13,10 @@ class StaffController extends Controller
 {
     public function index(Request $request)
     {
-        $staffs = Staff::where(function ($query) use ($request) {
+        $staffs = Staff::whereHas('profile', function ($query) {
+            $query->where('identity', '!=', 2);
+        })
+        ->where(function ($query) use ($request) {
             $keyword = $request->input('keyword');
 
             if (!empty($keyword)) {
