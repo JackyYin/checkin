@@ -73,8 +73,12 @@ class Kernel extends ConsoleKernel
         $noon_start     = strtotime(Carbon::today()->addHours(12));
         $noon_end       = strtotime(Carbon::today()->addHours(13)->addminutes(30));
         foreach ($staffs as $staff) {
-            $checkin_time =  date("Y-m-d H:i:s",$checkin_start + mt_rand(0,$checkin_diff));
-            $checkout_time =  date("Y-m-d H:i:s",$checkout_start + mt_rand(0,$checkout_diff));
+            $checkin_random_time =  date("Y-m-d H:i:s",$checkin_start + mt_rand(0,$checkin_diff));
+            $checkout_random_time =  date("Y-m-d H:i:s",$checkout_start + mt_rand(0,$checkout_diff));
+            //11:50~12:10
+            $noon_start_random_time =  date("Y-m-d H:i:s",strtotime('-10 minutes', $noon_start) + mt_rand(0,1200));
+            //13:20~13:40
+            $noon_end_random_time =  date("Y-m-d H:i:s",strtotime('-10 minutes', $noon_end) + mt_rand(0,1200));
             $leaves = $staff->get_check_list
                 ->where('type', '!=', 0)
                 ->where('checkin_at', '>=', Carbon::today()->addHours(9))
@@ -83,59 +87,130 @@ class Kernel extends ConsoleKernel
             if ($leaves->isEmpty()) {
                     Check::create([
                             'staff_id'    => $staff->id,
-                            'checkin_at'  => $checkin_time,
-                            'checkout_at' => $checkout_time,
+                            'checkin_at'  => $checkin_random_time,
+                            'checkout_at' => $checkout_random_time,
                             'type'        => 0,
                     ]);
-
             }
             else {
                 if ($leaves->count() == 1) {
                     $leave = $leaves->first();
-                    $leave_from =     $leave->checkin_at;
-                    $leave_to   =     $leave->checkout_at;
-                    $int_leave_from = strtotime($leave_from);
-                    $int_leave_to   = strtotime($leave_to);
-
-                    //不用請開頭
-                    if ($checkin_start <= $int_leave_from && $int_leave_from <= $checkin_end) {
-                        //不用請結尾
-                        if ($checkout_start <= $int_leave_to && $int_leave_to <= $checkout_end) {
-                                return;
+                    $leave_from = strtotime($leave->checkin_at);
+                    $leave_to   = strtotime($leave->checkout_at);
+                    //正負10分鐘
+                    $leave_to_random_time = date("Y-m-d H:i:s", strtotime('-10 minutes', $leave_to) + mt_rand(0,1200));
+                    $leave_from_random_time = date("Y-m-d H:i:s", strtotime('-10 minutes', $leave_from) + mt_rand(0,1200));
+                    //不用打開頭
+                    if ($checkin_start <= $leave_from && $leave_from <= $checkin_end) {
+                        //不用打結尾
+                        if ($checkout_start <= $leave_to && $leave_to <= $checkout_end) {
+                            return;
                         }
+                        //要打結尾
                         else {
-                            Check::create([
-                                'staff_id'    => $staff->id,
-                                'checkin_at'  => $leave_to,
-                                'checkout_at' => $checkout_time,
-                                'type'        => 0,
-                            ]);
+                            //請假請到中午
+                            if ($noon_start <= $leave_to && $leave_to <= $noon_end) {
+                                Check::create([
+                                    'staff_id'    => $staff->id,
+                                    'checkin_at'  => $noon_end_ramdom_time,
+                                    'checkout_at' => $checkout_random_time,
+                                    'type'        => 0,
+                                ]);
+                            }
+                            else {
+                                Check::create([
+                                    'staff_id'    => $staff->id,
+                                    'checkin_at'  => $leave_to_random_time,
+                                    'checkout_at' => $checkout_random_time,
+                                    'type'        => 0,
+                                ]);
+                            }
                         }
                     }
-                    //要請開頭
+                    //要打開頭
                     else {
-                        //不用請結尾
-                        if ($checkout_start <= $int_leave_to && $int_leave_to <= $checkout_end) {
-                            Check::create([
-                                'staff_id'    => $staff->id,
-                                'checkin_at'  => $checkin_time,
-                                'checkout_at' => $leave_from,
-                                'type'        => 0,
-                            ]);
+                        //不用打結尾
+                        if ($checkout_start <= $leave_to && $leave_to <= $checkout_end) {
+                            //從中午的區間開始請
+                            if ($noon_start <= $leave_from && $leave_from <= $noon_end) {
+                                Check::create([
+                                    'staff_id'    => $staff->id,
+                                    'checkin_at'  => $checkin_random_time,
+                                    'checkout_at' => $noon_start_random_time,
+                                    'type'        => 0,
+                                ]);
+                            }
+                            else {
+                                Check::create([
+                                    'staff_id'    => $staff->id,
+                                    'checkin_at'  => $checkin_random_time,
+                                    'checkout_at' => $leave_from_random_time,
+                                    'type'        => 0,
+                                ]);
+                            }
                         }
+                        //要打結尾
                         else {
-                            Check::create([
-                                'staff_id'    => $staff->id,
-                                'checkin_at'  => $checkin_time,
-                                'checkout_at' => $leave_from,
-                                'type'        => 0,
-                            ]);
-                            Check::create([
-                                'staff_id'    => $staff->id,
-                                'checkin_at'  => $leave_to,
-                                'checkout_at' => $checkout_time,
-                                'type'        => 0,
-                            ]);
+                            //從中午的區間開始請
+                            if ($noon_start <= $leave_from && $leave_from <= $noon_end) {
+                                //請到中午的區間
+                                if ($noon_start <= $leave_to && $leave_to <= $noon_end) {
+                                    //視為沒請
+                                    Check::create([
+                                        'staff_id'    => $staff->id,
+                                        'checkin_at'  => $checkin_random_time,
+                                        'checkout_at' => $checkout_random_time,
+                                        'type'        => 0,
+                                    ]);
+                                    $leave->delete();
+                                }
+                                else {
+                                    Check::create([
+                                        'staff_id'    => $staff->id,
+                                        'checkin_at'  => $checkin_random_time,
+                                        'checkout_at' => $noon_start_random_time,
+                                        'type'        => 0,
+                                    ]);
+                                    Check::create([
+                                        'staff_id'    => $staff->id,
+                                        'checkin_at'  => $leave_to_random_time,
+                                        'checkout_at' => $checkout_random_time,
+                                        'type'        => 0,
+                                    ]);
+                                }
+                            }
+                            //從非中午開始請
+                            else {
+                                //請到中午的區間
+                                if ($noon_start <= $leave_to && $leave_to <= $noon_end) {
+                                    Check::create([
+                                        'staff_id'    => $staff->id,
+                                        'checkin_at'  => $checkin_random_time,
+                                        'checkout_at' => $leave_from_random_time,
+                                        'type'        => 0,
+                                    ]);
+                                    Check::create([
+                                        'staff_id'    => $staff->id,
+                                        'checkin_at'  => $noon_end_random_time,
+                                        'checkout_at' => $checkout_random_time,
+                                        'type'        => 0,
+                                    ]);
+                                }
+                                else {
+                                    Check::create([
+                                        'staff_id'    => $staff->id,
+                                        'checkin_at'  => $checkin_random_time,
+                                        'checkout_at' => $leave_from_random_time,
+                                        'type'        => 0,
+                                    ]);
+                                    Check::create([
+                                        'staff_id'    => $staff->id,
+                                        'checkin_at'  => $leave_to_random_time,
+                                        'checkout_at' => $checkout_random_time,
+                                        'type'        => 0,
+                                    ]);
+                                }
+                            }
                         }
                     }
                 }
