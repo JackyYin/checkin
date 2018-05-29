@@ -104,7 +104,6 @@ class Kernel extends ConsoleKernel
                     if ($checkin_start <= $leave_from && $leave_from <= $checkin_end) {
                         //不用打結尾
                         if ($checkout_start <= $leave_to && $leave_to <= $checkout_end) {
-                            return;
                         }
                         //要打結尾
                         else {
