@@ -159,7 +159,8 @@
                   format: 'YYYY-MM-DD'
                 },
                 singleDatePicker: true,
-                showDropdowns: true
+                showDropdowns: true,
+                autoUpdateInput: false,
             });
         
             var validator = staff_form.validate({

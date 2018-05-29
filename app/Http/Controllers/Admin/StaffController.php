@@ -67,7 +67,7 @@ class StaffController extends Controller
             'on_board_date'         => 'date_format:Y-m-d',
             'birth'                 => 'date_format:Y-m-d',
             'add_insurance_date'    => 'date_format:Y-m-d',
-            'cancel_insurance_date' => 'date_format:Y-m-d',
+            'cancel_insurance_date' => 'nullable|date_format:Y-m-d',
         ], $messages);
 
         if ($validator->fails()) {
@@ -134,7 +134,7 @@ class StaffController extends Controller
             'on_board_date'         => 'date_format:Y-m-d',
             'birth'                 => 'date_format:Y-m-d',
             'add_insurance_date'    => 'date_format:Y-m-d',
-            'cancel_insurance_date' => 'date_format:Y-m-d',
+            'cancel_insurance_date' => 'nullable|date_format:Y-m-d',
         ], $messages);
 
         if ($validator->fails()) {
