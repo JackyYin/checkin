@@ -3,7 +3,8 @@
 @section('content')
     {{ Form::open([
         'id'  => 'CheckExportForm',
-        'url' => route('admin.check.exportCheck')
+        'method' => 'get',
+        'url' => route('admin.check.export_check_page')
     ]) }}
 
     <div class="form-group">
@@ -15,8 +16,32 @@
         {{ Form::text('date-range', null, ['class' => 'form-control']) }}
     </div>
 
-    {{ Form::submit('送出', ['class' => 'btn btn-primary']) }}
+    <button class="btn btn-primary" name="action_type" value="lookup" type="submit">查看</button>
+    <button class="btn btn-primary" name="action_type" value="export" type="submit">匯出</button>
     {{ Form::close() }}
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">日期</th>
+              <th scope="col">姓名</th>
+              <th scope="col">上班時間</th>
+              <th scope="col">下班時間</th>
+            </tr>
+          </thead>
+          <tbody>
+          @foreach ($rows as $row)
+            <tr>
+              <td>{{$row['date']}}</td>
+              <td>{{$row['name']}}</td>
+              <td>{{$row['checkin_at']}}</td>
+              <td>{{$row['checkout_at']}}</td>
+            </tr>
+          @endforeach
+          </tbody>
+        </table>
+    </div>
 @endsection
 @section('scripts')
     <script>

@@ -137,7 +137,7 @@ class CheckController extends Controller
             $columns[] = $this->CHECK_TYPE[$type]."時數";
         }
 
-        $all_rows  = $this->getDataRows($from , $to, $request->input('id'), $request->only(['has', 'op', 'value', 'type']));
+        $all_rows  = $this->getExportStatisticRows($from , $to, $request->input('id'), $request->only(['has', 'op', 'value', 'type']));
         $callback = function() use ($columns, $all_rows)
         {
             $file = fopen('php://output', 'w');
@@ -154,7 +154,7 @@ class CheckController extends Controller
         return response()->stream($callback, 200, $headers); 
     }
 
-    private function getDataRows($from, $to, $id, $conditions)
+    private function getExportStatisticRows($from, $to, $id, $conditions)
     {
         $mysql =
             "SELECT DATE(c.checkin_at) as date, s.name";
@@ -188,14 +188,33 @@ class CheckController extends Controller
         return $rows;
     }
 
-    public function export_check_page()
+    public function export_check_page(Request $request)
     {
+        switch ($request->input('action_type')) {
+
+            case 'lookup':
+                if ($request->has(['date-range', 'id'])) {
+                    $from = explode(" - ", $request->input('date-range'))[0];
+                    $to =   explode(" - ", $request->input('date-range'))[1];
+
+                    $rows  = $this->getCheckTimeRows($from , $to, $request->input('id'));
+                }
+                break;
+
+            case 'export':
+                return $this->exportCheck($request);
+                break;
+        }
+
+        $rows = isset($rows) ? $rows : [];
+
+        //form options
         $options['name'] =Staff::all()->pluck('name', 'id')->toArray();
 
-        return view('admin.pages.check.export_check_page', compact('options'));
+        return view('admin.pages.check.export_check_page', compact('options', 'rows'));
     }
 
-    public function exportCheck(Request $request)
+    private function exportCheck(Request $request)
     {
         $messages = [
             'id.required'   => '請選擇姓名',
@@ -257,6 +276,5 @@ class CheckController extends Controller
 
         $rows = DB::select($mysql);
         return $rows;
-
     }
 }
