@@ -40,6 +40,10 @@
         {{ Form::label('ID_card_number', '身分證字號/居留證號碼') }}
         {{ Form::text('ID_card_number',  isset($staff->profile) ? $staff->profile->ID_card_number : null, ['id' => 'ID_card_number', 'class' => 'form-control']) }}
     </div>
+    <div class="form-group">
+        {{ Form::label('identity', '身份') }}
+        {{ Form::select('identity', $options['identity'], isset($staff->profile) ? $staff->profile->identity : null, ['class' => 'form-control']) }}
+    </div>
     <div class="form-check">
         {{ Form::radio('gender', 1, isset($staff->profile) ? $staff->profile->gender : true, ['class' => 'form-check-input']) }}
         {{ Form::label('gender', '男', ['class' => 'form-check-label']) }}

@@ -30,7 +30,9 @@ class StaffController extends Controller
 
     public function create()
     {
-        return view('admin.pages.staff.form'); 
+        $options = $this->getFormOptions();
+
+        return view('admin.pages.staff.form', compact('options')); 
     }
 
     public function store(Request $request)
@@ -84,8 +86,9 @@ class StaffController extends Controller
     public function edit($staff_id)
     {
         $staff = Staff::find($staff_id);
+        $options = $this->getFormOptions();
 
-        return view('admin.pages.staff.form', compact('staff'));
+        return view('admin.pages.staff.form', compact('staff', 'options'));
     }
 
     public function update($staff_id, Request $request)
@@ -175,5 +178,16 @@ class StaffController extends Controller
         $staff->save();
 
         return response("訂閱成功", 200);
+    }
+
+    private function getFormOptions ()
+    {
+        $options['identity'] = array(
+            Profile::ID_FULL_TIME => '全職',
+            Profile::ID_PART_TIME => '工讀',
+            Profile::ID_RESIGNED  => '離職',
+        );
+
+        return $options;
     }
 }
