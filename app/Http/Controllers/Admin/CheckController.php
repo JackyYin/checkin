@@ -279,4 +279,45 @@ class CheckController extends Controller
         $rows = DB::select($mysql);
         return $rows;
     }
+
+    public function count_late(Request $request)
+    {
+        switch ($request->input('action_type')) {
+
+            case 'lookup':
+                if ($request->has(['date-range', 'id'])) {
+                    $from = explode(" - ", $request->input('date-range'))[0];
+                    $to =   explode(" - ", $request->input('date-range'))[1];
+
+                    $rows  = $this->getCountLateRows($from , $to, $request->input('id'));
+                }
+                break;
+
+            case 'export':
+                break;
+        }
+
+        $rows = isset($rows) ? $rows : [];
+
+        //form options
+        $options['name'] =Staff::all()->pluck('name', 'id')->toArray();
+
+        return view('admin.pages.check.count_late', compact('options', 'rows'));
+    }
+
+    private function getCountLateRows($from , $to, $id)
+    {
+        $mysql =
+            "SELECT s.name"
+            .", SUM(IF(c.type = ".Check::TYPE_LATE.", 1, 0)) as late_count"
+            ." FROM checks c left join  staffs s on s.id = c.staff_id
+            WHERE c.staff_id IN (".implode(',', $id).")"
+            ." AND checkin_at >= '".$from." 00:00:00'"
+            ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'"
+            ." GROUP BY c.staff_id\n";
+
+        $rows = DB::select($mysql);
+        return $rows;
+
+    }
 }
