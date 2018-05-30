@@ -16,7 +16,7 @@ class LeaveController extends Controller
     private $CHECK_TYPE = [
         1 => "事假",
         2 => "特休",
-        3 => "公假",
+        3 => "出差",
         4 => '病假',
         5 => 'Online',
         6 => '晚到',
