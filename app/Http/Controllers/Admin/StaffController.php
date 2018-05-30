@@ -26,7 +26,21 @@ class StaffController extends Controller
                     ->orWhere("email", "LIKE", $search);
             }
 
-        })->get();
+        })
+        ->get()
+        ->sort(function ($a, $b) {
+            if (!$a->staff_code) {
+                return $b->staff_code ? 1  : 0;
+            }
+            if (!$b->staff_code) {
+                return -1;
+            }
+            if ($a->staff_code == $b->staff_code) {
+                return 0;
+            }
+
+            return $a->staff_code < $b->staff_code ? -1 : 1;
+        });
 
         return view('admin.pages.staff.index', compact('staffs'));
     }
