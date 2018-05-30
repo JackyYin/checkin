@@ -24,8 +24,9 @@ Route::group(['middleware' => ['auth.admin']], function () {
         Route::post('assignSubscription', ['as' => 'assignSubscription', 'uses' => 'StaffController@assignSubscription']);
     });
     Route::group(['prefix' => 'check', 'as' => 'check.'], function () {
-        Route::get('export_statistic_page', ['as' => 'export_statistic_page', 'uses' => 'CheckController@export_statistic_page']);
-        Route::get('export_check_page', ['as' => 'export_check_page', 'uses' => 'CheckController@export_check_page']);
+        Route::get('export_statistic', ['as' => 'export_statistic', 'uses' => 'CheckController@export_statistic']);
+        Route::get('export_check', ['as' => 'export_check', 'uses' => 'CheckController@export_check']);
+        Route::get('count_late', ['as' => 'count_late', 'uses' => 'CheckController@count_late']);
     });
     Route::group(['prefix' => 'manager', 'as' => 'manager.'], function () {
         Route::post('assign', ['as' => 'assign', 'uses' => 'ManagerController@assign']);

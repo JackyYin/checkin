@@ -36,7 +36,7 @@ class CheckController extends Controller
         5 => 'online',
         6 => 'late'
     ];
-    public function export_statistic_page(Request $request)
+    public function export_statistic(Request $request)
     {
         switch ($request->input('action_type')) {
 
@@ -190,7 +190,7 @@ class CheckController extends Controller
         return $rows;
     }
 
-    public function export_check_page(Request $request)
+    public function export_check(Request $request)
     {
         switch ($request->input('action_type')) {
 

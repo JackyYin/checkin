@@ -4,7 +4,7 @@
     {{ Form::open([
         'id'     => 'STExportForm',
         'method' => 'get',
-        'url'    => route('admin.check.export_statistic_page')
+        'url'    => route('admin.check.export_statistic')
     ]) }}
 
     <div class="form-group">

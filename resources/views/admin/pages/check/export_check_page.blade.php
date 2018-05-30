@@ -4,7 +4,7 @@
     {{ Form::open([
         'id'  => 'CheckExportForm',
         'method' => 'get',
-        'url' => route('admin.check.export_check_page')
+        'url' => route('admin.check.export_check')
     ]) }}
 
     <div class="form-group">
