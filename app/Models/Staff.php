@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\Enums;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Staff extends Model
 {
@@ -62,36 +63,19 @@ class Staff extends Model
         return $this->hasMany(Check::class,'staff_id','id');
     }
 
-    public function get_check_today()
-    {
-        return $this->get_check_list->where('checkin_at', '>=', date('Y-m-d').' 00:00:00')->first();
-    }
-
-    public function checked_in_today()
-    {
-        $this->get_check_today() ? $checked = true : $checked = false;
-        return $checked;
-    }
-
-    public function checked_out_today()
-    {
-        $list = $this->get_check_list
-            ->where('checkin_at', '>=', date('Y-m-d').' 00:00:00')
-            ->where('checkout_at', '>=', date('Y-m-d').' 00:00:00')->first();
-        $list ? $checked = true : $checked = false;
-        return $checked;
-    }
-
     public function count_checkin_today()
     {
-        return $this->get_check_list->where('checkin_at', '>=', date('Y-m-d').' 00:00:00')->count();
+        return $this->get_check_list
+            ->where('type', Check::TYPE_NORMAL)
+            ->where('checkin_at', '>=', Carbon::today())->count();
     }
 
     public function count_checkout_today()
     {
         return $this->get_check_list
-            ->where('checkin_at', '>=', date('Y-m-d').' 00:00:00')
-            ->where('checkout_at', '>=', date('Y-m-d').' 00:00:00')
+            ->where('type', Check::TYPE_NORMAL)
+            ->where('checkin_at', '>=', Carbon::today())
+            ->where('checkout_at', '>=', Carbon::today())
             ->count();
     }
 

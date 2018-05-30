@@ -134,7 +134,7 @@ class CheckController extends Controller
 
             case 1:
                 $check = $staff->get_check_list
-                    ->where('checkin_at', '>=', date('Y-m-d').' 00:00:00')
+                    ->where('checkin_at', '>=', Carbon::today())
                     ->where('checkout_at', null)
                     ->first();
                 $check->update([
@@ -144,7 +144,7 @@ class CheckController extends Controller
                 $datetime2 = date_create($check->checkout_at);
                 $interval  = date_diff($datetime1, $datetime2);
                 $response = $check->checkout_at." 打卡下班成功！\n"
-                    ."已上班時數： ".$interval->format('%H:%I');
+                    ."已上班時數： ".$interval->format('%H')." 小時 ".$interval->format('%i')." 分鐘";
                 break;
 
             default:
