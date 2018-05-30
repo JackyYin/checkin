@@ -6,7 +6,7 @@
         <link href="{!! asset('css/bootstrap-multiselect.css') !!}" media="all" rel="stylesheet" type="text/css" />
     </head>
     <body>
-            @if ($admin || $manager)
+            @if ($as_admin || $as_manager)
                 @include('admin.layouts.header')
             @endif
         <div class="container" style="padding-top: 20px">

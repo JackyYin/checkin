@@ -16,8 +16,8 @@ class AdminViewServiceProvider extends ServiceProvider
     public function boot()
     {
         View::composer('admin.pages.*', function ($view) {
-            $view->with('admin', Auth::guard('admin')->user());
-            $view->with('manager', Auth::guard('manager')->user());
+            $view->with('as_admin', Auth::guard('admin')->check());
+            $view->with('as_manager', Auth::guard('manager')->check());
         });
     }
 
