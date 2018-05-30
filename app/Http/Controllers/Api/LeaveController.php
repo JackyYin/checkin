@@ -19,6 +19,7 @@ class LeaveController extends Controller
         3 => "公假",
         4 => '病假',
         5 => 'Online',
+        6 => '晚到',
     ];
     /**
      *
@@ -236,7 +237,7 @@ class LeaveController extends Controller
             'staff_id'    => $staff->id,
             'checkin_at'  => $request->input('start_time').":00",
             'checkout_at' => $request->input('end_time').":00",
-            'type'        => Check::TYPE_ANNUAL_LEAVE,
+            'type'        => Check::TYPE_LATE,
         ]);
 
         $reason = LeaveReason::create([

@@ -47,6 +47,7 @@
               <th scope="col">公假時數</th>
               <th scope="col">病假時數</th>
               <th scope="col">Online時數</th>
+              <th scope="col">晚到時數</th>
             </tr>
           </thead>
           <tbody>
@@ -59,6 +60,7 @@
               <td>{{$row['official_leave_time']}}</td>
               <td>{{$row['sick_leave_time']}}</td>
               <td>{{$row['online_time']}}</td>
+              <td>{{$row['late_time']}}</td>
             </tr>
           @endforeach
           </tbody>
