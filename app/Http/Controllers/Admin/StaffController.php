@@ -13,7 +13,8 @@ class StaffController extends Controller
 {
     public function index(Request $request)
     {
-        $staffs = Staff::whereHas('profile', function ($query) {
+        $staffs = Staff::with(['admin', 'manager'])
+        ->whereHas('profile', function ($query) {
             $query->where('identity', '!=', 2);
         })
         ->where(function ($query) use ($request) {
