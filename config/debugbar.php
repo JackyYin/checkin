@@ -16,7 +16,7 @@ return [
 
     'enabled' => env('DEBUGBAR_ENABLED', null),
     'except' => [
-        //
+        'api/*'
     ],
 
     /*
@@ -175,7 +175,7 @@ return [
      |
      */
 
-    'inject' => false,
+    'inject' => true,
 
     /*
      |--------------------------------------------------------------------------
