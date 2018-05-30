@@ -314,7 +314,8 @@ class CheckController extends Controller
             WHERE c.staff_id IN (".implode(',', $id).")"
             ." AND checkin_at >= '".$from." 00:00:00'"
             ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'"
-            ." GROUP BY c.staff_id\n";
+            ." GROUP BY c.staff_id"
+            ." ORDER BY late_count DESC";
 
         $rows = DB::select($mysql);
         return $rows;
