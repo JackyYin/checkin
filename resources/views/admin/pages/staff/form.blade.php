@@ -108,7 +108,7 @@
     </div>
     <div class="form-group">
         {{ Form::label('experience', '經歷') }}
-        {{ Form::text('experience', isset($staff->profile) ? $staff->profile->experience : null, ['class' => 'form-control']) }}
+        {{ Form::textarea('experience', isset($staff->profile) ? $staff->profile->experience : null, ['class' => 'form-control']) }}
     </div>
     <div class="form-group">
         {{ Form::label('group', '組別') }}
