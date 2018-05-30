@@ -10,6 +10,9 @@
                 <a class="nav-link" href={{ route('admin.staff.index') }}>員工總覽</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href={{ route('admin.staff.resignedIndex') }}>離職員工管理</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href={{ route('admin.staff.create') }}>手動輸入資料</a>
             </li>
             <li class="nav-item">

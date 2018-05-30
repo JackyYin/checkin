@@ -168,7 +168,7 @@ class StaffController extends Controller
         return redirect()->route('admin.staff.index')->with('success', '員工編輯成功！');
     }
 
-    public function assignSubscription (Request $request)
+    public function assignSubscription(Request $request)
     {
         $messages = [
             'staff_id.required' => '請輸入姓名',
@@ -198,7 +198,7 @@ class StaffController extends Controller
         return response("訂閱成功", 200);
     }
 
-    private function getFormOptions ()
+    private function getFormOptions()
     {
         $options['identity'] = array(
             Profile::ID_FULL_TIME => '全職',
@@ -207,5 +207,39 @@ class StaffController extends Controller
         );
 
         return $options;
+    }
+
+    public function resignedIndex(Request $request)
+    {
+        $staffs = Staff::whereHas('profile', function ($query) {
+            $query->where('identity', 2);
+        })
+        ->where(function ($query) use ($request) {
+            $keyword = $request->input('keyword');
+
+            if (!empty($keyword)) {
+                $search = "%{$keyword}%";
+
+                $query->where("name", "LIKE", $search)
+                    ->orWhere("email", "LIKE", $search);
+            }
+
+        })
+        ->get()
+        ->sort(function ($a, $b) {
+            if (!$a->staff_code) {
+                return $b->staff_code ? 1  : 0;
+            }
+            if (!$b->staff_code) {
+                return -1;
+            }
+            if ($a->staff_code == $b->staff_code) {
+                return 0;
+            }
+
+            return $a->staff_code < $b->staff_code ? -1 : 1;
+        });
+
+        return view('admin.pages.staff.resigned_index', compact('staffs'));
     }
 }
