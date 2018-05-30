@@ -69,7 +69,6 @@ class CheckController extends Controller
             Check::TYPE_OFFICIAL_LEAVE => '公假',
             Check::TYPE_SICK_LEAVE     => '病假',
             Check::TYPE_ONLINE         => 'Online',
-            Check::TYPE_LATE           => '晚到',
         );
 
         return view('admin.pages.check.export_page', compact('options', 'rows'));
@@ -83,8 +82,7 @@ class CheckController extends Controller
             .", SUM(IF(c.type = 2, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as annual_leave_time"
             .", SUM(IF(c.type = 3, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as official_leave_time"
             .", SUM(IF(c.type = 4, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as sick_leave_time"
-            .", SUM(IF(c.type = 5, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as online_time"
-            .", SUM(IF(c.type = 6, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as late_time";
+            .", SUM(IF(c.type = 5, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as online_time";
         $mysql =
             $mysql." FROM checks c left join  staffs s on s.id = c.staff_id
             WHERE c.staff_id IN (".implode(',', $id).")"
@@ -104,7 +102,7 @@ class CheckController extends Controller
 
         $rows = DB::select($mysql);
         $rows = array_where($rows, function($value,$key) {
-            return $value['personal_leave_time'] + $value['annual_leave_time'] + $value['official_leave_time'] + $value['sick_leave_time'] + $value['online_time'] + $value['late_time'] != 0;
+            return $value['personal_leave_time'] + $value['annual_leave_time'] + $value['official_leave_time'] + $value['sick_leave_time'] + $value['online_time'] != 0;
         });
         return $rows;
     }
@@ -187,7 +185,7 @@ class CheckController extends Controller
 
         $rows = DB::select($mysql);
         $rows = array_where($rows, function($value,$key) {
-            return $value['personal_leave_time'] + $value['annual_leave_time'] + $value['official_leave_time'] + $value['sick_leave_time'] + $value['online_time'] + $value['late_time'] != 0;
+            return $value['personal_leave_time'] + $value['annual_leave_time'] + $value['official_leave_time'] + $value['sick_leave_time'] + $value['online_time'] != 0;
         });
         return $rows;
     }
