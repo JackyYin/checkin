@@ -15,7 +15,7 @@ class StaffController extends Controller
     {
         $staffs = Staff::with(['admin', 'manager'])
         ->whereHas('profile', function ($query) {
-            $query->where('identity', '!=', 2);
+            $query->where('identity', '!=', Profile::ID_RESIGNED);
         })
         ->where(function ($query) use ($request) {
             $keyword = $request->input('keyword');
@@ -212,7 +212,7 @@ class StaffController extends Controller
     public function resignedIndex(Request $request)
     {
         $staffs = Staff::whereHas('profile', function ($query) {
-            $query->where('identity', 2);
+            $query->where('identity', Profile::ID_RESIGNED);
         })
         ->where(function ($query) use ($request) {
             $keyword = $request->input('keyword');
