@@ -7,6 +7,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Carbon\Carbon;
 use App\Models\Check;
 use App\Models\Staff;
+use App\Models\Profile;
 
 class Kernel extends ConsoleKernel
 {
@@ -60,7 +61,10 @@ class Kernel extends ConsoleKernel
 
     private function autoCheck()
     {
-        $staffs = Staff::all();
+        $staffs = Staff::with(['get_check_list'])
+            ->whereHas('profile', function ($query) {
+                $query->where('identity', Profile::ID_FULL_TIME);
+            })->get();
         //random checkin time
         $checkin_start = strtotime(Carbon::today()->addHours(9));
         $checkin_end   = strtotime(Carbon::today()->addHours(9)->addMinutes(30));
