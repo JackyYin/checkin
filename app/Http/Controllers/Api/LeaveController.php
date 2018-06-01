@@ -63,14 +63,38 @@ class LeaveController extends Controller
         }
 
         return response()->json([
-            Check::TYPE_PERSONAL_LEAVE  => $this->CHECK_TYPE[Check::TYPE_PERSONAL_LEAVE],
-            Check::TYPE_ANNUAL_LEAVE    => $this->CHECK_TYPE[Check::TYPE_ANNUAL_LEAVE], 
-            Check::TYPE_OFFICIAL_LEAVE  => $this->CHECK_TYPE[Check::TYPE_OFFICIAL_LEAVE],
-            Check::TYPE_SICK_LEAVE      => $this->CHECK_TYPE[Check::TYPE_SICK_LEAVE],
-            Check::TYPE_MOURNING_LEAVE  => $this->CHECK_TYPE[Check::TYPE_MOURNING_LEAVE],
-            Check::TYPE_MATERNITY_LEAVE => $this->CHECK_TYPE[Check::TYPE_MATERNITY_LEAVE],
-            Check::TYPE_PATERNITY_LEAVE => $this->CHECK_TYPE[Check::TYPE_PATERNITY_LEAVE],
-            Check::TYPE_MARRIAGE_LEAVE  => $this->CHECK_TYPE[Check::TYPE_MARRIAGE_LEAVE],
+            array(
+                'id'   => Check::TYPE_ANNUAL_LEAVE, 
+                'name' => $this->CHECK_TYPE[Check::TYPE_ANNUAL_LEAVE],
+            ),
+            array(
+                'id'   => Check::TYPE_PERSONAL_LEAVE, 
+                'name' => $this->CHECK_TYPE[Check::TYPE_PERSONAL_LEAVE],
+            ),
+            array(
+                'id'   => Check::TYPE_OFFICIAL_LEAVE, 
+                'name' => $this->CHECK_TYPE[Check::TYPE_OFFICIAL_LEAVE],
+            ),
+            array(
+                'id'   => Check::TYPE_MOURNING_LEAVE, 
+                'name' => $this->CHECK_TYPE[Check::TYPE_MOURNING_LEAVE],
+            ),
+            array(
+                'id'   => Check::TYPE_MARRIAGE_LEAVE, 
+                'name' => $this->CHECK_TYPE[Check::TYPE_MARRIAGE_LEAVE],
+            ),
+            array(
+                'id'   => Check::TYPE_MATERNITY_LEAVE, 
+                'name' => $this->CHECK_TYPE[Check::TYPE_MATERNITY_LEAVE],
+            ),
+            array(
+                'id'   => Check::TYPE_PATERNITY_LEAVE, 
+                'name' => $this->CHECK_TYPE[Check::TYPE_PATERNITY_LEAVE],
+            ),
+            array(
+                'id'   => Check::TYPE_SICK_LEAVE, 
+                'name' => $this->CHECK_TYPE[Check::TYPE_SICK_LEAVE],
+            ),
         ], 200);
     }
 
