@@ -76,6 +76,10 @@ class LeaveController extends Controller
                 'name' => $this->CHECK_TYPE[Check::TYPE_OFFICIAL_LEAVE],
             ),
             array(
+                'id'   => Check::TYPE_SICK_LEAVE, 
+                'name' => $this->CHECK_TYPE[Check::TYPE_SICK_LEAVE],
+            ),
+            array(
                 'id'   => Check::TYPE_MOURNING_LEAVE, 
                 'name' => $this->CHECK_TYPE[Check::TYPE_MOURNING_LEAVE],
             ),
@@ -90,10 +94,6 @@ class LeaveController extends Controller
             array(
                 'id'   => Check::TYPE_PATERNITY_LEAVE, 
                 'name' => $this->CHECK_TYPE[Check::TYPE_PATERNITY_LEAVE],
-            ),
-            array(
-                'id'   => Check::TYPE_SICK_LEAVE, 
-                'name' => $this->CHECK_TYPE[Check::TYPE_SICK_LEAVE],
             ),
         ], 200);
     }
