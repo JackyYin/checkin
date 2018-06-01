@@ -20,21 +20,29 @@ class CheckController extends Controller
     ];
 
     private $CHECK_TYPE = [
-        1 => "事假",
-        2 => "特休",
-        3 => "公假",
-        4 => '病假',
-        5 => 'Online',
-        6 => '晚到',
+        1  => "事假",
+        2  => "特休",
+        3  => "公假",
+        4  => '病假',
+        5  => 'Online',
+        6  => '晚到',
+        7  => '喪假',
+        8  => '產假',
+        9  => '陪產假',
+        10 => '婚假',
     ];
 
     private $CHECK_ENG_TYPE = [
-        1 => "personal_leave",
-        2 => "annual_leave",
-        3 => "official_leave",
-        4 => 'sick_leave',
-        5 => 'online',
-        6 => 'late'
+        1  => "personal_leave",
+        2  => "annual_leave",
+        3  => "official_leave",
+        4  => 'sick_leave',
+        5  => 'online',
+        6  => 'late',
+        7  => 'mourning_leave',
+        8  => 'maternity_leave',
+        9  => 'paternity_leave',
+        10 => 'marriage_leave',
     ];
     public function export_statistic(Request $request)
     {
@@ -64,11 +72,15 @@ class CheckController extends Controller
             2   => "小於等於",
         );
         $options['type'] = array(
-            Check::TYPE_PERSONAL_LEAVE => '事假',
-            Check::TYPE_ANNUAL_LEAVE   => '特休',
-            Check::TYPE_OFFICIAL_LEAVE => '公假',
-            Check::TYPE_SICK_LEAVE     => '病假',
-            Check::TYPE_ONLINE         => 'Online',
+            Check::TYPE_PERSONAL_LEAVE  => $this->CHECK_TYPE[Check::TYPE_PERSONAL_LEAVE],
+            Check::TYPE_ANNUAL_LEAVE    => $this->CHECK_TYPE[Check::TYPE_ANNUAL_LEAVE],
+            Check::TYPE_OFFICIAL_LEAVE  => $this->CHECK_TYPE[Check::TYPE_OFFICIAL_LEAVE],
+            Check::TYPE_SICK_LEAVE      => $this->CHECK_TYPE[Check::TYPE_SICK_LEAVE],
+            Check::TYPE_ONLINE          => $this->CHECK_TYPE[Check::TYPE_ONLINE],
+            Check::TYPE_MOURNING_LEAVE  => $this->CHECK_TYPE[Check::TYPE_MOURNING_LEAVE],
+            Check::TYPE_MATERNITY_LEAVE => $this->CHECK_TYPE[Check::TYPE_MATERNITY_LEAVE],
+            Check::TYPE_PATERNITY_LEAVE => $this->CHECK_TYPE[Check::TYPE_PATERNITY_LEAVE],
+            Check::TYPE_MARRIAGE_LEAVE  => $this->CHECK_TYPE[Check::TYPE_MARRIAGE_LEAVE],
         );
 
         return view('admin.pages.check.export_page', compact('options', 'rows'));
@@ -82,7 +94,11 @@ class CheckController extends Controller
             .", SUM(IF(c.type = 2, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as annual_leave_time"
             .", SUM(IF(c.type = 3, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as official_leave_time"
             .", SUM(IF(c.type = 4, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as sick_leave_time"
-            .", SUM(IF(c.type = 5, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as online_time";
+            .", SUM(IF(c.type = 5, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as online_time"
+            .", SUM(IF(c.type = 7, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as mourning_time"
+            .", SUM(IF(c.type = 8, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as maternity_time"
+            .", SUM(IF(c.type = 9, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as paternity_time"
+            .", SUM(IF(c.type = 10, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as marriage_time";
         $mysql =
             $mysql." FROM checks c left join  staffs s on s.id = c.staff_id
             WHERE c.staff_id IN (".implode(',', $id).")"
@@ -102,7 +118,7 @@ class CheckController extends Controller
 
         $rows = DB::select($mysql);
         $rows = array_where($rows, function($value,$key) {
-            return $value['personal_leave_time'] + $value['annual_leave_time'] + $value['official_leave_time'] + $value['sick_leave_time'] + $value['online_time'] != 0;
+            return array_sum(array_except($value, ['date', 'name'])) != 0;
         });
         return $rows;
     }
@@ -185,7 +201,7 @@ class CheckController extends Controller
 
         $rows = DB::select($mysql);
         $rows = array_where($rows, function($value,$key) {
-            return $value['personal_leave_time'] + $value['annual_leave_time'] + $value['official_leave_time'] + $value['sick_leave_time'] + $value['online_time'] != 0;
+            return array_sum(array_except($value, ['date', 'name'])) != 0;
         });
         return $rows;
     }

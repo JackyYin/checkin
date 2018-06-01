@@ -14,12 +14,16 @@ use App\Models\LeaveReason;
 class LeaveController extends Controller
 {
     private $CHECK_TYPE = [
-        1 => "事假",
-        2 => "特休",
-        3 => "出差",
-        4 => '病假',
-        5 => 'Online',
-        6 => '晚到',
+        1  => "事假",
+        2  => "特休",
+        3  => "出差",
+        4  => '病假',
+        5  => 'Online',
+        6  => '晚到',
+        7  => '喪假',
+        8  => '產假',
+        9  => '陪產假',
+        10 => '婚假',
     ];
     /**
      *
@@ -59,10 +63,14 @@ class LeaveController extends Controller
         }
 
         return response()->json([
-            Check::TYPE_PERSONAL_LEAVE  => '事假',
-            Check::TYPE_ANNUAL_LEAVE    => '特休',
-            Check::TYPE_OFFICIAL_LEAVE  => '出差',
-            Check::TYPE_SICK_LEAVE      => '病假',
+            Check::TYPE_PERSONAL_LEAVE  => $this->CHECK_TYPE[Check::TYPE_PERSONAL_LEAVE],
+            Check::TYPE_ANNUAL_LEAVE    => $this->CHECK_TYPE[Check::TYPE_ANNUAL_LEAVE], 
+            Check::TYPE_OFFICIAL_LEAVE  => $this->CHECK_TYPE[Check::TYPE_OFFICIAL_LEAVE],
+            Check::TYPE_SICK_LEAVE      => $this->CHECK_TYPE[Check::TYPE_SICK_LEAVE],
+            Check::TYPE_MOURNING_LEAVE  => $this->CHECK_TYPE[Check::TYPE_MOURNING_LEAVE],
+            Check::TYPE_MATERNITY_LEAVE => $this->CHECK_TYPE[Check::TYPE_MATERNITY_LEAVE],
+            Check::TYPE_PATERNITY_LEAVE => $this->CHECK_TYPE[Check::TYPE_PATERNITY_LEAVE],
+            Check::TYPE_MARRIAGE_LEAVE  => $this->CHECK_TYPE[Check::TYPE_MARRIAGE_LEAVE],
         ], 200);
     }
 
