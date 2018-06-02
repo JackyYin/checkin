@@ -6,7 +6,6 @@
         'method' => 'get',
         'url'    => route('admin.check.export_statistic')
     ]) }}
-
     <div class="form-group">
         {{ Form::label('id[]', '姓名') }}
         {{ Form::select('id[]', $options['name'], null, ['class' => 'form-control','multiple', 'id' => 'nameSelect']) }}
@@ -37,20 +36,20 @@
     {{ Form::close() }}
 
     <div class="table-responsive">
-        <table class="table table-bordered">
+        <table id="STexportTable" class="table table-bordered">
           <thead>
             <tr>
               <th scope="col">日期</th>
               <th scope="col">姓名</th>
-              <th scope="col">事假時數</th>
-              <th scope="col">特休時數</th>
-              <th scope="col">公假時數</th>
-              <th scope="col">病假時數</th>
-              <th scope="col">Online時數</th>
-              <th scope="col">喪假時數</th>
-              <th scope="col">產假時數</th>
-              <th scope="col">陪產假時數</th>
-              <th scope="col">婚假時數</th>
+              <th class="type-1" scope="col">事假時數</th>
+              <th class="type-2" scope="col">特休時數</th>
+              <th class="type-3" scope="col">公假時數</th>
+              <th class="type-4" scope="col">病假時數</th>
+              <th class="type-5" scope="col">Online時數</th>
+              <th class="type-7" scope="col">喪假時數</th>
+              <th class="type-8" scope="col">產假時數</th>
+              <th class="type-9" scope="col">陪產假時數</th>
+              <th class="type-10" scope="col">婚假時數</th>
             </tr>
           </thead>
           <tbody>
@@ -58,15 +57,15 @@
             <tr>
               <td>{{$row['date']}}</td>
               <td>{{$row['name']}}</td>
-              <td>{{$row['personal_leave_time']}}</td>
-              <td>{{$row['annual_leave_time']}}</td>
-              <td>{{$row['official_leave_time']}}</td>
-              <td>{{$row['sick_leave_time']}}</td>
-              <td>{{$row['online_time']}}</td>
-              <td>{{$row['mourning_time']}}</td>
-              <td>{{$row['maternity_time']}}</td>
-              <td>{{$row['paternity_time']}}</td>
-              <td>{{$row['marriage_time']}}</td>
+              <td class="type-1">{{$row['personal_leave_time']}}</td>
+              <td class="type-2">{{$row['annual_leave_time']}}</td>
+              <td class="type-3">{{$row['official_leave_time']}}</td>
+              <td class="type-4">{{$row['sick_leave_time']}}</td>
+              <td class="type-5">{{$row['online_time']}}</td>
+              <td class="type-7">{{$row['mourning_time']}}</td>
+              <td class="type-8">{{$row['maternity_time']}}</td>
+              <td class="type-9">{{$row['paternity_time']}}</td>
+              <td class="type-10">{{$row['marriage_time']}}</td>
             </tr>
           @endforeach
           </tbody>
@@ -76,14 +75,14 @@
 @section('scripts')
     <script>
         $(document).ready( function () {
-            var statistic_export_form = $('#STExportForm');
-            statistic_export_form.find('input[name="date-range"]').daterangepicker({
+            var form = $('#STExportForm');
+            form.find('input[name="date-range"]').daterangepicker({
                 locale: {
                     format: 'YYYY-MM-DD'
                 }
             });
 
-            var validator = statistic_export_form.validate({
+            var validator = form.validate({
                 errorClass: "alert alert-danger",
                 rules: {
                     "id[]":   { required: true},
@@ -96,7 +95,7 @@
             });
             validator.showErrors();
 
-            statistic_export_form.find('#nameSelect').multiselect({
+            form.find('#nameSelect').multiselect({
                 buttonClass: 'btn btn-outline-secondary',
                 buttonText: function(options, select) {
                     if (options.length === 0) {
@@ -123,7 +122,7 @@
                 maxHeight: 400,
             });
 
-            statistic_export_form.find('#typeSelect').multiselect({
+            form.find('#typeSelect').multiselect({
                 buttonClass: 'btn btn-outline-secondary',
                 buttonText: function(options, select) {
                     if (options.length === 0) {
@@ -149,6 +148,21 @@
                 selectAllText: '全選',
                 maxHeight: 400,
             });
+
+            //根據所選假別調整table
+            var table = $('#STexportTable');
+            var all_types = {!! json_encode(array_divide($options['type'])[0]) !!}
+            var visible_types = {!! json_encode(request()->query('type')) !!}.map(function (item) { return parseInt(item,10); }) ;
+            console.log('all_types',all_types);
+            console.log('visible_types',visible_types);
+            for (i = 0; i< all_types.length; i++) {
+                if (visible_types.indexOf(all_types[i]) <= -1) {
+                    var head = table.find('thead').find('.type-' + all_types[i]);
+                    var body = table.find('tbody').find('.type-' + all_types[i]);
+                    head.css('display','none');
+                    body.css('display','none');
+                }
+            }
         });
     </script>
 @endsection
