@@ -57,15 +57,33 @@
             <tr>
               <td>{{$row['date']}}</td>
               <td>{{$row['name']}}</td>
-              <td class="type-1">{{$row['personal_leave_time']}}</td>
-              <td class="type-2">{{$row['annual_leave_time']}}</td>
-              <td class="type-3">{{$row['official_leave_time']}}</td>
-              <td class="type-4">{{$row['sick_leave_time']}}</td>
-              <td class="type-5">{{$row['online_time']}}</td>
-              <td class="type-7">{{$row['mourning_time']}}</td>
-              <td class="type-8">{{$row['maternity_time']}}</td>
-              <td class="type-9">{{$row['paternity_time']}}</td>
-              <td class="type-10">{{$row['marriage_time']}}</td>
+              <td class="type-1">
+              {{ isset($row['personal_leave_time']) ? $row['personal_leave_time'] : "" }}
+              </td>
+              <td class="type-2">
+              {{ isset($row['annual_leave_time']) ? $row['annual_leave_time'] : "" }}
+              </td>
+              <td class="type-3">
+              {{ isset($row['official_leave_time']) ? $row['official_leave_time'] : "" }}
+              </td>
+              <td class="type-4">
+              {{ isset($row['sick_leave_time']) ? $row['sick_leave_time'] : "" }}
+              </td>
+              <td class="type-5">
+              {{ isset($row['online_time']) ? $row['online_time'] : "" }}
+              </td>
+              <td class="type-7">
+              {{ isset($row['mourning_leave_time']) ? $row['mourning_leave_time'] : "" }}
+              </td>
+              <td class="type-8">
+              {{ isset($row['maternity_leave_time']) ? $row['maternity_leave_time'] : "" }}
+              </td>
+              <td class="type-9">
+              {{ isset($row['paternity_leave_time']) ? $row['paternity_leave_time'] : "" }}
+              </td>
+              <td class="type-10">
+              {{ isset($row['marriage_leave_time']) ? $row['marriage_leave_time'] : "" }}
+              </td>
             </tr>
           @endforeach
           </tbody>

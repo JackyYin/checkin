@@ -53,7 +53,7 @@ class CheckController extends Controller
                     $from = explode(" - ", $request->input('date-range'))[0];
                     $to =   explode(" - ", $request->input('date-range'))[1];
 
-                    $rows  = $this->getStatisticRows($from , $to, $request->input('id'), $request->only(['has', 'op', 'value']));
+                    $rows  = $this->getStatisticRows($from , $to, $request->input('id'), $request->only(['has', 'op', 'value', 'type']));
                 }
                 break;
 
@@ -84,43 +84,6 @@ class CheckController extends Controller
         );
 
         return view('admin.pages.check.export_page', compact('options', 'rows'));
-    }
-
-    private function getStatisticRows($from, $to, $id, $conditions)
-    {
-        $mysql =
-            "SELECT DATE(c.checkin_at) as date, s.name as name"
-            .", SUM(IF(c.type = 1, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as personal_leave_time"
-            .", SUM(IF(c.type = 2, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as annual_leave_time"
-            .", SUM(IF(c.type = 3, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as official_leave_time"
-            .", SUM(IF(c.type = 4, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as sick_leave_time"
-            .", SUM(IF(c.type = 5, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as online_time"
-            .", SUM(IF(c.type = 7, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as mourning_time"
-            .", SUM(IF(c.type = 8, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as maternity_time"
-            .", SUM(IF(c.type = 9, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as paternity_time"
-            .", SUM(IF(c.type = 10, TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as marriage_time";
-        $mysql =
-            $mysql." FROM checks c left join  staffs s on s.id = c.staff_id
-            WHERE c.staff_id IN (".implode(',', $id).")"
-            ." AND checkin_at >= '".$from." 00:00:00'"
-            ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'"
-            ." GROUP BY c.staff_id, DATE(c.checkin_at)\n";
-
-        if (array_key_exists('has', $conditions) && $conditions['has']['work_time']) {
-            $mysql =
-                $mysql." HAVING SUM(TIMESTAMPDIFF(HOUR,checkin_at,checkout_at)) ".$this->OPERATOR[$conditions['op']['work_time']]." ".$conditions['value']['work_time']."\n".
-                " ORDER BY DATE(c.checkin_at)";
-        }
-        else {
-            $mysql =
-                $mysql." ORDER BY DATE(c.checkin_at)";
-        }
-
-        $rows = DB::select($mysql);
-        $rows = array_where($rows, function($value,$key) {
-            return array_sum(array_except($value, ['date', 'name'])) != 0;
-        });
-        return $rows;
     }
 
     private function exportST(Request $request)
@@ -155,7 +118,7 @@ class CheckController extends Controller
             $columns[] = $this->CHECK_TYPE[$type]."時數";
         }
 
-        $all_rows  = $this->getExportStatisticRows($from , $to, $request->input('id'), $request->only(['has', 'op', 'value', 'type']));
+        $all_rows  = $this->getStatisticRows($from , $to, $request->input('id'), $request->only(['has', 'op', 'value', 'type']));
         $callback = function() use ($columns, $all_rows)
         {
             $file = fopen('php://output', 'w');
@@ -172,7 +135,7 @@ class CheckController extends Controller
         return response()->stream($callback, 200, $headers); 
     }
 
-    private function getExportStatisticRows($from, $to, $id, $conditions)
+    private function getStatisticRows($from, $to, $id, $conditions)
     {
         $mysql =
             "SELECT DATE(c.checkin_at) as date, s.name";
