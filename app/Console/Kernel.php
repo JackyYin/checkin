@@ -61,6 +61,8 @@ class Kernel extends ConsoleKernel
 
     private function autoCheck()
     {
+        //$fakeTime = Carbon::create(2018,6,1,8);
+        //Carbon::setTestNow($fakeTime);
         $staffs = Staff::with(['get_check_list'])
             ->whereHas('profile', function ($query) {
                 $query->where('identity', Profile::ID_FULL_TIME);
@@ -115,7 +117,7 @@ class Kernel extends ConsoleKernel
                             if ($noon_start <= $leave_to && $leave_to <= $noon_end) {
                                 Check::create([
                                     'staff_id'    => $staff->id,
-                                    'checkin_at'  => $noon_end_ramdom_time,
+                                    'checkin_at'  => $noon_end_random_time,
                                     'checkout_at' => $checkout_random_time,
                                     'type'        => 0,
                                 ]);
