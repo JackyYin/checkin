@@ -113,7 +113,7 @@ class CheckController extends Controller
         $to   = explode(" - ", $request->input('date-range'))[1];
 
         //第一列
-        $columns = array("日期", "姓名");
+        $columns = array("姓名", "日期");
         foreach ($request->input('type') as $type) {
             $columns[] = $this->CHECK_TYPE[$type]."時數";
         }
@@ -138,28 +138,25 @@ class CheckController extends Controller
     private function getStatisticRows($from, $to, $id, $conditions)
     {
         $mysql =
-            "SELECT DATE(c.checkin_at) as date, s.name";
+            "SELECT name, DATE(checkin_at) as date";
 
         foreach ($conditions['type'] as $type) {
             $mysql =
-                $mysql.", SUM(IF(c.type = ".$type.", TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as ".$this->CHECK_ENG_TYPE[$type]."_time";
+                $mysql.", SUM(IF(type = ".$type.", TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as ".$this->CHECK_ENG_TYPE[$type]."_time";
         }
 
         $mysql =
-            $mysql." FROM checks c left join  staffs s on s.id = c.staff_id
+            $mysql." FROM ( SELECT s.name, s.staff_code, c.checkin_at, c.checkout_at, c.type FROM checks AS c left join  staffs AS s on s.id = c.staff_id
             WHERE c.staff_id IN (".implode(',', $id).")"
             ." AND checkin_at >= '".$from." 00:00:00'"
             ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'"
-            ." GROUP BY c.staff_id, DATE(c.checkin_at)\n";
+            ." AND type != 0"
+            ." ORDER BY DATE(c.checkin_at), staff_code) AS temp"
+            ." GROUP BY staff_code,date";
 
         if (array_key_exists('has', $conditions) && $conditions['has']['work_time']) {
             $mysql =
-                $mysql." HAVING SUM(TIMESTAMPDIFF(HOUR,checkin_at,checkout_at)) ".$this->OPERATOR[$conditions['op']['work_time']]." ".$conditions['value']['work_time']."\n".
-                " ORDER BY DATE(c.checkin_at)";
-        }
-        else {
-            $mysql =
-                $mysql." ORDER BY DATE(c.checkin_at)";
+                $mysql." HAVING SUM(TIMESTAMPDIFF(HOUR,checkin_at,checkout_at)) ".$this->OPERATOR[$conditions['op']['work_time']]." ".$conditions['value']['work_time']."\n";
         }
 
         $rows = DB::select($mysql);

@@ -39,8 +39,8 @@
         <table id="STexportTable" class="table table-bordered">
           <thead>
             <tr>
-              <th scope="col">日期</th>
               <th scope="col">姓名</th>
+              <th scope="col">日期</th>
               <th class="type-1" scope="col">事假時數</th>
               <th class="type-2" scope="col">特休時數</th>
               <th class="type-3" scope="col">公假時數</th>
@@ -55,8 +55,8 @@
           <tbody>
           @foreach ($rows as $row)
             <tr>
-              <td>{{$row['date']}}</td>
               <td>{{$row['name']}}</td>
+              <td>{{$row['date']}}</td>
               <td class="type-1">
               {{ isset($row['personal_leave_time']) ? $row['personal_leave_time'] : "" }}
               </td>
