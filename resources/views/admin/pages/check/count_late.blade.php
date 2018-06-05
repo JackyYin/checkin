@@ -41,14 +41,14 @@
 @section('scripts')
     <script>
         $(document).ready( function () {
-            var form = $('#CountLateForm');
-            form.find('input[name="date-range"]').daterangepicker({
+            var CountLateForm = $('#CountLateForm');
+            CountLateForm.find('input[name="date-range"]').daterangepicker({
                 locale: {
                     format: 'YYYY-MM-DD'
                 }
             });
 
-            var validator = form.validate({
+            var validator = CountLateForm.validate({
                 errorClass: "alert alert-danger",
                 rules: {
                     "id[]":   { required: true},
@@ -59,7 +59,7 @@
             });
             validator.showErrors();
 
-            form.find('#nameSelect').multiselect({
+            CountLateForm.find('#nameSelect').multiselect({
                 buttonClass: 'btn btn-outline-secondary',
                 buttonText: function(options, select) {
                     if (options.length === 0) {

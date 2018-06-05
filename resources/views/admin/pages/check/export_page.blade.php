@@ -93,14 +93,14 @@
 @section('scripts')
     <script>
         $(document).ready( function () {
-            var form = $('#STExportForm');
-            form.find('input[name="date-range"]').daterangepicker({
+            var STExportForm = $('#STExportForm');
+            STExportForm.find('input[name="date-range"]').daterangepicker({
                 locale: {
                     format: 'YYYY-MM-DD'
                 }
             });
 
-            var validator = form.validate({
+            var validator = STExportForm.validate({
                 errorClass: "alert alert-danger",
                 rules: {
                     "id[]":   { required: true},
@@ -113,7 +113,7 @@
             });
             validator.showErrors();
 
-            form.find('#nameSelect').multiselect({
+            STExportForm.find('#nameSelect').multiselect({
                 buttonClass: 'btn btn-outline-secondary',
                 buttonText: function(options, select) {
                     if (options.length === 0) {
@@ -140,7 +140,7 @@
                 maxHeight: 400,
             });
 
-            form.find('#typeSelect').multiselect({
+            STExportForm.find('#typeSelect').multiselect({
                 buttonClass: 'btn btn-outline-secondary',
                 buttonText: function(options, select) {
                     if (options.length === 0) {

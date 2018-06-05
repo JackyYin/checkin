@@ -46,14 +46,14 @@
 @section('scripts')
     <script>
         $(document).ready( function () {
-            var check_export_form = $('#CheckExportForm');
-            check_export_form.find('input[name="date-range"]').daterangepicker({
+            var CheckExportForm = $('#CheckExportForm');
+            CheckExportForm.find('input[name="date-range"]').daterangepicker({
                 locale: {
                     format: 'YYYY-MM-DD'
                 }
             });
 
-            var validator = check_export_form.validate({
+            var validator = CheckExportForm.validate({
                 errorClass: "alert alert-danger",
                 rules: {
                     "id[]":   { required: true},
@@ -64,7 +64,7 @@
             });
             validator.showErrors();
 
-            check_export_form.find('#nameSelect').multiselect({
+            CheckExportForm.find('#nameSelect').multiselect({
                 buttonClass: 'btn btn-outline-secondary',
                 buttonText: function(options, select) {
                     if (options.length === 0) {
