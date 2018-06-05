@@ -13,7 +13,7 @@ class StaffController extends Controller
 {
     public function index(Request $request)
     {
-        $staffs = Staff::with(['admin', 'manager'])
+        $staffs = Staff::with(['admin', 'manager', 'profile'])
         ->whereHas('profile', function ($query) {
             $query->where('identity', '!=', Profile::ID_RESIGNED);
         })
@@ -93,12 +93,13 @@ class StaffController extends Controller
             'name'       => $request->input('name'),
             'email'      => $request->input('email'),
             'staff_code' => $request->input('staff_code'),
+            'subscribed' => $request->input('subscribed'),
             'active'     => 0,
         ]);
 
-        $profile = Profile::create(array_merge($request->except('cancel_insurance_date'),['staff_id' => $new_staff->id]));
+        $profile = Profile::create(array_merge($request->except('cancel_insurance_date', 'subscribed'),['staff_id' => $new_staff->id]));
 
-        return redirect()->route('admin.staff.create')->with('success', '員工創建成功!'); 
+        return redirect()->route('admin.staff.index')->with('success', '員工創建成功!'); 
     }
 
     public function edit($staff_id)
@@ -156,8 +157,8 @@ class StaffController extends Controller
             return redirect()->route('admin.staff.edit', $staff_id)->withErrors($validator->errors()); 
         }
 
-        $staff->update($request->only(['name', 'email', 'staff_code']));
-        $staff->profile->update($request->all());
+        $staff->update($request->only(['name', 'email', 'staff_code', 'subscribed']));
+        $staff->profile->update($request->except(['subscribed']));
         if ($staff->admin) {
             $staff->admin->update($request->only(['name', 'email']));
         }
@@ -166,6 +167,12 @@ class StaffController extends Controller
         }
 
         return redirect()->route('admin.staff.index')->with('success', '員工編輯成功！');
+    }
+
+    public function show($staff_id)
+    {
+        $staff = Staff::find($staff_id);
+        return view('admin.pages.staff.show', compact('staff'));
     }
 
     public function assignSubscription(Request $request)
@@ -204,6 +211,10 @@ class StaffController extends Controller
             Profile::ID_FULL_TIME => '全職',
             Profile::ID_PART_TIME => '工讀',
             Profile::ID_RESIGNED  => '離職',
+        );
+        $options['subscribed'] = array(
+            STAFF::SUBSCRIBED     => '已訂閱',
+            STAFF::NOT_SUBSCRIBED => '未訂閱',
         );
 
         return $options;

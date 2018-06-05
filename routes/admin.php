@@ -18,8 +18,8 @@ Route::group(['namespace' => 'Auth'], function () {
 
 Route::group(['middleware' => ['auth.admin']], function () {
     Route::get('logout',  ['as' => 'logout', 'uses' => 'Auth\AuthController@logout']);
-    Route::resource('staff', 'StaffController', ['except' => ['show', 'destroy']]);
-    Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
+    Route::resource('staff', 'StaffController', ['except' => ['destroy']]);
+    Route::group(['prefix' => 'staff/other', 'as' => 'staff.'], function () {
         Route::get('import', ['as' => 'import', 'uses' => 'StaffController@import']);
         Route::post('assignSubscription', ['as' => 'assignSubscription', 'uses' => 'StaffController@assignSubscription']);
         Route::get('resignedIndex', ['as' => 'resignedIndex', 'uses' => 'StaffController@resignedIndex']);

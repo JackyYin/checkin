@@ -8,34 +8,31 @@
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">搜尋</button>
             </form>
             <a class="btn btn-outline-secondary" href="{{ route('admin.staff.index') }}" style="margin-left: 10px">返回</a>
+            <a class="btn btn-outline-primary ml-auto" href={{ route('admin.staff.create') }}>新增員工</a>
         </nav>
         <table class="table table-bordered">
           <thead>
             <tr>
+              <th scope="col">員工編號</th>
               <th scope="col">姓名</th>
               <th scope="col">email</th>
-              <th scope="col">員工編號</th>
-              <th scope="col">權限</th>
+              <th scope="col">手機號碼</th>
               <th scope="col">啟用狀態</th>
               <th scope="col">訂閱狀態</th>
+              @if ($as_admin)
               <th scope="col">動作</th>
+              @endif
             </tr>
           </thead>
           <tbody>
           @foreach ($staffs as $staff)
             <tr data-id="{{$staff->id}}">
-              <td>{{$staff->name}}</td>
-              <td>{{$staff->email}}</td>
-              <td>{{$staff->staff_code}}</td>
-              <td class="authority">
-                @if ($staff->admin)
-                    Admin
-                @elseif ($staff->manager)
-                    管理者
-                @else
-                    一般
-                @endif
+              <td>{{ $staff->staff_code }}</td>
+              <td>
+                <a href="{{ route('admin.staff.show', $staff->id) }}">{{ $staff->name }}</a>
               </td>
+              <td>{{ $staff->email }}</td>
+              <td>{{ $staff->profile->phone_number }}</td>
               <td>
                 {!! strtr($staff->active, [
                    '1' => '<span class="badge badge-success">已啟用</span>',
@@ -46,15 +43,13 @@
                    '1' => '<span class="badge badge-success">已訂閱</span>',
                    '0' => '<span class="badge badge-warning">未訂閱</span>']) !!}
               </td>
+              @if ($as_admin)
               <td>
-                <a class="btn btn-secondary" href="{{ route('admin.staff.edit', ['staff' => $staff->id]) }}">編輯</a>
-                @if ($as_admin && !$staff->admin && !$staff->manager)
-                  <a class="btn btn-secondary btn-assign-manager"  href="#">指派管理員</a>
-                @endif
-                @if (!$staff->subscribed)
-                    <a class="btn btn-secondary btn-assign-subscription" href="#">訂閱</a>
+                @if (!$staff->admin && !$staff->manager)
+                <a class="btn btn-secondary" id="js-assign-manager"  href="#">指派管理員</a>
                 @endif
               </td>
+              @endif
             </tr>
           @endforeach
           </tbody>
@@ -67,7 +62,7 @@
             var staff_index = $('#staffIndex');
 
             //指派管理員功能
-            var btn_assign_manager = staff_index.find('.btn-assign-manager');
+            var btn_assign_manager = staff_index.find('#js-assign-manager');
             btn_assign_manager.click(function () {
                 var assign_btn = $(this);
                 var staff_id = $(this).closest('tr').data('id');

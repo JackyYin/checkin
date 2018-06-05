@@ -44,6 +44,10 @@
         {{ Form::label('identity', '身份') }}
         {{ Form::select('identity', $options['identity'], isset($staff->profile) ? $staff->profile->identity : null, ['class' => 'form-control']) }}
     </div>
+    <div class="form-group">
+        {{ Form::label('subscribed', '訂閱狀態') }}
+        {{ Form::select('subscribed', $options['subscribed'], null, ['class' => 'form-control']) }}
+    </div>
     <div class="form-check">
         {{ Form::radio('gender', 1, isset($staff->profile) ? $staff->profile->gender : true, ['class' => 'form-check-input']) }}
         {{ Form::label('gender', '男', ['class' => 'form-check-label']) }}
