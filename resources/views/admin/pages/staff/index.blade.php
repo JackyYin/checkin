@@ -30,6 +30,13 @@
               <td>{{ $staff->staff_code }}</td>
               <td>
                 <a href="{{ route('admin.staff.show', $staff->id) }}">{{ $staff->name }}</a>
+                @if ($staff->admin)
+                <i class="fas fa-chess-king"></i>
+                @elseif ($staff->manager)
+                <i class="fas fa-chess-knight"></i>
+                @else
+                <i class="fas fa-chess-pawn"></i>
+                @endif
               </td>
               <td>{{ $staff->email }}</td>
               <td>{{ $staff->profile->phone_number }}</td>
