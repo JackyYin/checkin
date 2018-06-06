@@ -32,6 +32,9 @@ class LeaveController extends Controller
      *
      * @SWG\Post(path="/api/get-leave-type",
      *   tags={"Leave"},
+     *   security={
+     *   	{"oauth": {}}
+     *   },
      *   summary="取得假別列表",
      *   operationId="get-leave-type",
      *   produces={"text/plain"},
@@ -105,6 +108,9 @@ class LeaveController extends Controller
      *
      * @SWG\Post(path="/api/request-leave",
      *   tags={"Leave"},
+     *   security={
+     *   	{"oauth": {}}
+     *   },
      *   summary="申請請假",
      *   operationId="request-leave",
      *   produces={"application/json"},
@@ -207,6 +213,9 @@ class LeaveController extends Controller
      *
      * @SWG\Post(path="/api/request-late",
      *   tags={"Leave"},
+     *   security={
+     *   	{"oauth": {}}
+     *   },
      *   summary="申請晚到",
      *   operationId="request-late",
      *   produces={"application/json"},
@@ -301,6 +310,9 @@ class LeaveController extends Controller
      *
      * @SWG\Post(path="/api/request-online",
      *   tags={"Leave"},
+     *   security={
+     *   	{"oauth": {}}
+     *   },
      *   summary="申請online",
      *   operationId="request-online",
      *   produces={"application/json"},
