@@ -13,10 +13,13 @@ use App\Models\AuthCode;
 
 class RegisterController extends Controller
 {
+	/**
+	 * @SWG\Tag(name="Auth", description="使用者認證")
+	 */
     /**
      *
      * @SWG\Post(path="/api/register",
-     *   tags={"project"},
+     *   tags={"Auth"},
      *   summary="註冊手續",
      *   operationId="register",
      *   produces={"text/plain"},
@@ -91,7 +94,7 @@ class RegisterController extends Controller
     /**
      *
      * @SWG\Post(path="/api/active",
-     *   tags={"project"},
+     *   tags={"Auth"},
      *   summary="註冊驗證手續",
      *   operationId="active",
      *   produces={"text/plain"},

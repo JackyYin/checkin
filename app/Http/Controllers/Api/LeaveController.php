@@ -25,10 +25,13 @@ class LeaveController extends Controller
         9  => '陪產假',
         10 => '婚假',
     ];
+	/**
+	 * @SWG\Tag(name="Leave", description="請假")
+	 */
     /**
      *
      * @SWG\Post(path="/api/get-leave-type",
-     *   tags={"project"},
+     *   tags={"Leave"},
      *   summary="取得假別列表",
      *   operationId="get-leave-type",
      *   produces={"text/plain"},
@@ -101,7 +104,7 @@ class LeaveController extends Controller
     /**
      *
      * @SWG\Post(path="/api/request-leave",
-     *   tags={"project"},
+     *   tags={"Leave"},
      *   summary="申請請假",
      *   operationId="request-leave",
      *   produces={"application/json"},
@@ -203,7 +206,7 @@ class LeaveController extends Controller
     /**
      *
      * @SWG\Post(path="/api/request-late",
-     *   tags={"project"},
+     *   tags={"Leave"},
      *   summary="申請晚到",
      *   operationId="request-late",
      *   produces={"application/json"},
@@ -297,7 +300,7 @@ class LeaveController extends Controller
     /**
      *
      * @SWG\Post(path="/api/request-online",
-     *   tags={"project"},
+     *   tags={"Leave"},
      *   summary="申請online",
      *   operationId="request-online",
      *   produces={"application/json"},

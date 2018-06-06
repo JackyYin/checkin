@@ -19,10 +19,13 @@ class CheckController extends Controller
     public function __construct()
     {
     }
+	/**
+	 * @SWG\Tag(name="Check", description="上下班")
+	 */
     /**
      *
      * @SWG\Post(path="/api/checkin",
-     *   tags={"project"},
+     *   tags={"Check"},
      *   summary="打卡上班",
      *   operationId="checkin",
      *   produces={"text/plain"},
@@ -87,7 +90,7 @@ class CheckController extends Controller
     /**
      *
      * @SWG\Post(path="/api/checkout",
-     *   tags={"project"},
+     *   tags={"Check"},
      *   summary="打卡下班",
      *   operationId="checkout",
      *   produces={"text/plain"},
@@ -156,55 +159,8 @@ class CheckController extends Controller
     }
     /**
      *
-     * @SWG\Post(path="/api/get-check-type",
-     *   tags={"project"},
-     *   summary="取得請假與打卡列表",
-     *   operationId="get-check-list",
-     *   produces={"application/json"},
-     *   @SWG\Parameter(
-     *       name="line_id",
-     *       in="formData",
-     *       type="string",
-     *       required=true,
-     *   ),
-     *   @SWG\Response(response="default", description="操作成功")
-     * )
-     */
-    public function getCheckType(Request $request)
-    {
-
-        $messages = [
-            'line_id.required'    => '請填入line_id',
-            'line_id.exists'      => '不存在的line_id',
-        ];
-        $validator = Validator::make($request->all(), [
-            'line_id'    => 'required|exists:staff_line,line_id',
-        ], $messages);
-
-        if ($validator->fails()) {
-            $array = $validator->errors()->all();
-            return implode(",",$array);
-        }
-
-        $staff = Line::where('line_id', $request->input('line_id'))->first()->staff;
-
-        if ($staff->active == Staff::NON_ACTIVE) {
-            return "帳號未驗證";
-        }
-
-        return response()->json([
-            Check::TYPE_NORMAL          => '打卡',
-            Check::TYPE_PERSONAL_LEAVE  => '事假',
-            Check::TYPE_ANNUAL_LEAVE    => '特休',
-            Check::TYPE_OFFICIAL_LEAVE  => '公假',
-            99                          => '所有',
-        ], JSON_UNESCAPED_UNICODE);
-    }
-
-    /**
-     *
      * @SWG\Post(path="/api/get-check-list",
-     *   tags={"project"},
+     *   tags={"Check"},
      *   summary="取得請假或打卡紀錄",
      *   operationId="get-check-list",
      *   produces={"application/json"},
