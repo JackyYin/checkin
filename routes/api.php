@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 Route::get('login',  ['as' => 'login', 'uses' => 'Auth\AuthController@login']);
 
-Route::group(['namespace' => 'Api'], function () {
+Route::group(['middleware' => ['client'], 'namespace' => 'Api'], function () {
     Route::post('register', ['uses' => 'RegisterController@register']);
     Route::post('active', ['uses' => 'RegisterController@active']);
     Route::post('checkin', ['uses' => 'CheckController@checkIn']);
@@ -26,8 +26,4 @@ Route::group(['namespace' => 'Api'], function () {
     Route::post('request-leave', ['uses' => 'LeaveController@requestLeave']);
     Route::post('request-late', ['uses' => 'LeaveController@requestLate']);
     Route::post('request-online', ['uses' => 'LeaveController@requestOnline']);
-});
-
-Route::group(['middleware' => ['client'], 'namespace' => 'Api'], function () {
-//放入要驗證的api
 });
