@@ -25,15 +25,15 @@ class LeaveController extends Controller
         9  => '陪產假',
         10 => '婚假',
     ];
-	/**
-	 * @SWG\Tag(name="Leave", description="請假")
-	 */
+    /**
+     * @SWG\Tag(name="Leave", description="請假")
+     */
     /**
      *
      * @SWG\Post(path="/api/get-leave-type",
      *   tags={"Leave"},
      *   security={
-     *   	{"oauth": {}}
+     *      {"oauth": {}}
      *   },
      *   summary="取得假別列表",
      *   operationId="get-leave-type",
@@ -109,7 +109,7 @@ class LeaveController extends Controller
      * @SWG\Post(path="/api/request-leave",
      *   tags={"Leave"},
      *   security={
-     *   	{"oauth": {}}
+     *      {"oauth": {}}
      *   },
      *   summary="申請請假",
      *   operationId="request-leave",
@@ -180,6 +180,10 @@ class LeaveController extends Controller
             return response("帳號未驗證", 400);
         }
 
+        if(!$this->CheckRepeat($staff->id, $request->input('start_time'), $request->input('end_time'))) {
+            return response("已存在重複的請假時間", 400);
+        }
+
         $check = Check::create([
             'staff_id'    => $staff->id,
             'checkin_at'  => $request->input('start_time').":00",
@@ -209,12 +213,50 @@ class LeaveController extends Controller
             'subscribers'   => $subscribers,
         ]);
     }
+
+    private function CheckRepeat($staff_id, $from, $to)
+    {
+        $date = explode(" ", $from)[0];
+        $date_start = $date." 00:00:00";
+        $date_end   = $date." 23:59:59";
+
+        $past_checks = Check::where('staff_id', $staff_id)
+            ->where('type', '!=', 0)
+            ->where('checkin_at', '>=', $date_start)
+            ->where('checkin_at', '<=', $date_end)
+            ->where('checkout_at', '<=', $date_end)
+            ->get();
+
+        foreach ($past_checks as $check) {
+            $check_start = strtotime($check->checkin_at);
+            $check_end   = strtotime($check->checkout_at);
+            if (strtotime($from) <= $check_start) {
+                if (strtotime($to) <= $check_start) {
+                    continue;
+                }
+                elseif ($check_start <= strtotime($to) && strtotime($to) <= $check_end) {
+                    return false;
+                }
+                elseif ($check_end <= strtotime($to)) {
+                    $check->delete();
+                }
+            }
+            elseif ($check_start <= strtotime($from) && strtotime($from) <= $check_end) {
+                return false;
+            }
+            elseif ($check_end <= strtotime($from)) {
+                continue;
+            }
+        }
+
+        return true;
+    }
     /**
      *
      * @SWG\Post(path="/api/request-late",
      *   tags={"Leave"},
      *   security={
-     *   	{"oauth": {}}
+     *      {"oauth": {}}
      *   },
      *   summary="申請晚到",
      *   operationId="request-late",
@@ -277,6 +319,10 @@ class LeaveController extends Controller
             return response("帳號未驗證", 400);
         }
 
+        if(!$this->CheckRepeat($staff->id, $request->input('start_time'), $request->input('end_time'))) {
+            return response("已存在重複的請假時間", 400);
+        }
+
         $check = Check::create([
             'staff_id'    => $staff->id,
             'checkin_at'  => $request->input('start_time').":00",
@@ -311,7 +357,7 @@ class LeaveController extends Controller
      * @SWG\Post(path="/api/request-online",
      *   tags={"Leave"},
      *   security={
-     *   	{"oauth": {}}
+     *      {"oauth": {}}
      *   },
      *   summary="申請online",
      *   operationId="request-online",
@@ -372,6 +418,10 @@ class LeaveController extends Controller
 
         if ($staff->active == Staff::NON_ACTIVE) {
             return response("帳號未驗證", 400);
+        }
+
+        if(!$this->CheckRepeat($staff->id, $request->input('start_time'), $request->input('end_time'))) {
+            return response("已存在重複的請假時間", 400);
         }
 
         $check = Check::create([
