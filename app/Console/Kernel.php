@@ -43,7 +43,10 @@ class Kernel extends ConsoleKernel
 
         //自動打上下班卡
         $schedule->call(function () {
-            $this->autoCheck();
+            //六日不補上下班
+            if (Carbon::now()->isWeekday()) {
+                $this->autoCheck();
+            }
         })->dailyAt('23:59');
     }
 
