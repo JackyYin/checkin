@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
 use Validator;
+use DB;
 use App\Models\Staff;
 use App\Models\Profile;
 
@@ -13,6 +14,10 @@ class StaffController extends Controller
 {
     public function index(Request $request)
     {
+        if ($request->input('action_type') == 'export') {
+            return $this->exportStaff();
+        }
+
         $staffs = Staff::with(['admin', 'manager', 'profile'])
         ->whereHas('profile', function ($query) {
             $query->where('identity', '!=', Profile::ID_RESIGNED);
@@ -46,6 +51,63 @@ class StaffController extends Controller
         return view('admin.pages.staff.index', compact('staffs'));
     }
 
+    private function exportStaff()
+    {
+        $headers = array(
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=file.csv",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        );
+
+        //第一列
+        $columns = array(
+            '員工編號', '姓名', '身分證字號', '性別', '電話號碼', 'email', '戶籍地址', '通訊地址', '銀行帳號', '緊急聯絡人',
+            '緊急聯絡電話', '職稱', '到職日', '離職日', '生日', '月支薪俸', '加保日期', '退保日期', '最高學歷', '經歷', '組別'
+        );
+
+        $all_rows  = $this->getStaffRows();
+        $callback = function() use ($columns, $all_rows)
+        {
+            $file = fopen('php://output', 'w');
+            fwrite($file, "\xEF\xBB\xBF");
+            fputcsv($file, $columns);
+
+            foreach($all_rows as $row) {
+                if (!empty($row)) {
+                    fputcsv($file, $row);
+                }
+            }
+            fclose($file);
+        };
+        return response()->stream($callback, 200, $headers);
+    }
+
+    private function getStaffRows()
+    {
+        $rows = Profile::where('identity', '!=', 2)
+        ->get()
+        ->sort(function ($a, $b) {
+            if (!$a->staff_code) {
+                return $b->staff_code ? 1  : 0;
+            }
+            if (!$b->staff_code) {
+                return -1;
+            }
+            if ($a->staff_code == $b->staff_code) {
+                return 0;
+            }
+
+            return $a->staff_code < $b->staff_code ? -1 : 1;
+        })->toArray();
+
+        $rows = array_map(function ($item) {
+            return array_except($item, ['id', 'staff_id', 'identity', 'created_at', 'updated_at']);
+        }, $rows);
+
+        return $rows;
+    }
     public function create()
     {
         $options = $this->getFormOptions();

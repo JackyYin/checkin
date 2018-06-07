@@ -8,7 +8,17 @@
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">搜尋</button>
             </form>
             <a class="btn btn-outline-secondary" href="{{ route('admin.staff.index') }}" style="margin-left: 10px">返回</a>
-            <a class="btn btn-outline-primary ml-auto" href={{ route('admin.staff.create') }}>新增員工</a>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item" style="margin-right: 10px">
+                    <form class="form-inline my-2 my-lg-0" action="{{ route('admin.staff.index') }}" method="get">
+                      <input type="hidden" name="action_type" value="export">
+                      <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">匯出</button>
+                    </form>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline-primary ml-auto" href={{ route('admin.staff.create') }}>新增員工</a>
+                </li>
+            </ul>
         </nav>
         <table class="table table-bordered">
           <thead>
