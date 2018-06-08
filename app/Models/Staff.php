@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Traits\Enums;
-use Illuminate\Database\Eloquent\Model;
+use Laravel\Passport\HasApiTokens;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Carbon\Carbon;
 
-class Staff extends Model
+class Staff extends Authenticatable
 {
-    use Enums;
+    use HasApiTokens;
 
     const NON_ACTIVE = 0;
     const ACTIVE     = 1;

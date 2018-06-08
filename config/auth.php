@@ -38,12 +38,7 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
-        ],
-
-        'api' => [
-            'driver' => 'passport',
-            'provider' => 'users',
+            'provider' => 'staffs',
         ],
 
         'admin' => [
@@ -54,6 +49,16 @@ return [
         'manager' => [
             'driver' => 'session',
             'provider' => 'manager',
+        ],
+
+        'api' => [
+            'driver' => 'passport',
+            'provider' => 'staffs',
+        ],
+
+        'bot' => [
+            'driver' => 'passport',
+            'provider' => 'bot',
         ],
     ],
 
@@ -75,7 +80,7 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'staffs' => [
             'driver' => 'eloquent',
             'model' => App\Models\Staff::class,
         ],
@@ -89,6 +94,12 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Manager::class,
         ],
+
+        'bot' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Bot::class,
+        ],
+
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',

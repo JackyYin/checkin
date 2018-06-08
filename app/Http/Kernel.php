@@ -72,6 +72,8 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-		'client' => CheckClientCredentials::class,
+        'client' => CheckClientCredentials::class,
+        'auth.api.bot' => \App\Http\Middleware\Api\Bot::class,
+        'auth.api.user' => \App\Http\Middleware\Api\User::class,
     ];
 }

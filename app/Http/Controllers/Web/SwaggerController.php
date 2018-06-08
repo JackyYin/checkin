@@ -18,6 +18,12 @@ use App\Http\Controllers\Controller;
  *      in="header",
  *      name="Authorization"
  *  )
+ * @SWG\SecurityScheme(
+ *      securityDefinition="api-user",
+ *      type="apiKey",
+ *      in="header",
+ *      name="User-Authorization"
+ *  )
 */
 class SwaggerController extends Controller
 {
