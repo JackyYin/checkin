@@ -32,9 +32,6 @@ class LeaveController extends Controller
      *
      * @SWG\Post(path="/api/get-leave-type",
      *   tags={"Leave"},
-     *   security={
-     *      {"oauth": {}}
-     *   },
      *   summary="取得假別列表",
      *   operationId="get-leave-type",
      *   produces={"text/plain"},
@@ -59,13 +56,19 @@ class LeaveController extends Controller
 
         if ($validator->fails()) {
             $array = $validator->errors()->all();
-            return response(implode(",",$array), 400);
+            return response()->json([
+                'reply_message' => implode(",", $array),
+                'subscribers'   => [],
+            ], 400);
         }
 
         $staff = Line::where('line_id', $request->input('line_id'))->first()->staff;
 
         if ($staff->active == Staff::NON_ACTIVE) {
-            return response("帳號未驗證", 400);
+            return response()->json([
+                'reply_message' => "帳號未驗證",
+                'subscribers'   => [],
+            ], 200);
         }
 
         return response()->json([
@@ -108,9 +111,6 @@ class LeaveController extends Controller
      *
      * @SWG\Post(path="/api/request-leave",
      *   tags={"Leave"},
-     *   security={
-     *      {"oauth": {}}
-     *   },
      *   summary="申請請假",
      *   operationId="request-leave",
      *   produces={"application/json"},
@@ -171,17 +171,26 @@ class LeaveController extends Controller
 
         if ($validator->fails()) {
             $array = $validator->errors()->all();
-            return response(implode(",",$array), 400);
+            return response()->json([
+                'reply_message' => implode(",", $array),
+                'subscribers'   => [],
+            ], 400);
         }
 
         $staff = Line::where('line_id', $request->input('line_id'))->first()->staff;
 
         if ($staff->active == Staff::NON_ACTIVE) {
-            return response("帳號未驗證", 400);
+            return response()->json([
+                'reply_message' => "帳號未驗證",
+                'subscribers'   => [],
+            ], 200);
         }
 
         if(!$this->CheckRepeat($staff->id, $request->input('start_time'), $request->input('end_time'))) {
-            return response("已存在重複的請假時間", 400);
+            return response()->json([
+                'reply_message' => "已存在重複的請假時間",
+                'subscribers'   => [],
+            ], 200);
         }
 
         $check = Check::create([
@@ -255,9 +264,6 @@ class LeaveController extends Controller
      *
      * @SWG\Post(path="/api/request-late",
      *   tags={"Leave"},
-     *   security={
-     *      {"oauth": {}}
-     *   },
      *   summary="申請晚到",
      *   operationId="request-late",
      *   produces={"application/json"},
@@ -310,17 +316,26 @@ class LeaveController extends Controller
 
         if ($validator->fails()) {
             $array = $validator->errors()->all();
-            return response(implode(",",$array), 400);
+            return response()->json([
+                'reply_message' => implode(",", $array),
+                'subscribers'   => [],
+            ], 400);
         }
 
         $staff = Line::where('line_id', $request->input('line_id'))->first()->staff;
 
         if ($staff->active == Staff::NON_ACTIVE) {
-            return response("帳號未驗證", 400);
+            return response()->json([
+                'reply_message' => "帳號未驗證",
+                'subscribers'   => [],
+            ], 200);
         }
 
         if(!$this->CheckRepeat($staff->id, $request->input('start_time'), $request->input('end_time'))) {
-            return response("已存在重複的請假時間", 400);
+            return response()->json([
+                'reply_message' => "已存在重複的請假時間",
+                'subscribers'   => [],
+            ], 200);
         }
 
         $check = Check::create([
@@ -356,9 +371,6 @@ class LeaveController extends Controller
      *
      * @SWG\Post(path="/api/request-online",
      *   tags={"Leave"},
-     *   security={
-     *      {"oauth": {}}
-     *   },
      *   summary="申請online",
      *   operationId="request-online",
      *   produces={"application/json"},
@@ -411,17 +423,26 @@ class LeaveController extends Controller
 
         if ($validator->fails()) {
             $array = $validator->errors()->all();
-            return response(implode(",",$array), 400);
+            return response()->json([
+                'reply_message' => implode(",", $array),
+                'subscribers'   => [],
+            ], 400);
         }
 
         $staff = Line::where('line_id', $request->input('line_id'))->first()->staff;
 
         if ($staff->active == Staff::NON_ACTIVE) {
-            return response("帳號未驗證", 400);
+            return response()->json([
+                'reply_message' => "帳號未驗證",
+                'subscribers'   => [],
+            ], 200);
         }
 
         if(!$this->CheckRepeat($staff->id, $request->input('start_time'), $request->input('end_time'))) {
-            return response("已存在重複的請假時間", 400);
+            return response()->json([
+                'reply_message' => "已存在重複的請假時間",
+                'subscribers'   => [],
+            ], 200);
         }
 
         $check = Check::create([
