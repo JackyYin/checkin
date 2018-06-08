@@ -20,9 +20,6 @@ class RegisterController extends Controller
      *
      * @SWG\Post(path="/api/register",
      *   tags={"Auth"},
-     *   security={
-     *   	{"oauth": {}}
-     *   },
      *   summary="註冊手續",
      *   operationId="register",
      *   produces={"text/plain"},
@@ -98,9 +95,6 @@ class RegisterController extends Controller
      *
      * @SWG\Post(path="/api/active",
      *   tags={"Auth"},
-     *   security={
-     *   	{"oauth": {}}
-     *   },
      *   summary="註冊驗證手續",
      *   operationId="active",
      *   produces={"text/plain"},

@@ -26,9 +26,6 @@ class CheckController extends Controller
      *
      * @SWG\Post(path="/api/checkin",
      *   tags={"Check"},
-     *   security={
-     *   	{"oauth": {}}
-     *   },
      *   summary="打卡上班",
      *   operationId="checkin",
      *   produces={"text/plain"},
@@ -94,9 +91,6 @@ class CheckController extends Controller
      *
      * @SWG\Post(path="/api/checkout",
      *   tags={"Check"},
-     *   security={
-     *   	{"oauth": {}}
-     *   },
      *   summary="打卡下班",
      *   operationId="checkout",
      *   produces={"text/plain"},
@@ -167,9 +161,6 @@ class CheckController extends Controller
      *
      * @SWG\Post(path="/api/get-check-list",
      *   tags={"Check"},
-     *   security={
-     *   	{"oauth": {}}
-     *   },
      *   summary="取得請假或打卡紀錄",
      *   operationId="get-check-list",
      *   produces={"application/json"},
