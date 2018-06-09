@@ -32,7 +32,7 @@ class LeaveController extends Controller
     /**
      *
      * @SWG\Get(path="/api/v2/leave/types",
-     *   tags={"Leave", "v2"},
+     *   tags={"Leave", "V2"},
      *   security={
      *   	{"bot": {}},
      *   	{"api-user": {}}
@@ -45,22 +45,6 @@ class LeaveController extends Controller
      */
     public function getLeaveType(Request $request)
     {
-        $messages = [
-            'line_id.required'       => '請填入line_id',
-            'line_id.exists'         => '不存在的line_id',
-        ];
-        $validator = Validator::make($request->all(), [
-            'line_id'    => 'required|exists:staff_line,line_id',
-        ], $messages);
-
-        if ($validator->fails()) {
-            $array = $validator->errors()->all();
-            return response()->json([
-                'reply_message' => implode(",", $array),
-                'subscribers'   => [],
-            ], 400);
-        }
-
         $staff =  Auth::guard('api')->user();
 
         if ($staff->active == Staff::NON_ACTIVE) {

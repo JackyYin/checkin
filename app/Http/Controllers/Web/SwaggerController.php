@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
  *     version="1.0.0"
  *   )
  * )
- * @SWG\Tag(name="v2", description="第二版")
+ * @SWG\Tag(name="V2", description="第二版")
  * @SWG\SecurityScheme(
  *      securityDefinition="bot",
  *      type="apiKey",
