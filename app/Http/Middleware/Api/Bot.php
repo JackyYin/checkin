@@ -25,7 +25,7 @@ class Bot
         }
 
         return response()->json([
-            "reply_message" => "Unauthenticated.",
+            "reply_message" => "Unauthenticated Bot.",
         ], 401);
     }
 }

@@ -26,7 +26,9 @@ class User
             return $next($request);
         }
 
-        return $next($request);
+        return response()->json([
+            "reply_message" => "Unauthenticated Api User.",
+        ], 401);
     }
 }
 
