@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use \Gnello\Mattermost\Laravel\Facades\Mattermost;
+use Ramsey\Uuid\Uuid;
 use Validator;
 use Mail;
 use App\Models\Staff;
@@ -20,6 +20,9 @@ class RegisterController extends Controller
      *
      * @SWG\Post(path="/api/v2/register",
      *   tags={"Auth", "V2"},
+     *   security={
+     *   	{"bot": {}},
+     *   },
      *   summary="註冊手續",
      *   operationId="register",
      *   produces={"text/plain"},
@@ -56,7 +59,7 @@ class RegisterController extends Controller
         }
 
         //驗證url
-        $registration_token = uniqid(sha1($new_staff->email), false);
+        $registration_token = Uuid::uuid4();
         RegistrationToken::create([
             'staff_id' => $new_staff->id,
             'token'    => sha1($registration_token),

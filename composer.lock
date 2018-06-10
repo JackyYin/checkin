@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "037facb7931c30a2cf9379d71b41cb7a",
+    "content-hash": "099db224e9c3b1a2c0a6d356a1010306",
     "packages": [
         {
             "name": "darkaonline/l5-swagger",
