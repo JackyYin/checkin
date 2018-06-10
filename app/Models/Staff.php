@@ -59,6 +59,11 @@ class Staff extends Authenticatable
         return $this->hasOne(Manager::class,'staff_id','id');
     }
 
+    public function registration_token()
+    {
+        return $this->hasMany(RegistrationToken::class,'staff_id','id');
+    }
+
     public function get_check_list()
     {
         return $this->hasMany(Check::class,'staff_id','id');
