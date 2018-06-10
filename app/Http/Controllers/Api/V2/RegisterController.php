@@ -94,23 +94,30 @@ class RegisterController extends Controller
      */
     public function active($registration_token)
     {
-        if ($registration_token) {
-            $token_object = RegistrationToken::where('token', sha1($registration_token))->first();
-
-            if (!$token_object) {
-                return "帳號驗證失敗";
-            }
-
-            $staff = $token_object->staff;
-            $staff->update([
-                'active' => Staff::ACTIVE,
-            ]);
-            $staff->registration_token()->delete();
-            $access_token = $staff->createToken('Api User')->accessToken;
-
-            return "帳號已啟用";
+        if (!$registration_token) {
+            abort(404, 'Girlfriend not found.');
         }
 
-        abort(404, 'Girlfriend not found.');
+        $token_object = RegistrationToken::where('token', sha1($registration_token))->first();
+
+        if (!$token_object) {
+            return "帳號驗證失敗";
+        }
+
+        $staff = $token_object->staff;
+
+        if ($staff->active == Staff::ACTIVE) {
+            $staff->registration_token()->delete();
+            return "已啟用的帳號";
+        }
+
+        $staff->update([
+            'active' => Staff::ACTIVE,
+        ]);
+        $staff->registration_token()->delete();
+        //送token給line-bot
+        $access_token = $staff->createToken('Api User')->accessToken;
+
+        return "帳號驗證成功";
     }
 }
