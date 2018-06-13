@@ -162,6 +162,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\AdminViewServiceProvider::class,
+        App\Providers\CustomPassportServiceProvider::class,
 
     ],
 

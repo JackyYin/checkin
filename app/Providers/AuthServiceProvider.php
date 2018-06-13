@@ -27,12 +27,11 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //永久token
-        Passport::tokensExpireIn(Carbon::now()->addYears(100));
+        Passport::routes();
 
-        Passport::routes(function (\Laravel\Passport\RouteRegistrar $router) {
-            $router->forAccessTokens();
-        });
+        Passport::tokensExpireIn(Carbon::now()->addDays(30));
+
+        Passport::refreshTokensExpireIn(Carbon::now()->addDays(90));
 
     }
 }
