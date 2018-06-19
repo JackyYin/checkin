@@ -28,15 +28,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-//        $schedule->call(function () {
-//            $checks = Check::two_days_ago()->not_checked_out()->get();
-//            foreach ($checks as $check) {
-//                $check->update([
-//                    'checkout_at' => Carbon::now()->subDays(1)->subHours(5)->subMinutes(30),
-//                ]);
-//            }
-//        })->dailyAt('0:01');
-
         //刪掉api:get-check-list儲存的檔案
         $command = "rm -rf ".base_path('storage/app/chart/')."*";
         $schedule->exec($command)->everyMinute();
@@ -80,13 +71,13 @@ class Kernel extends ConsoleKernel
         $checkout_diff  = $checkout_end - $checkout_start;
         //noon
         $noon_start     = strtotime(Carbon::today()->addHours(12));
-        $noon_end       = strtotime(Carbon::today()->addHours(13)->addminutes(30));
+        $noon_end       = strtotime(Carbon::today()->addHours(13));
         foreach ($staffs as $staff) {
             $checkin_random_time =  date("Y-m-d H:i:s",$checkin_start + mt_rand(0,$checkin_diff));
             $checkout_random_time =  date("Y-m-d H:i:s",$checkout_start + mt_rand(0,$checkout_diff));
             //11:50~12:10
             $noon_start_random_time =  date("Y-m-d H:i:s",strtotime('-10 minutes', $noon_start) + mt_rand(0,1200));
-            //13:20~13:40
+            //12:50~13:10
             $noon_end_random_time =  date("Y-m-d H:i:s",strtotime('-10 minutes', $noon_end) + mt_rand(0,1200));
             $leaves = $staff->get_check_list
                 ->where('type', '!=', 0)
