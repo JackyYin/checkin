@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\Enums;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
 class Staff extends Authenticatable
@@ -24,7 +25,7 @@ class Staff extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'active', 'staff_code', 'subscribed'
+        'name', 'email', 'active', 'staff_code', 'subscribed', 'registration_token'
     ];
 
     /**
@@ -93,5 +94,15 @@ class Staff extends Authenticatable
     public function range_one_day($from)
     {
         return $this->get_check_list->where('checkin_at', '>=', $from)->where('checkin_at', '<=', date('Y-m-d', strtotime($from.'+ 1 day' )));
+    }
+
+    public function findForPassport($username)
+    {
+        return $this->where('email', $username)->first();
+    }
+
+    public function validateForPassportPasswordGrant($password)
+    {
+        return Hash::check($password, $this->registration_token);
     }
 }
