@@ -159,7 +159,10 @@ class CheckController extends Controller
                 $mysql." HAVING SUM(TIMESTAMPDIFF(HOUR,checkin_at,checkout_at)) ".$this->OPERATOR[$conditions['op']['work_time']]." ".$conditions['value']['work_time']."\n";
         }
 
-        $rows = DB::select($mysql);
+        $rows = collect(DB::select($mysql))->map(function ($item) {
+            return json_decode(json_encode($item), true);
+        })->toArray();
+
         $rows = array_where($rows, function($value,$key) {
             return array_sum(array_except($value, ['date', 'name'])) != 0;
         });
@@ -252,7 +255,9 @@ class CheckController extends Controller
         $mysql =
             $mysql." ORDER BY DATE(c.checkin_at)";
 
-        $rows = DB::select($mysql);
+        $rows = collect(DB::select($mysql))->map(function ($item) {
+            return json_decode(json_encode($item), true);
+        })->toArray();
         return $rows;
     }
 
@@ -291,9 +296,13 @@ class CheckController extends Controller
             ." AND checkin_at >= '".$from." 00:00:00'"
             ." AND checkout_at <= '".date('Y-m-d', strtotime('+1 day', strtotime($to)))." 00:00:00'"
             ." GROUP BY c.staff_id"
+            ." HAVING late_count > 0"
             ." ORDER BY late_count DESC";
 
-        $rows = DB::select($mysql);
+        $rows = collect(DB::select($mysql))->map(function ($item) {
+            return json_decode(json_encode($item), true);
+        })->toArray();
+
         return $rows;
 
     }
