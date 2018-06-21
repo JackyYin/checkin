@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Carbon\Carbon;
 use DateInterval;
 use Laravel\Passport\Bridge\PersonalAccessGrant;
 use Laravel\Passport\Passport;
@@ -53,11 +54,11 @@ class CustomPassportServiceProvider extends PassportServiceProvider
                 );
 
                 $server->enableGrantType(
-                    new PersonalAccessGrant, new DateInterval('P30D')
+                    new PersonalAccessGrant, new DateInterval('P1Y')
                 );
 
                 $server->enableGrantType(
-                    new ClientCredentialsGrant, Passport::tokensExpireIn()
+                    new ClientCredentialsGrant, new DateInterval('P100Y')
                 );
 
                 if (Passport::$implicitGrantEnabled) {
