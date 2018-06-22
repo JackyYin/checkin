@@ -36,6 +36,8 @@ Route::group(['namespace' => 'Api'], function () {
                     Route::get('/types', ['uses' => 'LeaveController@getLeaveType']);
                     Route::get('/', ['uses' => 'LeaveController@index']);
                     Route::post('/', ['uses' => 'LeaveController@store']);
+                    Route::post('/online', ['uses' => 'LeaveController@requestOnline']);
+                    Route::post('/late', ['uses' => 'LeaveController@requestLate']);
                     Route::put('/{id}', ['uses' => 'LeaveController@update']);
                     Route::delete('/{id}', ['uses' => 'LeaveController@destroy']);
                 });
