@@ -31,6 +31,7 @@ Route::group(['namespace' => 'Api'], function () {
         Route::get('register/active/{registration_token}', ['as' => 'api.register.active', 'uses' => 'RegisterController@active']);
         Route::group(['middleware' => ['auth.api.bot']], function () {
             Route::post('/register', ['uses' => 'RegisterController@register']);
+            Route::post('/register/refresh', ['uses' => 'RegisterController@refresh']);
             Route::group(['middleware' => ['auth.api.user']], function () {
                 Route::group(['prefix' => 'leave'], function () {
                     Route::get('/types', ['uses' => 'LeaveController@getLeaveType']);
