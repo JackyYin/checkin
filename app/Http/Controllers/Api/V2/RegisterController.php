@@ -100,17 +100,13 @@ class RegisterController extends Controller
      *       name="registration_token",
      *       in="path",
      *       type="string",
-     *       required=false,
+     *       required=true,
      *   ),
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
     public function active($registration_token)
     {
-        if (!$registration_token) {
-            abort(404, 'Girlfriend not found.');
-        }
-
         $staff = Staff::all()->filter(function ($item) use ($registration_token) {
             return Hash::check($registration_token, $item->registration_token);
         })->first();
