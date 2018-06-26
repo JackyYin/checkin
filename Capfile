@@ -18,6 +18,13 @@ SSHKit::Backend::Netssh.configure do |ssh|
   }
 end
 
+# Load capistrano/stride
+if ENV['STRIDE_URI']
+  require 'capistrano/stride'
+  set :stride_url, ENV['STRIDE_URI']
+  set :stride_token, ENV['STRIDE_TOKEN']
+end
+
 if ENV['MATTERMOST_URI']
   require 'net/http'
   require 'net/https'

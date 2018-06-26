@@ -14,6 +14,8 @@ GEM
       capistrano (>= 3.0)
     capistrano-ssh-doctor (1.0.0)
       capistrano (>= 3.1)
+    capistrano-stride (0.3.0)
+      capistrano (~> 3.2)
     capistrano-wal-e (0.1.2)
       capistrano (>= 3.1)
       sshkit (>= 1.2.0)
@@ -40,10 +42,11 @@ DEPENDENCIES
   capistrano-deploy_hooks
   capistrano-safe-deploy-to
   capistrano-ssh-doctor
+  capistrano-stride (~> 0.3)
   capistrano-wal-e
   dotenv
   highline
   sshkit-sudo
 
 BUNDLED WITH
-   1.16.0
+   1.16.2
