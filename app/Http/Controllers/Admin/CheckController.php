@@ -142,7 +142,7 @@ class CheckController extends Controller
 
         foreach ($conditions['type'] as $type) {
             $mysql =
-                $mysql.", SUM(IF(type = ".$type.", TIMESTAMPDIFF(HOUR,checkin_at,checkout_at), 0)) as ".$this->CHECK_ENG_TYPE[$type]."_time";
+                $mysql.", SUM(IF(type = ".$type.", TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at), 0)) as ".$this->CHECK_ENG_TYPE[$type]."_time";
         }
 
         $mysql =
