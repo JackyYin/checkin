@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Controllers\Controller;
+use App\Helpers\StrideHelper;
 use Illuminate\Http\Request;
 use Validator;
 use Carbon\Carbon;
@@ -295,6 +296,10 @@ class LeaveController extends Controller
                 ."原因： ".$reason->reason."\n"
                 ."編號： ".$check->id;
 
+        if ($leave_type == Check::TYPE_LATE || $leave_type == Check::TYPE_ONLINE) {
+            StrideHelper::create_notify($check);
+        }
+
         return response()->json([
             'reply_message' => $reply_message,
             'subscribers'   => $this->getSubscribersExcept($staff->id),
@@ -429,6 +434,10 @@ class LeaveController extends Controller
                     'reason'   => $request->leave_reason,
                 ]);
             }
+        }
+
+        if ($leave->type == Check::TYPE_LATE || $leave->type == Check::TYPE_ONLINE) {
+            StrideHelper::edit_notify($leave);
         }
 
         $reply_message = 

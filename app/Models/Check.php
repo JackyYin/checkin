@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Check extends Model
 {
-
     const TYPE_NORMAL          = 0;
     const TYPE_PERSONAL_LEAVE  = 1;  //事假
     const TYPE_ANNUAL_LEAVE    = 2;  //特休
@@ -51,5 +50,10 @@ class Check extends Model
     public function leave_reason()
     {
         return $this->hasOne(LeaveReason::class, 'check_id', 'id');
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class, 'staff_id', 'id');
     }
 }
