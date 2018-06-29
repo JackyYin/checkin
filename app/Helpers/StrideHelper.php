@@ -26,12 +26,23 @@ class StrideHelper
         return $mapping[$type];
     }
  
+    private static function WEEK_DAY($day)
+    {
+        $mapping = [
+            "Sunday"    => "日",
+            "Monday"    => "一",
+            "Tuesday"   => "二",
+            "Wednesday" => "三",
+            "Thursday"  => "四",
+            "Friday"    => "五",
+            "Saturday"  => "六",
+        ];
+
+        return $mapping[$day];
+    }
+
     public static function create_notify(Check $check)
     {
-        if ($check->type != Check::TYPE_ONLINE && $check->type != Check::TYPE_OFFICIAL_LEAVE) {
-            return false;
-        }
-
         if ( strtotime(Carbon::today()) <= strtotime($check->checkin_at) && strtotime($check->checkin_at) <= strtotime(Carbon::tomorrow())) {
             $http = new Client([
                 'headers' => [
@@ -40,11 +51,18 @@ class StrideHelper
                 ]
             ]);
 
-            $body = 
-                "姓名: ".$check->staff->name."\n"
-                .date("H 點 i 分", strtotime($check->checkin_at))." 至 ".date("H 點 i 分", strtotime($check->checkout_at))." 請假\n"
-                ."假別: ".self::CHECK_TYPE($check->type)."\n"
-                ."原因: ".$check->leave_reason->reason."\n";
+            if ($check->type == Check::TYPE_ONLINE || $check->type == Check::TYPE_OFFICIAL_LEAVE) {
+                $body = 
+                    "時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
+                    ."姓名: ".$check->staff->name."\n"
+                    ."假別: ".self::CHECK_TYPE($check->type)."\n"
+                    ."原因: ".$check->leave_reason->reason."\n";
+            }
+            else {
+                $body = 
+                    "時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
+                    ."姓名: ".$check->staff->name."\n";
+            }
 
             $response = $http->request('POST', config('stride.url'), [
                     'body' => $body, 
@@ -54,10 +72,6 @@ class StrideHelper
 
     public static function edit_notify(Check $check)
     {
-        if ($check->type != Check::TYPE_ONLINE && $check->type != Check::TYPE_OFFICIAL_LEAVE) {
-            return;
-        }
-
         if ( strtotime(Carbon::today()) <= strtotime($check->checkin_at) && strtotime($check->checkin_at) <= strtotime(Carbon::tomorrow())) {
             $http = new Client([
                 'headers' => [
@@ -66,12 +80,20 @@ class StrideHelper
                 ]
             ]);
 
-            $body = 
-                "編號: ".$check->id." 已編輯\n"
-                ."姓名: ".$check->staff->name."\n"
-                .date("H 點 i 分", strtotime($check->checkin_at))." 至 ".date("H 點 i 分", strtotime($check->checkout_at))." 請假\n"
-                ."假別: ".self::CHECK_TYPE($check->type)."\n"
-                ."原因: ".$check->leave_reason->reason."\n";
+            if ($check->type == Check::TYPE_ONLINE || $check->type == Check::TYPE_OFFICIAL_LEAVE) {
+                $body = 
+                    "編號: ".$check->id." 已編輯\n"
+                    ."時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
+                    ."姓名: ".$check->staff->name."\n"
+                    ."假別: ".self::CHECK_TYPE($check->type)."\n"
+                    ."原因: ".$check->leave_reason->reason."\n";
+            }
+            else {
+                $body = 
+                    "編號: ".$check->id." 已編輯\n"
+                    ."時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
+                    ."姓名: ".$check->staff->name."\n";
+            }
 
             $response = $http->request('POST', config('stride.url'), [
                     'body' => $body, 
