@@ -296,7 +296,7 @@ class LeaveController extends Controller
                 ."原因： ".$reason->reason."\n"
                 ."編號： ".$check->id;
 
-        if ($leave_type == Check::TYPE_LATE || $leave_type == Check::TYPE_ONLINE) {
+        if ($leave_type == Check::TYPE_OFFICIAL_LEAVE || $leave_type == Check::TYPE_ONLINE) {
             StrideHelper::create_notify($check);
         }
 
@@ -436,7 +436,7 @@ class LeaveController extends Controller
             }
         }
 
-        if ($leave->type == Check::TYPE_LATE || $leave->type == Check::TYPE_ONLINE) {
+        if ($leave->type == Check::TYPE_OFFICIAL_LEAVE || $leave->type == Check::TYPE_ONLINE) {
             StrideHelper::edit_notify($leave);
         }
 

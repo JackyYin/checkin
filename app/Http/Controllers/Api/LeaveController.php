@@ -206,6 +206,10 @@ class LeaveController extends Controller
             'reason'   => $request->input('leave_reason'),
         ]);
 
+        if ($check->type == Check::TYPE_OFFICIAL_LEAVE) {
+            StrideHelper::create_notify($check);
+        }
+
         $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
                 ."姓名： ".$staff->name.",\n"
                 ."假別： ".$this->CHECK_TYPE[$check->type].",\n"
@@ -350,8 +354,6 @@ class LeaveController extends Controller
             'check_id' => $check->id,
             'reason'   => $request->input('leave_reason'),
         ]);
-
-        StrideHelper::create_notify($check);
 
         $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
                 ."姓名： ".$staff->name.",\n"
