@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Helpers\StrideHelper;
+use GuzzleHttp\Client;
 use Carbon\Carbon;
 use App\Models\Check;
 use App\Models\Staff;
@@ -39,6 +41,11 @@ class Kernel extends ConsoleKernel
                 $this->autoCheck();
             }
         })->dailyAt('23:59');
+        //自動發通知到stride
+
+        $schedule->call(function () {
+            $this->autoNotify();
+        })->dailyAt('09:00');
     }
 
     /**
@@ -214,6 +221,17 @@ class Kernel extends ConsoleKernel
                     }
                 }
             }
+        }
+    }
+
+    private function autoNotify()
+    {
+        $checks = Check::where('checkin_at', ">=", Carbon::today())
+            ->where('checkin_at', "<=", Carbon::tomorrow())
+            ->get();
+
+        foreach ($checks as $check) {
+            StrideHelper::create_notify($check);
         }
     }
 }
