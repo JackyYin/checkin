@@ -28,11 +28,15 @@ class StrideHelper
  
     public static function create_notify(Check $check)
     {
+        if ($check->type != Check::TYPE_ONLINE && $check->type != Check::TYPE_OFFICIAL_LEAVE) {
+            return false;
+        }
+
         if ( strtotime(Carbon::today()) <= strtotime($check->checkin_at) && strtotime($check->checkin_at) <= strtotime(Carbon::tomorrow())) {
             $http = new Client([
                 'headers' => [
                     'Content-Type'  => 'text/plain',
-                    'Authorization' => 'Bearer '.env('STRIDE_TOKEN'),
+                    'Authorization' => 'Bearer '.config('stride.token'),
                 ]
             ]);
 
@@ -42,7 +46,7 @@ class StrideHelper
                 ."假別: ".self::CHECK_TYPE($check->type)."\n"
                 ."原因: ".$check->leave_reason->reason."\n";
 
-            $response = $http->request('POST', env('STRIDE_URI'), [
+            $response = $http->request('POST', config('stride.url'), [
                     'body' => $body, 
             ]);
         }
@@ -50,11 +54,15 @@ class StrideHelper
 
     public static function edit_notify(Check $check)
     {
+        if ($check->type != Check::TYPE_ONLINE && $check->type != Check::TYPE_OFFICIAL_LEAVE) {
+            return;
+        }
+
         if ( strtotime(Carbon::today()) <= strtotime($check->checkin_at) && strtotime($check->checkin_at) <= strtotime(Carbon::tomorrow())) {
             $http = new Client([
                 'headers' => [
                     'Content-Type'  => 'text/plain',
-                    'Authorization' => 'Bearer '.env('STRIDE_TOKEN'),
+                    'Authorization' => 'Bearer '.env('stride.token'),
                 ]
             ]);
 
@@ -65,7 +73,7 @@ class StrideHelper
                 ."假別: ".self::CHECK_TYPE($check->type)."\n"
                 ."原因: ".$check->leave_reason->reason."\n";
 
-            $response = $http->request('POST', env('STRIDE_URI'), [
+            $response = $http->request('POST', config('stride.url'), [
                     'body' => $body, 
             ]);
         }

@@ -296,9 +296,7 @@ class LeaveController extends Controller
                 ."原因： ".$reason->reason."\n"
                 ."編號： ".$check->id;
 
-        if ($leave_type == Check::TYPE_OFFICIAL_LEAVE || $leave_type == Check::TYPE_ONLINE) {
-            StrideHelper::create_notify($check);
-        }
+        StrideHelper::create_notify($check);
 
         return response()->json([
             'reply_message' => $reply_message,
@@ -436,9 +434,7 @@ class LeaveController extends Controller
             }
         }
 
-        if ($leave->type == Check::TYPE_OFFICIAL_LEAVE || $leave->type == Check::TYPE_ONLINE) {
-            StrideHelper::edit_notify($leave);
-        }
+        StrideHelper::edit_notify($leave);
 
         $reply_message = 
             "編號: ".$leave->id."編輯成功\n"
