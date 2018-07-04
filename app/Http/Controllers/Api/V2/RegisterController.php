@@ -60,12 +60,6 @@ class RegisterController extends Controller
 
         $new_staff = Staff::where('email', $request->input('email'))->first();
 
-        if (!$new_staff) {
-            return response()->json([
-                'reply_message' => "不存在的email,請先登錄員工個人資料",
-            ], 200);
-        }
-
         //驗證url
         $registration_token = Uuid::uuid4();
         $new_staff->update([
