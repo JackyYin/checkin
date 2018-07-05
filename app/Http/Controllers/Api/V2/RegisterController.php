@@ -140,7 +140,7 @@ class RegisterController extends Controller
     {
         //送token給line-bot
         $client = new Client();
-        $response = $client->request('POST', 'http://httpbin.org/post', [
+        $response = $client->request('POST', env('STRIDE_BOT_BASE_URL').'/checkin/register/active', [
             'json' => [
                 'action' => 'User Authorized',
                 'content' => [
