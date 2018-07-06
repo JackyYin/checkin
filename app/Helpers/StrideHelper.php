@@ -70,7 +70,6 @@ class StrideHelper
             $http = new Client([
                 'headers' => [
                     'Content-Type'  => 'application/json',
-                    'Authorization' => 'Bearer '.config('stride.token'),
                 ]
             ]);
 
@@ -89,56 +88,8 @@ class StrideHelper
 
             $response = $http->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
                 'json' => [
-                    'action' => 'Leave Notification',
+                    'action' => 'Leave Create Notification',
                     'reply_message' => $body,
-                ]
-            ]);
-
-            return $response->getBody();
-        }
-    }
-    public static function old_create_notify(Check $check)
-    {
-        if ( strtotime(Carbon::today()) <= strtotime($check->checkin_at) && strtotime($check->checkin_at) <= strtotime(Carbon::tomorrow())) {
-            $http = new Client([
-                'headers' => [
-                    'Content-Type'  => 'application/json',
-                    'Authorization' => 'Bearer '.config('stride.token'),
-                ]
-            ]);
-
-            if ($check->type == Check::TYPE_ONLINE || $check->type == Check::TYPE_OFFICIAL_LEAVE) {
-                $body = 
-                    "\n時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
-                    ."姓名: ".$check->staff->name."\n"
-                    ."假別: ".self::CHECK_TYPE($check->type)."\n"
-                    ."原因: ".$check->leave_reason->reason."\n";
-            }
-            else {
-                $body = 
-                    "\n時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
-                    ."姓名: ".$check->staff->name."\n";
-            }
-
-            $text_array = array(
-                array(
-                    'type' => "text",
-                    'text' => "$body"
-                )
-            );
-
-            $response = $http->request('POST', config('stride.url'), [
-                'json' => [
-                    'body' => [
-                        'type' => "doc",
-                        'version' => 1,
-                        'content' => array(
-                            array (
-                                'type' => "paragraph",
-                                'content' => $text_array
-                            )
-                        )
-                    ]
                 ]
             ]);
 
@@ -152,7 +103,6 @@ class StrideHelper
             $http = new Client([
                 'headers' => [
                     'Content-Type'  => 'text/plain',
-                    'Authorization' => 'Bearer '.env('stride.token'),
                 ]
             ]);
 
@@ -171,9 +121,14 @@ class StrideHelper
                     ."姓名: ".$check->staff->name."\n";
             }
 
-            $response = $http->request('POST', config('stride.url'), [
-                    'body' => $body, 
+            $response = $http->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
+                'json' => [
+                    'action' => 'Leave Edit Notification',
+                    'reply_message' => $body,
+                ]
             ]);
+
+            return $response->getBody();
         }
     }
 }
