@@ -90,7 +90,7 @@ class StrideHelper
             $response = $http->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
                 'json' => [
                     'action' => 'Leave Notification',
-                    'content' => $body,
+                    'reply_message' => $body,
                 ]
             ]);
 

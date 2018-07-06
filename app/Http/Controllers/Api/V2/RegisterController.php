@@ -143,7 +143,7 @@ class RegisterController extends Controller
         $response = $client->request('POST', env('STRIDE_BOT_BASE_URL').'/checkin/register/active', [
             'json' => [
                 'action' => 'User Authorized',
-                'content' => [
+                'reply_message' => [
                     'email' => $staff->email,
                     'access_token' => $access_token,
                     'refresh_token' => $refresh_token,

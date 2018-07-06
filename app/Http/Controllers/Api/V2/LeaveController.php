@@ -231,7 +231,6 @@ class LeaveController extends Controller
             $array = $validator->errors()->all();
             return response()->json([
                 'reply_message' => implode(",", $array),
-                'subscribers'   => [],
             ], 400);
         }
 
@@ -290,7 +289,6 @@ class LeaveController extends Controller
             $array = $validator->errors()->all();
             return response()->json([
                 'reply_message' => implode(",", $array),
-                'subscribers'   => [],
             ], 400);
         }
 
@@ -349,7 +347,6 @@ class LeaveController extends Controller
             $array = $validator->errors()->all();
             return response()->json([
                 'reply_message' => implode(",", $array),
-                'subscribers'   => [],
             ], 400);
         }
 
@@ -363,8 +360,7 @@ class LeaveController extends Controller
         if(!$this->CheckRepeat($staff->id, $request->input('start_time'), $request->input('end_time'))) {
             return response()->json([
                 'reply_message' => "已存在重複的請假時間",
-                'subscribers'   => [],
-            ], 200);
+            ], 400);
         }
 
         $check = Check::create([
@@ -390,7 +386,7 @@ class LeaveController extends Controller
         return response()->json([
             'reply_message' => $reply_message,
             'subscribers'   => $this->getSubscribersExcept($staff->id),
-        ]);
+        ], 200);
     }
     /**
      *
@@ -439,8 +435,7 @@ class LeaveController extends Controller
         if (!$leave) {
             return response()->json([
                 'reply_message' => "請輸入正確的請假id",
-                'subscribers'   => [],
-            ], 200);
+            ], 400);
         }
 
         $staff = Auth::guard('api')->user();
@@ -448,8 +443,7 @@ class LeaveController extends Controller
         if ($leave->staff_id != $staff->id) {
             return response()->json([
                 'reply_message' => "沒有權限編輯此筆假單",
-                'subscribers'   => [],
-            ], 200);
+            ], 400);
         } 
 
         $messages = [
@@ -468,7 +462,6 @@ class LeaveController extends Controller
             $array = $validator->errors()->all();
             return response()->json([
                 'reply_message' => implode(",", $array),
-                'subscribers'   => [],
             ], 400);
         }
 
@@ -476,31 +469,27 @@ class LeaveController extends Controller
             && strtotime($request->start_time.":00") >= strtotime($leave->checkout_at)) {
             return response()->json([
                 'reply_message' => "起始時間需在結束時間之前",
-                'subscribers'   => [],
-            ], 200);
+            ], 400);
         }
 
         if (!$request->filled('start_time') && $request->filled('end_time') 
             && strtotime($request->end_time.":00") <= strtotime($leave->checkin_at)) {
             return response()->json([
                 'reply_message' => "結束時間需在起始時間之後",
-                'subscribers'   => [],
-            ], 200);
+            ], 400);
         }
 
         if ($request->filled('start_time') && $request->filled('end_time') 
             && strtotime($request->end_time.":00") <= strtotime($request->start_time.":00")) {
             return response()->json([
                 'reply_message' => "起始時間需在結束時間之前",
-                'subscribers'   => [],
-            ], 200);
+            ], 400);
         }
 
         if (!$this->CheckRepeat($staff->id, $request->input('start_time', $leave->checkin_at), $request->input('end_time', $leave->checkout_at), $leave_id)) {
             return response()->json([
                 'reply_message' => "已存在重複的請假時間",
-                'subscribers'   => [],
-            ], 200);
+            ], 400);
         }
 
         $leave->update([
