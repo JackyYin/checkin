@@ -189,6 +189,7 @@ class RegisterController extends Controller
         $object = $this->getRefreshToken($request->refresh_token);
 
         return response()->json([
+            'action' => 'User Token Refreshed',
             'reply_message' => [
                 'access_token' => $object->access_token,
                 'refresh_token' => $object->refresh_token,
