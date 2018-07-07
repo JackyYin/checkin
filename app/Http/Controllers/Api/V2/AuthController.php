@@ -28,7 +28,7 @@ class AuthController extends Controller
      *   security={
      *      {"bot": {}},
      *   },
-     *   summary="註冊手續",
+     *   summary="寄發驗證email",
      *   operationId="auth",
      *   produces={"application/json"},
      *   @SWG\Parameter(
@@ -88,7 +88,7 @@ class AuthController extends Controller
      *
      * @SWG\Get(path="/api/v2/bot/{bot_name}/auth/active/{registration_token}",
      *   tags={"Auth", "V2"},
-     *   summary="註冊驗證手續",
+     *   summary="email產生並送token到bot endpoint",
      *   operationId="active",
      *   produces={"text/plain"},
      *   @SWG\Parameter(
@@ -175,7 +175,7 @@ class AuthController extends Controller
      *   security={
      *      {"bot": {}},
      *   },
-     *   summary="憑證重發手續",
+     *   summary="token重發手續",
      *   operationId="refresh",
      *   produces={"application/json"},
      *   @SWG\Parameter(
