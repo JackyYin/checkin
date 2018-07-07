@@ -13,23 +13,21 @@ use DB;
 use GuzzleHttp\Client;
 use App\Models\Staff;
 use App\Models\Line;
-use App\Models\RegistrationToken;
 
-class RegisterController extends Controller
+class AuthController extends Controller
 {
     /**
      * @SWG\Tag(name="Auth", description="使用者認證")
      */
     /**
      *
-     * @SWG\Post(path="/api/v2/register",
+     * @SWG\Post(path="/api/v2/bot/auth",
      *   tags={"Auth", "V2"},
-     *   deprecated=true,
      *   security={
      *      {"bot": {}},
      *   },
      *   summary="註冊手續",
-     *   operationId="register",
+     *   operationId="auth",
      *   produces={"application/json"},
      *   @SWG\Parameter(
      *       name="email",
@@ -41,7 +39,7 @@ class RegisterController extends Controller
      * )
      */
 
-    public function register(Request $request)
+    public function auth(Request $request)
     {
         $messages = [
             'email.required'   => '請填入email',
@@ -60,14 +58,14 @@ class RegisterController extends Controller
         }
 
         $new_staff = Staff::where('email', $request->input('email'))->first();
-
+        $bot = Auth::guard('bot')->user();
         //驗證url
         $registration_token = Uuid::uuid4();
         $new_staff->update([
             'registration_token' => Hash::make($registration_token),
         ]);
 
-        $confirmation_url = route('api.register.active', ['registration_token' => $registration_token]);
+        $confirmation_url = route('api.bot.auth.active', ['bot_name' => $bot->name, 'registration_token' => $registration_token]);
         $this->sendRegistrationEmail($new_staff, $confirmation_url);
 
         return response()->json([
@@ -86,9 +84,8 @@ class RegisterController extends Controller
 
     /**
      *
-     * @SWG\Get(path="/api/v2/register/active/{registration_token}",
+     * @SWG\Get(path="/api/v2/bot/auth/active/{registration_token}",
      *   tags={"Auth", "V2"},
-     *   deprecated=true,
      *   summary="註冊驗證手續",
      *   operationId="active",
      *   produces={"text/plain"},
@@ -111,19 +108,21 @@ class RegisterController extends Controller
             return "帳號驗證失敗";
         }
 
-        $object = $this->getToken($staff, $registration_token);
+        $bot = Auth::guard('bot')->user();
+
+        $object = $this->getToken($staff, $bot->name, $registration_token);
 
         if (App::environment('local')) {
             return json_decode(json_encode($object), true);
         }
 
-        return $this->sendToken($staff, $object->access_token, $object->refresh_token);
+        return $this->sendToken($staff, $bot, $object->access_token, $object->refresh_token);
     }
 
-    private function getToken(Staff $staff, $registration_token)
+    private function getToken(Staff $staff, $bot_name, $registration_token)
     {
         $http = new Client;
-        $oauth_client = DB::table('oauth_clients')->where('name', "Api User")->first();
+        $oauth_client = DB::table('oauth_clients')->where('name', $bot_name." User")->first();
         $response = $http->post(url('/oauth/token'), [
             'form_params' => [
                 'grant_type' => 'password',
@@ -138,11 +137,11 @@ class RegisterController extends Controller
         return json_decode((string) $response->getBody());
     }
 
-    private function sendToken(Staff $staff, $access_token, $refresh_token)
+    private function sendToken(Staff $staff, Bot $bot, $access_token, $refresh_token)
     {
         //送token給line-bot
         $client = new Client();
-        $response = $client->request('POST', env('STRIDE_BOT_BASE_URL').'/checkin/register/active', [
+        $response = $client->request('POST', $bot->auth_hook_url, [
             'json' => [
                 'action' => 'User Authorized',
                 'reply_message' => [
@@ -163,9 +162,8 @@ class RegisterController extends Controller
     }
     /**
      *
-     * @SWG\Post(path="/api/v2/register/refresh",
+     * @SWG\Post(path="/api/v2/bot/auth/refresh",
      *   tags={"Auth", "V2"},
-     *   deprecated=true,
      *   security={
      *      {"bot": {}},
      *   },
@@ -189,7 +187,9 @@ class RegisterController extends Controller
             ], 400);
         }
 
-        $object = $this->getRefreshToken($request->refresh_token);
+        $bot = Auth::guard('bot')->user();
+
+        $object = $this->getRefreshToken($bot, $request->refresh_token);
 
         return response()->json([
             'action' => 'User Token Refreshed',
@@ -200,10 +200,10 @@ class RegisterController extends Controller
         ], 200);
     }
 
-    private function getRefreshToken($refresh_token)
+    private function getRefreshToken(Bot $bot, $refresh_token)
     {
         $http = new Client;
-        $oauth_client = DB::table('oauth_clients')->where('name', "Api User")->first();
+        $oauth_client = DB::table('oauth_clients')->where('name', $bot->name." User")->first();
         $response = $http->post(url('/oauth/token'), [
             'form_params' => [
                 'grant_type' => 'refresh_token',

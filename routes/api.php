@@ -28,27 +28,27 @@ Route::group(['namespace' => 'Api'], function () {
     Route::post('request-online', ['uses' => 'LeaveController@requestOnline']);
     //api v2
     Route::group(['prefix' => 'v2', 'namespace' => 'V2'], function () {
-        Route::get('register/active/{registration_token}', ['as' => 'api.register.active', 'uses' => 'RegisterController@active']);
+        Route::get('bot/{bot_name}/auth/active/{registration_token}', ['as' => 'api.bot.auth.active', 'uses' => 'AuthController@active']);
         Route::group(['middleware' => ['auth.api.bot']], function () {
-            Route::post('/register', ['uses' => 'RegisterController@register']);
-            Route::post('/register/refresh', ['uses' => 'RegisterController@refresh']);
-            Route::group(['middleware' => ['auth.api.user']], function () {
-                Route::group(['prefix' => 'leave'], function () {
-                    Route::get('/', ['uses' => 'LeaveController@index']);
-                    Route::get('/types', ['uses' => 'LeaveController@getLeaveType']);
-                    Route::get('/annual', ['uses' => 'LeaveController@getAnnualStat']);
-                    Route::post('/', ['uses' => 'LeaveController@store']);
-                    Route::post('/online', ['uses' => 'LeaveController@requestOnline']);
-                    Route::post('/late', ['uses' => 'LeaveController@requestLate']);
-                    Route::put('/{id}', ['uses' => 'LeaveController@update']);
-                    Route::delete('/{id}', ['uses' => 'LeaveController@destroy']);
-                });
-    //            Route::group(['prefix' => 'check'], function () {
-    //                Route::post('/', ['uses' => 'CheckController@index']);
-    //                Route::get('start', ['uses' => 'CheckController@start']);
-    //                Route::get('end', ['uses' => 'CheckController@end']);
-    //            });
+            Route::post('/bot/auth', ['uses' => 'AuthController@auth']);
+            Route::post('/bot/auth/refresh', ['uses' => 'AuthController@refresh']);
+        });
+        Route::group(['middleware' => ['auth.api.user']], function () {
+            Route::group(['prefix' => 'leave'], function () {
+                Route::get('/', ['uses' => 'LeaveController@index']);
+                Route::get('/types', ['uses' => 'LeaveController@getLeaveType']);
+                Route::get('/annual', ['uses' => 'LeaveController@getAnnualStat']);
+                Route::post('/', ['uses' => 'LeaveController@store']);
+                Route::post('/online', ['uses' => 'LeaveController@requestOnline']);
+                Route::post('/late', ['uses' => 'LeaveController@requestLate']);
+                Route::put('/{id}', ['uses' => 'LeaveController@update']);
+                Route::delete('/{id}', ['uses' => 'LeaveController@destroy']);
             });
+        //    Route::group(['prefix' => 'check'], function () {
+        //        Route::post('/', ['uses' => 'CheckController@index']);
+        //        Route::get('start', ['uses' => 'CheckController@start']);
+        //        Route::get('end', ['uses' => 'CheckController@end']);
+        //    });
         });
     });
 });
