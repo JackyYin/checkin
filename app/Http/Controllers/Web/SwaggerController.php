@@ -22,7 +22,7 @@ use App\Http\Controllers\Controller;
  *      securityDefinition="api-user",
  *      type="apiKey",
  *      in="header",
- *      name="User-Authorization"
+ *      name="Authorization"
  *  )
 */
 class SwaggerController extends Controller

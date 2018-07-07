@@ -18,8 +18,6 @@ class User
     {
         $guard = "api";
 
-        $request->headers->set('Authorization', 'Bearer '.$request->headers->get('User-Authorization'));
-
         if (Auth()->guard($guard)->check()) {
             Auth()->shouldUse($guard);
 

@@ -35,7 +35,6 @@ class LeaveController extends Controller
      * @SWG\Get(path="/api/v2/leave/types",
      *   tags={"Leave", "V2"},
      *   security={
-     *   	{"bot": {}},
      *   	{"api-user": {}}
      *   },
      *   summary="取得假別列表",
@@ -86,7 +85,6 @@ class LeaveController extends Controller
      * @SWG\Get(path="/api/v2/leave/annual",
      *   tags={"Leave", "V2"},
      *   security={
-     *   	{"bot": {}},
      *   	{"api-user": {}}
      *   },
      *   summary="特休狀況統計",
@@ -175,7 +173,6 @@ class LeaveController extends Controller
      * @SWG\Post(path="/api/v2/leave",
      *   tags={"Leave", "V2"},
      *   security={
-     *   	{"bot": {}},
      *   	{"api-user": {}}
      *   },
      *   summary="請假申請",
@@ -241,7 +238,6 @@ class LeaveController extends Controller
      * @SWG\Post(path="/api/v2/leave/late",
      *   tags={"Leave", "V2"},
      *   security={
-     *   	{"bot": {}},
      *   	{"api-user": {}}
      *   },
      *   summary="申請晚到",
@@ -299,7 +295,6 @@ class LeaveController extends Controller
      * @SWG\Post(path="/api/v2/leave/online",
      *   tags={"Leave", "V2"},
      *   security={
-     *   	{"bot": {}},
      *   	{"api-user": {}}
      *   },
      *   summary="申請online",
@@ -393,7 +388,6 @@ class LeaveController extends Controller
      * @SWG\Put(path="/api/v2/leave/{id}",
      *   tags={"Leave", "V2"},
      *   security={
-     *   	{"bot": {}},
      *   	{"api-user": {}}
      *   },
      *   summary="編輯請假",
