@@ -85,11 +85,17 @@ class AuthController extends Controller
 
     /**
      *
-     * @SWG\Get(path="/api/v2/bot/auth/active/{registration_token}",
+     * @SWG\Get(path="/api/v2/bot/{bot_name}/auth/active/{registration_token}",
      *   tags={"Auth", "V2"},
      *   summary="註冊驗證手續",
      *   operationId="active",
      *   produces={"text/plain"},
+     *   @SWG\Parameter(
+     *       name="bot_name",
+     *       in="path",
+     *       type="string",
+     *       required=true,
+     *   ),
      *   @SWG\Parameter(
      *       name="registration_token",
      *       in="path",
@@ -99,7 +105,7 @@ class AuthController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function active($registration_token)
+    public function active($bot_name, $registration_token)
     {
         $staff = Staff::all()->filter(function ($item) use ($registration_token) {
             return Hash::check($registration_token, $item->registration_token);
@@ -109,9 +115,9 @@ class AuthController extends Controller
             return "帳號驗證失敗";
         }
 
-        $bot = Auth::guard('bot')->user();
+        $bot = Bot::where('name', $bot_name)->first();
 
-        $object = $this->getToken($staff, $bot->name, $registration_token);
+        $object = $this->getToken($staff, $bot, $registration_token);
 
         if (App::environment('local')) {
             return json_decode(json_encode($object), true);
@@ -120,10 +126,10 @@ class AuthController extends Controller
         return $this->sendToken($staff, $bot, $object->access_token, $object->refresh_token);
     }
 
-    private function getToken(Staff $staff, $bot_name, $registration_token)
+    private function getToken(Staff $staff, Bot $bot, $registration_token)
     {
         $http = new Client;
-        $oauth_client = DB::table('oauth_clients')->where('name', $bot_name." User")->first();
+        $oauth_client = DB::table('oauth_clients')->where('name', $bot->name." User")->first();
         $response = $http->post(url('/oauth/token'), [
             'form_params' => [
                 'grant_type' => 'password',
