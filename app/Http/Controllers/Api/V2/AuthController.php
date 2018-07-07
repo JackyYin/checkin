@@ -14,6 +14,7 @@ use Auth;
 use GuzzleHttp\Client;
 use App\Models\Staff;
 use App\Models\Line;
+use App\Models\Bot;
 
 class AuthController extends Controller
 {
