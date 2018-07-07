@@ -10,6 +10,7 @@ use Ramsey\Uuid\Uuid;
 use Validator;
 use Mail;
 use DB;
+use Auth;
 use GuzzleHttp\Client;
 use App\Models\Staff;
 use App\Models\Line;
