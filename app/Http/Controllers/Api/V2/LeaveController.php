@@ -651,8 +651,7 @@ class LeaveController extends Controller
             ->selectRaw($select_string)->first();
 
         $salt = $this->saveSVGGraph($EnumTypes, $row);
-        return response(Storage::get('/chart/'.$salt.".png"))
-            ->header('Content-Type', 'image/png');
+        return response()->file(storage_path("app/chart/".$salt.".png"));
     }
 
     private function saveSVGGraph($EnumTypes, $row)
