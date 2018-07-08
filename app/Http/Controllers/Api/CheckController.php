@@ -164,6 +164,7 @@ class CheckController extends Controller
      *   summary="取得請假或打卡紀錄",
      *   operationId="get-check-list",
      *   produces={"application/json"},
+     *   deprecated=true,
      *   @SWG\Parameter(
      *       name="line_id",
      *       in="formData",

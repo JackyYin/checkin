@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api\V2;
 use App\Http\Controllers\Controller;
 use App\Helpers\StrideHelper;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Validator;
 use Carbon\Carbon;
+use SVGGraph;
 use Auth;
 use App\Models\Staff;
 use App\Models\Line;
@@ -35,7 +37,7 @@ class LeaveController extends Controller
      * @SWG\Get(path="/api/v2/leave/types",
      *   tags={"Leave", "V2"},
      *   security={
-     *   	{"api-user": {}}
+     *      {"api-user": {}}
      *   },
      *   summary="取得假別列表",
      *   operationId="get-leave-types",
@@ -85,7 +87,7 @@ class LeaveController extends Controller
      * @SWG\Get(path="/api/v2/leave/annual",
      *   tags={"Leave", "V2"},
      *   security={
-     *   	{"api-user": {}}
+     *      {"api-user": {}}
      *   },
      *   summary="特休狀況統計",
      *   operationId="get-annual-stat",
@@ -173,7 +175,7 @@ class LeaveController extends Controller
      * @SWG\Post(path="/api/v2/leave",
      *   tags={"Leave", "V2"},
      *   security={
-     *   	{"api-user": {}}
+     *      {"api-user": {}}
      *   },
      *   summary="請假申請",
      *   operationId="request-leave",
@@ -238,7 +240,7 @@ class LeaveController extends Controller
      * @SWG\Post(path="/api/v2/leave/late",
      *   tags={"Leave", "V2"},
      *   security={
-     *   	{"api-user": {}}
+     *      {"api-user": {}}
      *   },
      *   summary="申請晚到",
      *   operationId="request-late",
@@ -295,7 +297,7 @@ class LeaveController extends Controller
      * @SWG\Post(path="/api/v2/leave/online",
      *   tags={"Leave", "V2"},
      *   security={
-     *   	{"api-user": {}}
+     *      {"api-user": {}}
      *   },
      *   summary="申請online",
      *   operationId="request-online",
@@ -388,7 +390,7 @@ class LeaveController extends Controller
      * @SWG\Put(path="/api/v2/leave/{id}",
      *   tags={"Leave", "V2"},
      *   security={
-     *   	{"api-user": {}}
+     *      {"api-user": {}}
      *   },
      *   summary="編輯請假",
      *   operationId="edit-leave",
@@ -567,5 +569,115 @@ class LeaveController extends Controller
             ->where('id', '!=', $staff_id)->get()->pluck('email');
 
         return $subscribers;
+    }
+    /**
+     *
+     * @SWG\Get(path="/api/v2/leave",
+     *   tags={"Leave", "V2"},
+     *   security={
+     *      {"api-user": {}}
+     *   },
+     *   summary="取得請假圖表",
+     *   operationId="get-leave-chart",
+     *   produces={"application/json"},
+     *   @SWG\Parameter(
+     *       name="start_date",
+     *       in="query",
+     *       type="string",
+     *   ),
+     *   @SWG\Parameter(
+     *       name="end_date",
+     *       in="query",
+     *       type="string",
+     *   ),
+     *   @SWG\Response(response="default", description="操作成功")
+     * )
+     */
+    public function index(Request $request)
+    {
+        $messages = [
+            'start_date.date_format' => '請填入格式： YYYY-MM-DD',
+            'end_date.date_format'   => '請填入格式： YYYY-MM-DD',
+        ];
+        $validator = Validator::make($request->all(), [
+            'start_date' => 'date_format:Y-m-d',
+            'end_date'   => 'date_format:Y-m-d',
+        ], $messages);
+
+        if ($validator->fails()) {
+            $array = $validator->errors()->all();
+            return response()->json([
+                'reply_message' => implode(",", $array),
+            ], 400);
+        }
+
+        if ($request->filled('start_time') && $request->filled('end_time') 
+            && strtotime($request->end_time." 00:00:00") <= strtotime($request->start_time." 00:00:00")) {
+            return response()->json([
+                'reply_message' => "起始時間需在結束時間之前",
+            ], 400);
+        }
+        $staff = Auth::guard('api')->user();
+
+        $select_string = "";
+        $EnumTypes = array (
+            Check::TYPE_PERSONAL_LEAVE  => "personal",
+            Check::TYPE_ANNUAL_LEAVE    => "annual",
+            Check::TYPE_OFFICIAL_LEAVE  => "official",
+            Check::TYPE_SICK_LEAVE      => "sick",
+            Check::TYPE_ONLINE          => "online",
+            Check::TYPE_LATE            => "late",
+            Check::TYPE_MOURNING_LEAVE  => "mourning",
+            Check::TYPE_MATERNITY_LEAVE => "maternity",
+            Check::TYPE_PATERNITY_LEAVE => "paternity",
+            Check::TYPE_MARRIAGE_LEAVE  => "marriage",
+        );
+        foreach( $EnumTypes as $key => $value) {
+            $select_string .= "SUM(IF(type = ".$key.", TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at), 0) / 60) as ".$value.",";
+        }
+        $select_string = substr($select_string, 0, -1);
+
+        $row = Check::where('staff_id', $staff->id)
+            ->where(function ($query) use ($request) {
+                if ($request->filled('start_date')) {
+                    $query->where('checkin_at', ">=", $request->start_date." 00:00:00");
+                }
+
+                if ($request->filled('end_date')) {
+                    $to = Carbon::createFromFormat('Y-m-d', $request->end_date);
+                    $query->where('checkin_at', "<=", $to->addDay());
+                }
+            })
+            ->selectRaw($select_string)->first();
+
+        $salt = $this->saveSVGGraph($EnumTypes, $row);
+        return response(Storage::get('/chart/'.$salt.".png"))
+            ->header('Content-Type', 'image/png');
+    }
+
+    private function saveSVGGraph($EnumTypes, $row)
+    {
+        //make svg graph
+        $settings = array(
+            'label_x' => 'types',
+            'label_y' => 'hours',
+        );
+        $graph = new SVGGraph(1000, 600, $settings);
+        $colours = array('yellow');
+        $values = array();
+        foreach($EnumTypes as $type) {
+            $values[$type] = $row->{$type};
+        }
+        $graph->colours = $colours;
+        $graph->Values($values);
+        $svg = $graph->FETCH('BarGraph', FALSE, FALSE);
+
+        //save graph
+        $salt = str_random(30);
+        file_put_contents(storage_path('app/chart/').$salt.".svg", $svg);
+        $command = "inkscape ".storage_path('app/chart/').$salt.".svg -e ".storage_path('app/chart/'.$salt.".png");
+        exec($command);
+
+        return $salt;
     }
 }
