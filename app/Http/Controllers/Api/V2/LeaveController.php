@@ -168,7 +168,6 @@ class LeaveController extends Controller
 
                 return $checkin->diffInHours($checkout);
             });
-
     }
     /**
      *

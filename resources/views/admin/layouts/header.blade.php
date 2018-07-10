@@ -22,6 +22,9 @@
                 <a class="nav-link" href={{ route('admin.check.count_late') }}>查看晚到次數</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href={{ route('admin.check.annual_stat') }}>查看特休狀態</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href={{ route('admin.logout') }}>登出</a>
             </li>
         </ul>
