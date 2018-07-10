@@ -30,9 +30,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //刪掉api:get-check-list儲存的檔案
+        //刪掉api:取得請假圖表儲存的檔案
         $command = "rm -rf ".base_path('storage/app/chart/')."*";
-        $schedule->exec($command)->everyMinute();
+        $schedule->exec($command)->daily();
 
         //自動打上下班卡
         $schedule->call(function () {
