@@ -380,9 +380,9 @@ class CheckController extends Controller
         $remained_hours = $annual_hours - $used_hours > 0 ? $annual_hours - $used_hours : 0;
 
         $row['name'] = $staff->name;
-        $row['stat'] = "可用特休時數: ".$annual_hours."\n"
-               ."已用特休時數: ".$used_hours."\n"
-               ."剩下特休時數: ".$remained_hours;
+        $row['usable'] = $annual_hours;
+        $row['used'] = $used_hours;
+        $row['remained'] = $remained_hours;
 
         return $row;
     }

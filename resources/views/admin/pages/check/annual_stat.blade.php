@@ -20,14 +20,18 @@
           <thead>
             <tr>
               <th scope="col">姓名</th>
-              <th scope="col">特休狀態</th>
+              <th scope="col">可用特休時數</th>
+              <th scope="col">已用特休時數</th>
+              <th scope="col">剩下特休時數</th>
             </tr>
           </thead>
           <tbody>
           @foreach ($rows as $row)
             <tr>
               <td>{{$row['name']}}</td>
-              <td>{{$row['stat']}}</td>
+              <td>{{$row['usable']}}</td>
+              <td>{{$row['used']}}</td>
+              <td>{{$row['remained']}}</td>
             </tr>
           @endforeach
           </tbody>
