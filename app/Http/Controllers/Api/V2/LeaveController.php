@@ -610,8 +610,8 @@ class LeaveController extends Controller
             ], 400);
         }
 
-        if ($request->filled('start_time') && $request->filled('end_time') 
-            && strtotime($request->end_time." 00:00:00") <= strtotime($request->start_time." 00:00:00")) {
+        if ($request->filled('start_date') && $request->filled('end_date')
+            && strtotime($request->end_date." 00:00:00") <= strtotime($request->start_date." 00:00:00")) {
             return response()->json([
                 'reply_message' => "起始時間需在結束時間之前",
             ], 400);
