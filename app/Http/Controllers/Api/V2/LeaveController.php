@@ -639,7 +639,8 @@ class LeaveController extends Controller
         $row = Check::where('staff_id', $staff->id)
             ->where(function ($query) use ($request) {
                 if ($request->filled('start_date')) {
-                    $query->where('checkin_at', ">=", $request->start_date." 00:00:00");
+                    $from = Carbon::createFromFormat('Y-m-d', $request->start_date);
+                    $query->where('checkin_at', ">=", $from);
                 }
 
                 if ($request->filled('end_date')) {
