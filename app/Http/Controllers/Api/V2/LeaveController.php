@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Controllers\Controller;
 use App\Helpers\StrideHelper;
+use App\Helpers\LeaveHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Validator;
@@ -104,14 +105,7 @@ class LeaveController extends Controller
 
         if ( $on_board_months < 6) {
             $annual_hours = 0;
-            $used_hours = $staff->get_check_list
-            ->where('type', Check::TYPE_ANNUAL_LEAVE)
-            ->sum(function ($item) {
-                $checkin = Carbon::createFromFormat('Y-m-d H:i:s', $item->checkin_at);
-                $checkout = Carbon::createFromFormat('Y-m-d H:i:s', $item->checkout_at);
-
-                return $checkin->diffInHours($checkout);
-            });
+            $used_hours = $this->getUsedHours($staff, 0);
         }
         elseif ( 6 <= $on_board_months && $on_board_months < 12) {
             $annual_hours = 24;
@@ -155,19 +149,15 @@ class LeaveController extends Controller
         ], 200);
     }
 
-    private function getUsedHours($staff, $months)
+    private function getUsedHours($staff, $added_months)
     {
         $on_board_date = Carbon::createFromFormat('Y-m-d', $staff->profile->on_board_date);
 
-        return $staff->get_check_list
+        $checks = $staff->get_check_list
             ->where('type', Check::TYPE_ANNUAL_LEAVE)
-            ->where('checkin_at', ">=", $on_board_date->addMonths($months))
-            ->sum(function ($item) {
-                $checkin = Carbon::createFromFormat('Y-m-d H:i:s', $item->checkin_at);
-                $checkout = Carbon::createFromFormat('Y-m-d H:i:s', $item->checkout_at);
+            ->where('checkin_at', ">=", $on_board_date->addMonths($added_months));
 
-                return $checkin->diffInHours($checkout);
-            });
+        return LeaveHelper::countHours($checks);
     }
     /**
      *

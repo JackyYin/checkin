@@ -18,6 +18,9 @@ class Check extends Model
     const TYPE_PATERNITY_LEAVE = 9;  //陪產假
     const TYPE_MARRIAGE_LEAVE  = 10; //婚假
 
+    const NOON_START = "12:00:00"; //午休開始時間
+    const NOON_END   = "13:00:00"; //午休結束時間
+
     protected $table = 'checks';
     /**
      * The attributes that are mass assignable.

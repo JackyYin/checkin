@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Helpers\LeaveHelper;
 use Illuminate\Http\Request;
 use Auth;
 use Validator;
@@ -64,7 +65,6 @@ class CheckController extends Controller
         }
 
         $rows = isset($rows) ? $rows : [];
-
         //form options
         $options['name'] =Staff::all()->pluck('name', 'id')->toArray();
         $options['operators'] = array(
@@ -143,7 +143,7 @@ class CheckController extends Controller
 
         foreach ($conditions['type'] as $type) {
             $mysql =
-                $mysql.", SUM(IF(type = ".$type.", TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at), 0)) as ".$this->CHECK_ENG_TYPE[$type]."_time";
+                $mysql.", SUM(IF(type = ".$type.",IF(checkin_at <= DATE_ADD(DATE(checkin_at), INTERVAL 12 HOUR) && checkout_at >= DATE_ADD(DATE(checkin_at), INTERVAL 13 HOUR), TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at) - 60, TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at)), 0)) as ".$this->CHECK_ENG_TYPE[$type]."_time";
         }
 
         $mysql =
@@ -337,14 +337,7 @@ class CheckController extends Controller
 
         if ( $on_board_months < 6) {
             $annual_hours = 0;
-            $used_hours = $staff->get_check_list
-            ->where('type', Check::TYPE_ANNUAL_LEAVE)
-            ->sum(function ($item) {
-                $checkin = Carbon::createFromFormat('Y-m-d H:i:s', $item->checkin_at);
-                $checkout = Carbon::createFromFormat('Y-m-d H:i:s', $item->checkout_at);
-
-                return $checkin->diffInHours($checkout);
-            });
+            $used_hours = $this->getUsedHours($staff, 0);
         }
         elseif ( 6 <= $on_board_months && $on_board_months < 12) {
             $annual_hours = 24;
@@ -391,14 +384,10 @@ class CheckController extends Controller
     {
         $on_board_date = Carbon::createFromFormat('Y-m-d', $staff->profile->on_board_date);
 
-        return $staff->get_check_list
+        $checks = $staff->get_check_list
             ->where('type', Check::TYPE_ANNUAL_LEAVE)
-            ->where('checkin_at', ">=", $on_board_date->addMonths($months))
-            ->sum(function ($item) {
-                $checkin = Carbon::createFromFormat('Y-m-d H:i:s', $item->checkin_at);
-                $checkout = Carbon::createFromFormat('Y-m-d H:i:s', $item->checkout_at);
+            ->where('checkin_at', ">=", $on_board_date->addMonths($months));
 
-                return $checkin->diffInHours($checkout);
-            });
+        return LeaveHelper::countHours($checks);
     }
 }
