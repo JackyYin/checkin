@@ -540,7 +540,7 @@ class LeaveController extends Controller
                     $check->delete();
                 }
             }
-            elseif ($check_start <= strtotime($from) && strtotime($from) < $check_end) {
+            elseif ($check_start < strtotime($from) && strtotime($from) < $check_end) {
                 return false;
             }
             elseif ($check_end <= strtotime($from)) {
