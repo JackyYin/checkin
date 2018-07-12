@@ -77,8 +77,9 @@ class Kernel extends ConsoleKernel
         $checkout_end   = strtotime(Carbon::today()->addHours(19));
         $checkout_diff  = $checkout_end - $checkout_start;
         //noon
-        $noon_start     = strtotime(Carbon::today()->addHours(12));
-        $noon_end       = strtotime(Carbon::today()->addHours(13));
+        $noon_start     = strtotime(Carbon::today()->addHours(explode(":",Check::NOON_START)[0]));
+        $noon_end       = strtotime(Carbon::today()->addHours(explode(":",Check::NOON_END)[0]));
+
         foreach ($staffs as $staff) {
             $checkin_random_time =  date("Y-m-d H:i:s",$checkin_start + mt_rand(0,$checkin_diff));
             $checkout_random_time =  date("Y-m-d H:i:s",$checkout_start + mt_rand(0,$checkout_diff));
