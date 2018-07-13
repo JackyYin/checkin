@@ -28,7 +28,7 @@ Route::group(['namespace' => 'Api'], function () {
     Route::post('request-online', ['uses' => 'LeaveController@requestOnline']);
     //api v2
     Route::group(['prefix' => 'v2', 'namespace' => 'V2'], function () {
-        Route::get('bot/{bot_name}/auth/active/{registration_token}', ['as' => 'api.bot.auth.active', 'uses' => 'AuthController@active']);
+        Route::get('bot/{bot_name}/auth/verify/{registration_token}', ['as' => 'api.bot.auth.verify', 'uses' => 'AuthController@verify']);
         Route::group(['middleware' => ['auth.api.bot']], function () {
             Route::post('/bot/auth', ['uses' => 'AuthController@auth']);
             Route::post('/bot/auth/refresh', ['uses' => 'AuthController@refresh']);

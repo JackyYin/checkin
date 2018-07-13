@@ -67,7 +67,7 @@ class AuthController extends Controller
             'registration_token' => Hash::make($registration_token),
         ]);
 
-        $confirmation_url = route('api.bot.auth.active', ['bot_name' => $bot->name, 'registration_token' => $registration_token]);
+        $confirmation_url = route('api.bot.auth.verify', ['bot_name' => $bot->name, 'registration_token' => $registration_token]);
         $this->sendRegistrationEmail($new_staff, $confirmation_url);
 
         return response()->json([
@@ -86,10 +86,10 @@ class AuthController extends Controller
 
     /**
      *
-     * @SWG\Get(path="/api/v2/bot/{bot_name}/auth/active/{registration_token}",
+     * @SWG\Get(path="/api/v2/bot/{bot_name}/auth/verify/{registration_token}",
      *   tags={"Auth", "V2"},
      *   summary="email產生並送token到bot endpoint",
-     *   operationId="active",
+     *   operationId="verify",
      *   produces={"text/plain"},
      *   @SWG\Parameter(
      *       name="bot_name",
@@ -106,7 +106,7 @@ class AuthController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function active($bot_name, $registration_token)
+    public function verify($bot_name, $registration_token)
     {
         $staff = Staff::all()->filter(function ($item) use ($registration_token) {
             return Hash::check($registration_token, $item->registration_token);
