@@ -64,7 +64,7 @@ class StrideHelper
         return $content;
     }
 
-    public static function create_notify(Check $check)
+    public static function createNotification(Check $check)
     {
         if ( strtotime(Carbon::today()) <= strtotime($check->checkin_at) && strtotime($check->checkin_at) <= strtotime(Carbon::tomorrow())) {
             $http = new Client([
@@ -97,7 +97,7 @@ class StrideHelper
         }
     }
 
-    public static function edit_notify(Check $check)
+    public static function editNotification(Check $check)
     {
         if ( strtotime(Carbon::today()) <= strtotime($check->checkin_at) && strtotime($check->checkin_at) <= strtotime(Carbon::tomorrow())) {
             $http = new Client([
