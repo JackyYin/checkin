@@ -131,4 +131,30 @@ class StrideHelper
             return $response->getBody();
         }
     }
+
+    public static function personalNotification(Check $check)
+    {
+        $http = new Client([
+            'headers' => [
+                'Content-Type'  => 'text/plain',
+            ]
+        ]);
+
+        $body = 
+            "編號: ".$check->id."\n"
+            ."時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
+            ."姓名: ".$check->staff->name."\n"
+            ."假別: ".self::CHECK_TYPE($check->type)."\n"
+            ."原因: ".$check->leave_reason->reason."\n";
+
+        $response = $http->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
+            'json' => [
+                'action' => 'Personal Leave Notification',
+                'reply_message' => $body,
+                'email'         => $check->staff->email,
+            ]
+        ]);
+
+        return $response->getBody();
+    }
 }
