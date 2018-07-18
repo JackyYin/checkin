@@ -232,7 +232,7 @@ class Kernel extends ConsoleKernel
             ->get();
 
         foreach ($checks as $check) {
-            StrideHelper::create_notify($check);
+            StrideHelper::createNotification($check);
         }
     }
 }
