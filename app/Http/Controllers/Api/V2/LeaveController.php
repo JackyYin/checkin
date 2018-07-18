@@ -50,36 +50,44 @@ class LeaveController extends Controller
     {
         return response()->json([
             array(
-                'id'   => Check::TYPE_ANNUAL_LEAVE, 
-                'name' => $this->CHECK_TYPE[Check::TYPE_ANNUAL_LEAVE],
-            ),
-            array(
-                'id'   => Check::TYPE_PERSONAL_LEAVE, 
+                'id'   => Check::TYPE_PERSONAL_LEAVE,
                 'name' => $this->CHECK_TYPE[Check::TYPE_PERSONAL_LEAVE],
             ),
             array(
-                'id'   => Check::TYPE_OFFICIAL_LEAVE, 
+                'id'   => Check::TYPE_ANNUAL_LEAVE,
+                'name' => $this->CHECK_TYPE[Check::TYPE_ANNUAL_LEAVE],
+            ),
+            array(
+                'id'   => Check::TYPE_OFFICIAL_LEAVE,
                 'name' => $this->CHECK_TYPE[Check::TYPE_OFFICIAL_LEAVE],
             ),
             array(
-                'id'   => Check::TYPE_SICK_LEAVE, 
+                'id'   => Check::TYPE_SICK_LEAVE,
                 'name' => $this->CHECK_TYPE[Check::TYPE_SICK_LEAVE],
             ),
             array(
-                'id'   => Check::TYPE_MOURNING_LEAVE, 
+                'id'   => Check::TYPE_ONLINE,
+                'name' => $this->CHECK_TYPE[Check::TYPE_ONLINE],
+            ),
+            array(
+                'id'   => Check::TYPE_LATE,
+                'name' => $this->CHECK_TYPE[Check::TYPE_LATE],
+            ),
+            array(
+                'id'   => Check::TYPE_MOURNING_LEAVE,
                 'name' => $this->CHECK_TYPE[Check::TYPE_MOURNING_LEAVE],
             ),
             array(
-                'id'   => Check::TYPE_MARRIAGE_LEAVE, 
-                'name' => $this->CHECK_TYPE[Check::TYPE_MARRIAGE_LEAVE],
-            ),
-            array(
-                'id'   => Check::TYPE_MATERNITY_LEAVE, 
+                'id'   => Check::TYPE_MATERNITY_LEAVE,
                 'name' => $this->CHECK_TYPE[Check::TYPE_MATERNITY_LEAVE],
             ),
             array(
-                'id'   => Check::TYPE_PATERNITY_LEAVE, 
+                'id'   => Check::TYPE_PATERNITY_LEAVE,
                 'name' => $this->CHECK_TYPE[Check::TYPE_PATERNITY_LEAVE],
+            ),
+            array(
+                'id'   => Check::TYPE_MARRIAGE_LEAVE,
+                'name' => $this->CHECK_TYPE[Check::TYPE_MARRIAGE_LEAVE],
             ),
         ], 200);
     }
@@ -625,6 +633,7 @@ class LeaveController extends Controller
         );
         $noon_start = explode(":", Check::NOON_START)[0];
         $noon_end = explode(":", Check::NOON_END)[0];
+
         foreach( $EnumTypes as $key => $value) {
             $select_string .= "SUM(IF(type = ".$key.",  IF(checkin_at <= DATE_ADD(DATE(checkin_at), INTERVAL ".$noon_start."  HOUR) && checkout_at >= DATE_ADD(DATE(checkin_at), INTERVAL ".$noon_end." HOUR), TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at) - 60, TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at)), 0) / 60) as ".$value.",";
         }
