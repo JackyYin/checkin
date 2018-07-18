@@ -654,7 +654,7 @@ class LeaveController extends Controller
             'label_y' => 'hours',
         );
         $graph = new SVGGraph(1000, 600, $settings);
-        $colours = array('yellow');
+        $colours = array(array('red', 'yellow'));
         $values = array();
         foreach($EnumTypes as $type) {
             $values[$type] = $row->{$type};
