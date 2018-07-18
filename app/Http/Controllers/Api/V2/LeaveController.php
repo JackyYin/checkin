@@ -623,8 +623,10 @@ class LeaveController extends Controller
             Check::TYPE_PATERNITY_LEAVE => "paternity",
             Check::TYPE_MARRIAGE_LEAVE  => "marriage",
         );
+        $noon_start = explode(":", Check::NOON_START)[0];
+        $noon_end = explode(":", Check::NOON_END)[0];
         foreach( $EnumTypes as $key => $value) {
-            $select_string .= "SUM(IF(type = ".$key.",  IF(checkin_at <= DATE_ADD(DATE(checkin_at), INTERVAL 12 HOUR) && checkout_at >= DATE_ADD(DATE(checkin_at), INTERVAL 13 HOUR), TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at) - 60, TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at)), 0) / 60) as ".$value.",";
+            $select_string .= "SUM(IF(type = ".$key.",  IF(checkin_at <= DATE_ADD(DATE(checkin_at), INTERVAL ".$noon_start."  HOUR) && checkout_at >= DATE_ADD(DATE(checkin_at), INTERVAL ".$noon_end." HOUR), TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at) - 60, TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at)), 0) / 60) as ".$value.",";
         }
         $select_string = substr($select_string, 0, -1);
 
