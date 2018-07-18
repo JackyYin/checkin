@@ -48,6 +48,8 @@ class StaffController extends Controller
             return $a->staff_code < $b->staff_code ? -1 : 1;
         });
 
+        $staffs = $this->paginate($staffs, self::PAGER, $request->input('page'), $request);
+
         return view('admin.pages.staff.index', compact('staffs'));
     }
 

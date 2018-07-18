@@ -71,6 +71,7 @@
           @endforeach
           </tbody>
         </table>
+        {{ $staffs->links() }}
     </div>
 @endsection
 @section('scripts')
