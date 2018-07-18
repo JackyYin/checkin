@@ -624,7 +624,7 @@ class LeaveController extends Controller
             Check::TYPE_MARRIAGE_LEAVE  => "marriage",
         );
         foreach( $EnumTypes as $key => $value) {
-            $select_string .= "SUM(IF(type = ".$key.", TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at), 0) / 60) as ".$value.",";
+            $select_string .= "SUM(IF(type = ".$key.",  IF(checkin_at <= DATE_ADD(DATE(checkin_at), INTERVAL 12 HOUR) && checkout_at >= DATE_ADD(DATE(checkin_at), INTERVAL 13 HOUR), TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at) - 60, TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at)), 0) / 60) as ".$value.",";
         }
         $select_string = substr($select_string, 0, -1);
 
