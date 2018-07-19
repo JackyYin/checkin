@@ -487,7 +487,7 @@ class LeaveController extends Controller
         }
 
         $leave->update([
-            'type'        => $request->input('type', $leave->type),
+            'type'        => $request->input('leave_type', $leave->type),
             'checkin_at'  => $request->input('start_time', $leave->checkin_at),
             'checkout_at' => $request->input('end_time', $leave->checkout_at),
         ]);
