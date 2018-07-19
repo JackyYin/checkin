@@ -227,7 +227,7 @@ class LeaveController extends Controller
         ]);
     }
 
-    private function CheckRepeat($staff_id, $from, $to)
+    private function CheckRepeat($staff_id, $from, $to, $without = null)
     {
         $date = explode(" ", $from)[0];
         $date_start = $date." 00:00:00";
@@ -238,6 +238,7 @@ class LeaveController extends Controller
             ->where('checkin_at', '>=', $date_start)
             ->where('checkin_at', '<=', $date_end)
             ->where('checkout_at', '<=', $date_end)
+            ->where('id', '!=', $without)
             ->get();
 
         foreach ($past_checks as $check) {
@@ -247,14 +248,14 @@ class LeaveController extends Controller
                 if (strtotime($to) <= $check_start) {
                     continue;
                 }
-                elseif ($check_start <= strtotime($to) && strtotime($to) <= $check_end) {
+                elseif ($check_start < strtotime($to) && strtotime($to) < $check_end) {
                     return false;
                 }
                 elseif ($check_end <= strtotime($to)) {
                     $check->delete();
                 }
             }
-            elseif ($check_start <= strtotime($from) && strtotime($from) <= $check_end) {
+            elseif ($check_start < strtotime($from) && strtotime($from) < $check_end) {
                 return false;
             }
             elseif ($check_end <= strtotime($from)) {
