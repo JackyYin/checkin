@@ -510,9 +510,9 @@ class LeaveController extends Controller
         StrideHelper::personalNotification($leave, "edit");
 
         $reply_message = 
-            "編號: ".$leave->id."編輯成功\n"
-            ."時間: ".$leave->checkin_at."至".$leave->checkout_at."\n"
-            ."姓名: ".$staff->name."\n"
+            "編號: ".$leave->id." 編輯成功\n"
+            ."時間: ".date("Y-m-d", strtotime($leave->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($leave->checkin_at))).") ".date("H:i", strtotime($leave->checkin_at))." ~ ".date("H:i", strtotime($leave->checkout_at))."\n"
+            ."姓名: ".$leave->staff->name."\n"
             ."假別: ".$this->CHECK_TYPE[$leave->type]."\n"
             ."原因: ".$leave->leave_reason->reason."\n";
 
