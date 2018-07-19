@@ -376,7 +376,7 @@ class LeaveController extends Controller
                 ."編號： ".$check->id;
 
         StrideHelper::createNotification($check);
-        StrideHelper::personalNotification($check);
+        StrideHelper::personalNotification($check, "create");
 
         return response()->json([
             'reply_message' => $reply_message,
@@ -507,7 +507,7 @@ class LeaveController extends Controller
         }
 
         StrideHelper::editNotification($leave);
-        StrideHelper::personalNotification($leave);
+        StrideHelper::personalNotification($leave, "edit");
 
         $reply_message = 
             "編號: ".$leave->id."編輯成功\n"

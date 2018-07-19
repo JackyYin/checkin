@@ -108,7 +108,7 @@ class StrideHelper
 
             if ($check->type == Check::TYPE_ONLINE || $check->type == Check::TYPE_OFFICIAL_LEAVE) {
                 $body = 
-                    "編號: ".$check->id." 已編輯\n"
+                    "編號: ".$check->id." 編輯成功\n"
                     ."時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
                     ."姓名: ".$check->staff->name."\n"
                     ."假別: ".self::CHECK_TYPE($check->type)."\n"
@@ -116,7 +116,7 @@ class StrideHelper
             }
             else {
                 $body = 
-                    "編號: ".$check->id." 已編輯\n"
+                    "編號: ".$check->id." 編輯成功\n"
                     ."時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
                     ."姓名: ".$check->staff->name."\n";
             }
@@ -132,7 +132,7 @@ class StrideHelper
         }
     }
 
-    public static function personalNotification(Check $check)
+    public static function personalNotification(Check $check, $source)
     {
         $http = new Client([
             'headers' => [
@@ -140,9 +140,15 @@ class StrideHelper
             ]
         ]);
 
+        if ($source == "edit") {
+            $body = "編號: ".$check->id." 編輯成功\n";
+        }
+        if($source == "create") {
+            $body = "編號: ".$check->id."新增成功\n";
+        }
+
         $body = 
-            "編號: ".$check->id."\n"
-            ."時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
+            $body."時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
             ."姓名: ".$check->staff->name."\n"
             ."假別: ".self::CHECK_TYPE($check->type)."\n"
             ."原因: ".$check->leave_reason->reason."\n";
