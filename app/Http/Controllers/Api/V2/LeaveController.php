@@ -507,7 +507,7 @@ class LeaveController extends Controller
         }
 
         StrideHelper::editNotification($leave);
-        StrideHelper::personalNotification($check);
+        StrideHelper::personalNotification($leave);
 
         $reply_message = 
             "編號: ".$leave->id."編輯成功\n"
