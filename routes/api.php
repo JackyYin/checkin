@@ -36,6 +36,7 @@ Route::group(['namespace' => 'Api'], function () {
         Route::group(['middleware' => ['auth.api.user']], function () {
             Route::group(['prefix' => 'leave'], function () {
                 Route::get('/', ['uses' => 'LeaveController@index']);
+                Route::get('/{leave_id}', ['uses' => 'LeaveController@show']);
                 Route::get('/types', ['uses' => 'LeaveController@getLeaveType']);
                 Route::get('/annual', ['uses' => 'LeaveController@getAnnualStat']);
                 Route::post('/', ['uses' => 'LeaveController@store']);

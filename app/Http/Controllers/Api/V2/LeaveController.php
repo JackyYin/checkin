@@ -696,4 +696,62 @@ class LeaveController extends Controller
 
         return $salt;
     }
+    /**
+     * @SWG\Tag(name="Leave", description="請假")
+     */
+    /**
+     *
+     * @SWG\Get(path="/api/v2/leave/{leave_id}",
+     *   tags={"Leave", "V2"},
+     *   security={
+     *      {"api-user": {}}
+     *   },
+     *   summary="查看請假資訊",
+     *   operationId="get-specific-leave",
+     *   produces={"application/json"},
+     *   @SWG\Parameter(
+     *       name="leave_id",
+     *       in="path",
+     *       type="integer",
+     *       required=true,
+     *   ),
+     *   @SWG\Response(response="default", description="操作成功")
+     * )
+     */
+    public function show(Request $request)
+    {
+        $messages = [
+            'leave_id.integer' => '假單編號需為正整數',
+            'leave_id.exists'  => '不存在的假單',
+        ];
+        $validator = Validator::make($request->route()->parameters(), [
+            'leave_id' => 'integer|exists:checks,id',
+        ], $messages);
+
+        if ($validator->fails()) {
+            $array = $validator->errors()->all();
+            return response()->json([
+                'reply_message' => implode(",", $array),
+            ], 400);
+        }
+        $staff = Auth::guard('api')->user();
+
+        $leave = Check::where('id', $request->route('leave_id'))->where('staff_id', $staff->id)->first();
+
+        if (!$leave) {
+            return response()->json([
+                'reply_message' => "沒有權限查看此假單",
+            ], 400);
+        }
+
+        return response()->json([
+            'reply_message' => [
+                'id'           => $leave->id,
+                'leave_type'   => $leave->type,
+                'leave_reason' => $leave->leave_reason->reason,
+                'start_time'   => $leave->checkin_at,
+                'end_time'     => $leave->checkout_at,
+            ]
+        ]);
+    }
 }
