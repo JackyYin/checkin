@@ -21,19 +21,6 @@ class CheckController extends Controller
         2 => "<=",
     ];
 
-    private $CHECK_TYPE = [
-        1  => "事假",
-        2  => "特休",
-        3  => "公假",
-        4  => '病假',
-        5  => 'Online',
-        6  => '晚到',
-        7  => '喪假',
-        8  => '產假',
-        9  => '陪產假',
-        10 => '婚假',
-    ];
-
     private $CHECK_ENG_TYPE = [
         1  => "personal_leave",
         2  => "annual_leave",

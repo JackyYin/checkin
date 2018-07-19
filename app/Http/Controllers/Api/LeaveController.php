@@ -14,18 +14,6 @@ use App\Models\LeaveReason;
 
 class LeaveController extends Controller
 {
-    private $CHECK_TYPE = [
-        1  => "事假",
-        2  => "特休",
-        3  => "出差",
-        4  => '病假',
-        5  => 'Online',
-        6  => '晚到',
-        7  => '喪假',
-        8  => '產假',
-        9  => '陪產假',
-        10 => '婚假',
-    ];
     /**
      * @SWG\Tag(name="Leave", description="請假")
      */
