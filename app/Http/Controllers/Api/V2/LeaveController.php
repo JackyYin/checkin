@@ -589,6 +589,15 @@ class LeaveController extends Controller
      *       in="query",
      *       type="string",
      *   ),
+     *   @SWG\Parameter(
+     *       name="types[]",
+     *       in="query",
+     *       type="array",
+     *       collectionFormat="multi",
+     *       @SWG\Items(
+     *          type="integer",
+     *       ),
+     *   ),
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
@@ -631,6 +640,11 @@ class LeaveController extends Controller
             Check::TYPE_PATERNITY_LEAVE => "paternity",
             Check::TYPE_MARRIAGE_LEAVE  => "marriage",
         );
+
+        if ($request->filled('types')) {
+            $EnumTypes = array_only($EnumTypes, $request->types);
+        }
+
         $noon_start = explode(":", Check::NOON_START)[0];
         $noon_end = explode(":", Check::NOON_END)[0];
 
