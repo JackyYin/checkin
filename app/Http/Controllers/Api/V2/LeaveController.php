@@ -373,7 +373,7 @@ class LeaveController extends Controller
     }
     /**
      *
-     * @SWG\Put(path="/api/v2/leave/{id}",
+     * @SWG\Put(path="/api/v2/leave/{leaveId}",
      *   tags={"Leave", "V2"},
      *   security={
      *      {"api-user": {}}
@@ -382,7 +382,7 @@ class LeaveController extends Controller
      *   operationId="edit-leave",
      *   produces={"application/json"},
      *   @SWG\Parameter(
-     *       name="id",
+     *       name="leaveId",
      *       in="path",
      *       type="number",
      *       required=true,
@@ -410,9 +410,9 @@ class LeaveController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function update($leave_id, Request $request)
+    public function update($leaveId, Request $request)
     {
-        $leave = Check::find($leave_id);
+        $leave = Check::find($leaveId);
 
         if (!$leave) {
             return response()->json([
@@ -468,7 +468,7 @@ class LeaveController extends Controller
             ], 400);
         }
 
-        if (!$this->CheckRepeat($staff->id, $request->input('start_time', $leave->checkin_at), $request->input('end_time', $leave->checkout_at), $leave_id)) {
+        if (!$this->CheckRepeat($staff->id, $request->input('start_time', $leave->checkin_at), $request->input('end_time', $leave->checkout_at), $leaveId)) {
             return response()->json([
                 'reply_message' => "已存在重複的請假時間",
             ], 400);
@@ -689,7 +689,7 @@ class LeaveController extends Controller
      */
     /**
      *
-     * @SWG\Get(path="/api/v2/leave/{leave_id}",
+     * @SWG\Get(path="/api/v2/leave/{leaveId}",
      *   tags={"Leave", "V2"},
      *   security={
      *      {"api-user": {}}
@@ -698,7 +698,7 @@ class LeaveController extends Controller
      *   operationId="get-specific-leave",
      *   produces={"application/json"},
      *   @SWG\Parameter(
-     *       name="leave_id",
+     *       name="leaveId",
      *       in="path",
      *       type="integer",
      *       required=true,
@@ -709,11 +709,11 @@ class LeaveController extends Controller
     public function show(Request $request)
     {
         $messages = [
-            'leave_id.integer' => '假單編號需為正整數',
-            'leave_id.exists'  => '不存在的假單',
+            'leaveId.integer' => '假單編號需為正整數',
+            'leaveId.exists'  => '不存在的假單',
         ];
         $validator = Validator::make($request->route()->parameters(), [
-            'leave_id' => 'integer|exists:checks,id',
+            'leaveId' => 'integer|exists:checks,id',
         ], $messages);
 
         if ($validator->fails()) {
@@ -724,7 +724,7 @@ class LeaveController extends Controller
         }
         $staff = Auth::guard('api')->user();
 
-        $leave = Check::where('id', $request->route('leave_id'))->where('staff_id', $staff->id)->first();
+        $leave = Check::where('id', $request->route('leaveId'))->where('staff_id', $staff->id)->first();
 
         if (!$leave) {
             return response()->json([
@@ -740,6 +740,60 @@ class LeaveController extends Controller
                 'start_time'   => $leave->checkin_at,
                 'end_time'     => $leave->checkout_at,
             ]
+        ]);
+    }
+    /**
+     * @SWG\Tag(name="Leave", description="請假")
+     */
+    /**
+     *
+     * @SWG\Delete(path="/api/v2/leave/{leaveId}",
+     *   tags={"Leave", "V2"},
+     *   security={
+     *      {"api-user": {}}
+     *   },
+     *   summary="刪除假單",
+     *   operationId="delete-specific-leave",
+     *   produces={"application/json"},
+     *   @SWG\Parameter(
+     *       name="leaveId",
+     *       in="path",
+     *       type="integer",
+     *       required=true,
+     *   ),
+     *   @SWG\Response(response="default", description="操作成功")
+     * )
+     */
+    public function destroy(Request $request)
+    {
+        $messages = [
+            'leaveId.integer' => '假單編號需為正整數',
+            'leaveId.exists'  => '不存在的假單',
+        ];
+        $validator = Validator::make($request->route()->parameters(), [
+            'leaveId' => 'integer|exists:checks,id',
+        ], $messages);
+
+        if ($validator->fails()) {
+            $array = $validator->errors()->all();
+            return response()->json([
+                'reply_message' => implode(",", $array),
+            ], 400);
+        }
+        $staff = Auth::guard('api')->user();
+
+        $leave = Check::where('id', $request->route('leaveId'))->where('staff_id', $staff->id)->first();
+
+        if (!$leave) {
+            return response()->json([
+                'reply_message' => "沒有權限刪除此假單",
+            ], 400);
+        }
+
+        $leave->delete();
+
+        return response()->json([
+            'reply_message' => "假單刪除成功",
         ]);
     }
 }

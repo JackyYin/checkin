@@ -36,14 +36,14 @@ Route::group(['namespace' => 'Api'], function () {
         Route::group(['middleware' => ['auth.api.user']], function () {
             Route::group(['prefix' => 'leave'], function () {
                 Route::get('/', ['uses' => 'LeaveController@index']);
-                Route::get('/{leave_id}', ['uses' => 'LeaveController@show']);
+                Route::get('/{leaveId}', ['uses' => 'LeaveController@show']);
                 Route::get('/types/list', ['uses' => 'LeaveController@getLeaveType']);
                 Route::get('/annual/stat', ['uses' => 'LeaveController@getAnnualStat']);
                 Route::post('/', ['uses' => 'LeaveController@store']);
                 Route::post('/online', ['uses' => 'LeaveController@requestOnline']);
                 Route::post('/late', ['uses' => 'LeaveController@requestLate']);
-                Route::put('/{id}', ['uses' => 'LeaveController@update']);
-                Route::delete('/{id}', ['uses' => 'LeaveController@destroy']);
+                Route::put('/{leaveId}', ['uses' => 'LeaveController@update']);
+                Route::delete('/{leaveId}', ['uses' => 'LeaveController@destroy']);
             });
         //    Route::group(['prefix' => 'check'], function () {
         //        Route::post('/', ['uses' => 'CheckController@index']);
