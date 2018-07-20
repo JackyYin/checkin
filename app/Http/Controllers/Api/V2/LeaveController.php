@@ -23,7 +23,7 @@ class LeaveController extends Controller
      */
     /**
      *
-     * @SWG\Get(path="/api/v2/leave/types",
+     * @SWG\Get(path="/api/v2/leave/types/list",
      *   tags={"Leave", "V2"},
      *   security={
      *      {"api-user": {}}
@@ -81,7 +81,7 @@ class LeaveController extends Controller
     }
     /**
      *
-     * @SWG\Get(path="/api/v2/leave/annual",
+     * @SWG\Get(path="/api/v2/leave/annual/stat",
      *   tags={"Leave", "V2"},
      *   security={
      *      {"api-user": {}}
