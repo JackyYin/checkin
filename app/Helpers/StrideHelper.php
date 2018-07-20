@@ -144,7 +144,7 @@ class StrideHelper
             $body = "編號: ".$check->id." 編輯成功\n";
         }
         if($source == "create") {
-            $body = "編號: ".$check->id."新增成功\n";
+            $body = "編號: ".$check->id." 新增成功\n";
         }
 
         $body = 
