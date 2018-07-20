@@ -12,6 +12,7 @@ use Mail;
 use DB;
 use Auth;
 use GuzzleHttp\Client;
+use App\Mail\AuthenticationEmail;
 use App\Models\Staff;
 use App\Models\Line;
 use App\Models\Bot;
@@ -68,22 +69,12 @@ class AuthController extends Controller
         ]);
 
         $confirmation_url = route('api.bot.auth.verify', ['bot_name' => $bot->name, 'registration_token' => $registration_token]);
-        $this->sendRegistrationEmail($new_staff, $confirmation_url);
+        Mail::send(new AuthenticationEmail($new_staff, $confirmation_url));
 
         return response()->json([
             'reply_message' => "請至信箱確認驗證信件.",
         ], 200);
     }
-
-    private function sendRegistrationEmail(Staff $staff, $confirmation_url)
-    {
-        Mail::send('emails.registration',['staff' => $staff, 'url' => $confirmation_url], function ($message) use($staff) {
-            $message->from(env('MAIL_FROM_ADDRESS'),env('MAIL_FROM_NAME'))
-            ->to($staff->email, $staff->name)
-            ->subject("您好,請點擊連結以啟用帳號");
-        } );
-    }
-
     /**
      *
      * @SWG\Get(path="/api/v2/bot/{bot_name}/auth/verify/{registration_token}",
