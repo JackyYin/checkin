@@ -194,8 +194,8 @@ class LeaveController extends Controller
             'reason'   => $request->input('leave_reason'),
         ]);
 
-        StrideHelper::createNotification($check);
-        StrideHelper::personalNotification($check, "create");
+        StrideHelper::roomNotification($check, "Create");
+        StrideHelper::personalNotification($check, "Create");
 
         $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
                 ."姓名： ".$staff->name.",\n"
@@ -450,8 +450,8 @@ class LeaveController extends Controller
             'reason'   => $request->input('leave_reason'),
         ]);
 
-        StrideHelper::createNotification($check);
-        StrideHelper::personalNotification($check, "create");
+        StrideHelper::roomNotification($check, "Create");
+        StrideHelper::personalNotification($check, "Create");
 
         $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
                 ."姓名： ".$staff->name.",\n"

@@ -20,6 +20,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\AutoCheck::class,
+        \App\Console\Commands\StrideNotify::class,
     ];
 
     /**
@@ -60,9 +61,9 @@ class Kernel extends ConsoleKernel
         $checks = Check::where('checkin_at', ">=", Carbon::today())
             ->where('checkin_at', "<=", Carbon::tomorrow())
             ->get();
-
+            
         foreach ($checks as $check) {
-            StrideHelper::createNotification($check);
+            StrideHelper::roomNotification($check, "Create");
         }
     }
 }

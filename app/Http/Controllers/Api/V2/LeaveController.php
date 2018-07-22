@@ -363,8 +363,8 @@ class LeaveController extends Controller
                 ."原因： ".$reason->reason."\n"
                 ."編號： ".$check->id;
 
-        StrideHelper::createNotification($check);
-        StrideHelper::personalNotification($check, "create");
+        StrideHelper::roomNotification($check, "Create");
+        StrideHelper::personalNotification($check, "Create");
 
         return response()->json([
             'reply_message' => $reply_message,
@@ -494,8 +494,8 @@ class LeaveController extends Controller
             }
         }
 
-        StrideHelper::editNotification($leave);
-        StrideHelper::personalNotification($leave, "edit");
+        StrideHelper::roomNotification($leave, "Edit");
+        StrideHelper::personalNotification($leave, "Edit");
 
         $reply_message = 
             "編號: ".$leave->id." 編輯成功\n"
