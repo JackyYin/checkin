@@ -53,35 +53,33 @@ class StrideHelper
 
     private static function createNotification(Check $check)
     {
-        if ( strtotime(Carbon::today()) <= strtotime($check->checkin_at) && strtotime($check->checkin_at) <= strtotime(Carbon::tomorrow())) {
-            $http = new Client([
-                'headers' => [
-                    'Content-Type'  => 'application/json',
-                ]
-            ]);
+        $http = new Client([
+            'headers' => [
+                'Content-Type'  => 'application/json',
+            ]
+        ]);
 
-            if ($check->type == Check::TYPE_ONLINE || $check->type == Check::TYPE_OFFICIAL_LEAVE) {
-                $body = 
-                    "\n時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
-                    ."姓名: ".$check->staff->name."\n"
-                    ."假別: ".self::CHECK_TYPE($check->type)."\n"
-                    ."原因: ".$check->leave_reason->reason."\n";
-            }
-            else {
-                $body = 
-                    "\n時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
-                    ."姓名: ".$check->staff->name."\n";
-            }
-
-            $response = $http->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
-                'json' => [
-                    'action' => 'Leave Create Notification',
-                    'reply_message' => $body,
-                ]
-            ]);
-
-            return $response->getBody();
+        if ($check->type == Check::TYPE_ONLINE || $check->type == Check::TYPE_OFFICIAL_LEAVE) {
+            $body = 
+                "\n時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
+                ."姓名: ".$check->staff->name."\n"
+                ."假別: ".self::CHECK_TYPE($check->type)."\n"
+                ."原因: ".$check->leave_reason->reason."\n";
         }
+        else {
+            $body = 
+                "\n時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
+                ."姓名: ".$check->staff->name."\n";
+        }
+
+        $response = $http->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
+            'json' => [
+                'action' => 'Leave Create Notification',
+                'reply_message' => $body,
+            ]
+        ]);
+
+        return $response->getBody();
     }
 
     private static function editNotification(Check $check)
