@@ -517,7 +517,7 @@ class LeaveController extends Controller
         $date_end   = $date." 23:59:59";
 
         $past_checks = Check::where('staff_id', $staff_id)
-            ->where('type', '!=', 0)
+            ->isLeave()
             ->where('checkin_at', '>=', $date_start)
             ->where('checkin_at', '<=', $date_end)
             ->where('checkout_at', '<=', $date_end)

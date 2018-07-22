@@ -50,6 +50,7 @@ class AutoCheck extends Command
             ->whereHas('profile', function ($query) {
                 $query->where('identity', Profile::ID_FULL_TIME);
             })->get();
+        $bar = $this->output->createProgressBar(count($staffs));
         //random checkin time
         $date = Carbon::today()->toDateString();
         $checkin_start = Carbon::createFromFormat('Y-m-d H:i:s', $date." ".config('check.checkin.start'));
@@ -69,7 +70,7 @@ class AutoCheck extends Command
             //12:50~13:10
             $noon_end_random_time = $noon_end->copy()->subMinutes(10)->addMinutes(rand(0,20))->addSeconds(rand(0,60));
             $leaves = $staff->get_check_list
-                ->where('type', '!=', 0)
+                ->isLeave()
                 ->where('checkin_at', '>=', $checkin_start)
                 ->where('checkin_at', '<=', $checkout_end)
                 ->where('checkout_at', '<=', $checkout_end);
@@ -203,6 +204,8 @@ class AutoCheck extends Command
                     }
                 }
             }
+            $bar->advance();
         }
+        $bar->finish();
     }
 }

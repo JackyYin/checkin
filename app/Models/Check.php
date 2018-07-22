@@ -39,17 +39,6 @@ class Check extends Model
     protected $hidden = [];
     public $timestamps = false;
 
-    public function scopeTwo_days_ago($query)
-    {
-        return $query->where('checkin_at', '<=', date('Y-m-d', strtotime('-1 day')))
-            ->where('checkin_at', '>=', date('Y-m-d', strtotime('-2 days')));
-    }
-
-    public function scopeNot_checked_out($query)
-    {
-        return $query->whereNull('checkout_at');
-    }
-
     public function leave_reason()
     {
         return $this->hasOne(LeaveReason::class, 'check_id', 'id');
@@ -58,5 +47,10 @@ class Check extends Model
     public function staff()
     {
         return $this->belongsTo(Staff::class, 'staff_id', 'id');
+    }
+
+    public function scopeIsLeave($query)
+    {
+        return $query->where('type', '!=', self::TYPE_NORMAL);
     }
 }

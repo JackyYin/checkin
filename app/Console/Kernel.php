@@ -7,6 +7,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Helpers\StrideHelper;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
+use Artisan;
 use App\Models\Check;
 use App\Models\Staff;
 use App\Models\Profile;
@@ -60,10 +61,13 @@ class Kernel extends ConsoleKernel
     {
         $checks = Check::where('checkin_at', ">=", Carbon::today())
             ->where('checkin_at', "<=", Carbon::tomorrow())
-            ->get();
-            
-        foreach ($checks as $check) {
-            StrideHelper::roomNotification($check, "Create");
-        }
+            ->isLeave()
+            ->get()->pluck('id');
+
+        $exitCode = Artisan::call('stride:notify', [
+            'check'    => $checks,
+            '--scope'  => 'Room',
+            '--action' => 'Create',
+        ]);
     }
 }
