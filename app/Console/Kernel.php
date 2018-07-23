@@ -67,6 +67,7 @@ class Kernel extends ConsoleKernel
             'check'    => $generalChecks,
             '--scope'  => 'Room',
             '--action' => 'Create',
+            '--panel'  =>  true,
         ]);
 
     }

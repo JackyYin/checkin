@@ -82,8 +82,6 @@ class StrideHelper
                 'reply_message' => $body,
             ]
         ]);
-
-        return $response->getBody();
     }
 
     private static function editNotification(Check $check)
@@ -118,8 +116,6 @@ class StrideHelper
                 'reply_message' => $body,
             ]
         ]);
-
-        return $response->getBody();
     }
 
     public static function personalNotification(Check $check, $action)
@@ -158,7 +154,24 @@ class StrideHelper
                 'email'         => $check->staff->email,
             ]
         ]);
+    }
 
-        return $response->getBody();
+    public static function sendPanel()
+    {
+        $http = new Client([
+            'headers' => [
+                'Content-Type'  => 'text/plain',
+            ]
+        ]);
+
+        $today = Carbon::today();
+        $body = $today->toDateString()." (".self::WEEK_DAY($today->format('l')).") 出缺勤狀況";
+
+        $response = $http->request('POST', config('stride.bot.url')."/checkin/panel", [
+            'json' => [
+                'action' => 'Panel',
+                'reply_message' => $body,
+            ]
+        ]);
     }
 }

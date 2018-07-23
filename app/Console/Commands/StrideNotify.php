@@ -16,7 +16,8 @@ class StrideNotify extends Command
     protected $signature = 'stride:notify 
         {check* : The IDs of the Check}
         {--scope=}
-        {--action=}';
+        {--action=}
+        {--panel} : Display the Content Panel';
 
     /**
      * The console command description.
@@ -51,6 +52,10 @@ class StrideNotify extends Command
 
         $scope = $this->choice('What is The Scope?', ['Room', 'Personal'], 0);
         $action = $this->choice('What is The Action?', ['Create', 'Edit'], 0);
+
+        if ($this->option('panel')) {
+            StrideHelper::sendPanel();
+        }
 
         if ($scope == 'Room') {
             foreach ($checks as $check) {
