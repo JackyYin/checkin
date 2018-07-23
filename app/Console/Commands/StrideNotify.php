@@ -24,7 +24,7 @@ class StrideNotify extends Command
      *
      * @var string
      */
-    protected $description = 'Notification for All Leaves Today To Stride';
+    protected $description = 'Send Notification For All Leaves Today To Stride';
 
     /**
      * Create a new command instance.
