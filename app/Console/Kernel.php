@@ -59,15 +59,15 @@ class Kernel extends ConsoleKernel
 
     private function autoNotify()
     {
-        $checks = Check::where('checkin_at', ">=", Carbon::today())
-            ->where('checkin_at', "<=", Carbon::tomorrow())
+        $generalChecks = Check::where('checkout_at', '>=', Carbon::today())
             ->isLeave()
             ->get()->pluck('id');
 
-        $exitCode = Artisan::call('stride:notify', [
-            'check'    => $checks,
+        Artisan::call('stride:notify', [
+            'check'    => $generalChecks,
             '--scope'  => 'Room',
             '--action' => 'Create',
         ]);
+
     }
 }
