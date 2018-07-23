@@ -59,17 +59,21 @@ class StrideHelper
             ]
         ]);
 
-        if ($check->type == Check::TYPE_ONLINE || $check->type == Check::TYPE_OFFICIAL_LEAVE) {
-            $body = 
-                "\n時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
-                ."姓名: ".$check->staff->name."\n"
-                ."假別: ".self::CHECK_TYPE($check->type)."\n"
-                ."原因: ".$check->leave_reason->reason."\n";
+        $checkin_at = Carbon::createFromFormat('Y-m-d H:i:s', $check->checkin_at);
+        $checkout_at = Carbon::createFromFormat('Y-m-d H:i:s', $check->checkout_at);
+
+        if ($checkin_at->isSameDay($checkout_at)) {
+            $body = "時間: ".$checkin_at->toDateString()." (".self::WEEK_DAY($checkin_at->format('l')).") ".$checkin_at->format('H:i')." ~ ".$checkout_at->format('H:i')."\n";
         }
         else {
-            $body = 
-                "\n時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
-                ."姓名: ".$check->staff->name."\n";
+            $body = "時間: ".$checkin_at->toDateString()." (".self::WEEK_DAY($checkin_at->format('l')).") ".$checkin_at->format('H:i')." ~ ".$checkout_at->toDateString()." (".self::WEEK_DAY($checkout_at->format('l')).") ".$checkout_at->format('H:i')."\n";
+        }
+
+        $body .= "姓名: ".$check->staff->name."\n";
+
+        if ($check->type == Check::TYPE_ONLINE || $check->type == Check::TYPE_OFFICIAL_LEAVE) {
+            $body .= "假別: ".self::CHECK_TYPE($check->type)."\n"
+                ."原因: ".$check->leave_reason->reason."\n";
         }
 
         $response = $http->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
@@ -90,21 +94,24 @@ class StrideHelper
             ]
         ]);
 
-        if ($check->type == Check::TYPE_ONLINE || $check->type == Check::TYPE_OFFICIAL_LEAVE) {
-            $body = 
-                "編號: ".$check->id." 編輯成功\n"
-                ."時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
-                ."姓名: ".$check->staff->name."\n"
-                ."假別: ".self::CHECK_TYPE($check->type)."\n"
-                ."原因: ".$check->leave_reason->reason."\n";
+        $checkin_at = Carbon::createFromFormat('Y-m-d H:i:s', $check->checkin_at);
+        $checkout_at = Carbon::createFromFormat('Y-m-d H:i:s', $check->checkout_at);
+
+        $body = "編號: ".$check->id." 編輯成功\n";
+
+        if ($checkin_at->isSameDay($checkout_at)) {
+            $body .= "時間: ".$checkin_at->toDateString()." (".self::WEEK_DAY($checkin_at->format('l')).") ".$checkin_at->format('H:i')." ~ ".$checkout_at->format('H:i')."\n";
         }
         else {
-            $body = 
-                "編號: ".$check->id." 編輯成功\n"
-                ."時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
-                ."姓名: ".$check->staff->name."\n";
+            $body .= "時間: ".$checkin_at->toDateString()." (".self::WEEK_DAY($checkin_at->format('l')).") ".$checkin_at->format('H:i')." ~ ".$checkout_at->toDateString()." (".self::WEEK_DAY($checkout_at->format('l')).") ".$checkout_at->format('H:i')."\n";
         }
+ 
+        $body .= "姓名: ".$check->staff->name."\n";
 
+        if ($check->type == Check::TYPE_ONLINE || $check->type == Check::TYPE_OFFICIAL_LEAVE) {
+            $body .= "假別: ".self::CHECK_TYPE($check->type)."\n"
+                ."原因: ".$check->leave_reason->reason."\n";
+        }
         $response = $http->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
             'json' => [
                 'action' => 'Leave Edit Notification',
@@ -130,9 +137,17 @@ class StrideHelper
             $body = "編號: ".$check->id." 新增成功\n";
         }
 
-        $body = 
-            $body."時間: ".date("Y-m-d", strtotime($check->checkin_at))." (".self::WEEK_DAY(date("l", strtotime($check->checkin_at))).") ".date("H:i", strtotime($check->checkin_at))." ~ ".date("H:i", strtotime($check->checkout_at))."\n"
-            ."姓名: ".$check->staff->name."\n"
+        $checkin_at = Carbon::createFromFormat('Y-m-d H:i:s', $check->checkin_at);
+        $checkout_at = Carbon::createFromFormat('Y-m-d H:i:s', $check->checkout_at);
+
+        if ($checkin_at->isSameDay($checkout_at)) {
+            $body .= "時間: ".$checkin_at->toDateString()." (".self::WEEK_DAY($checkin_at->format('l')).") ".$checkin_at->format('H:i')." ~ ".$checkout_at->format('H:i')."\n";
+        }
+        else {
+            $body .= "時間: ".$checkin_at->toDateString()." (".self::WEEK_DAY($checkin_at->format('l')).") ".$checkin_at->format('H:i')." ~ ".$checkout_at->toDateString()." (".self::WEEK_DAY($checkout_at->format('l')).") ".$checkout_at->format('H:i')."\n";
+        }
+
+        $body .= "姓名: ".$check->staff->name."\n"
             ."假別: ".self::CHECK_TYPE($check->type)."\n"
             ."原因: ".$check->leave_reason->reason."\n";
 
