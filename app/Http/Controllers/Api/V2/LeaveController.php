@@ -655,8 +655,11 @@ class LeaveController extends Controller
             })
             ->selectRaw($select_string)->first();
 
-        $salt = $this->saveSVGGraph($EnumTypes, $row);
-        return response()->file(storage_path("app/chart/".$salt.".png"));
+        return response()->json([
+            'reply_message' => $row
+        ]);
+        //$salt = $this->saveSVGGraph($EnumTypes, $row);
+        //return response()->file(storage_path("app/chart/".$salt.".png"));
     }
 
     private function saveSVGGraph($EnumTypes, $row)
