@@ -5,6 +5,7 @@
         {{ Html::style('https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css') }}
         <link href="{!! asset('css/bootstrap-multiselect.css') !!}" media="all" rel="stylesheet" type="text/css" />
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker3.standalone.css" />
     </head>
     <body>
             @if ($as_admin || $as_manager)
@@ -24,6 +25,7 @@
         {{ Html::script('https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js') }}
         <script type="text/javascript" src="{!! asset('js/bootstrap.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/bootstrap-multiselect.js') !!}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
         @yield('scripts')
     </body>
 </html>

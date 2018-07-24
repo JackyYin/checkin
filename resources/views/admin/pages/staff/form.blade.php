@@ -156,15 +156,9 @@
                   format: 'YYYY-MM-DD'
                 },
                 singleDatePicker: true,
-                showDropdowns: true
             });
-            staff_form.find('input[name="cancel_insurance_date"]').daterangepicker({
-                locale: {
-                  format: 'YYYY-MM-DD'
-                },
-                singleDatePicker: true,
-                showDropdowns: true,
-                autoUpdateInput: false,
+            staff_form.find('input[name="cancel_insurance_date"]').datepicker({
+                format: 'yyyy-mm-dd',
             });
         
             var validator = staff_form.validate({
