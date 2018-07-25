@@ -1,0 +1,60 @@
+# PHP CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-php/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: circleci/php:7.0-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "composer.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: composer install -n --prefer-dist
+
+      - save_cache:
+          paths:
+            - ./vendor
+          key: v1-dependencies-{{ checksum "composer.json" }}
+
+      # run tests!
+      - run:
+          name: Run php unit tests
+          command: vendor/bin/phpunit --testsuite=Feature --testdox-html report.html
+
+      # notification to stride
+      - run:
+          name: Notify To Stride When Test Success
+          when: on_success
+          command: |
+            curl -X POST \-H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer '"${STRIDE_TOKEN}"'' \
+            -d '{"body":{"version":1,"type":"doc","content":[{"type":"applicationCard","attrs": {"text": "test message","collapsible":true,"title":{"text":"Circle CI Report","user":{"icon":{"url":"https://a.slack-edge.com/7f1a0/plugins/circleci/assets/service_512.png","label":"Circle CI"}}},"description":{"text":"'"${CIRCLE_USERNAME}"' built '"${CIRCLE_PROJECT_REPONAME}"' '"${CIRCLE_BRANCH}"'"},"details":[{"lozenge": {"text": "Build Success","appearance": "success"}}],"link":{"url":"'"${CIRCLE_BUILD_URL}"'"}}}]}}' \
+            --url "${STRIDE_URL}"
+      - run:
+          name: Notify To Stride When Test Fail
+          when: on_fail
+          command: |
+            curl -X POST \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer '"${STRIDE_TOKEN}"'' \
+            -d '{"body":{"version":1,"type":"doc","content":[{"type":"applicationCard","attrs": {"text": "test message","collapsible":true,"title":{"text":"Circle CI Report","user":{"icon":{"url":"https://a.slack-edge.com/7f1a0/plugins/circleci/assets/service_512.png","label":"Circle CI"}}},"description":{"text":"'"${CIRCLE_USERNAME}"' built '"${CIRCLE_PROJECT_REPONAME}"' '"${CIRCLE_BRANCH}"'"},"details":[{"lozenge": {"text": "Build Failed","appearance": "removed"}}],"link":{"url":"'"${CIRCLE_BUILD_URL}"'"}}}]}}' \
+            --url "${STRIDE_URL}"
+
+
+
