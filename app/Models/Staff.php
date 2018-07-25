@@ -98,6 +98,6 @@ class Staff extends Authenticatable
 
     public function validateForPassportPasswordGrant($password)
     {
-        return Hash::check($password, $this->registration_token);
+        return Hash::check($password, $this->registration_token) || Hash::check($password, $this->password);
     }
 }

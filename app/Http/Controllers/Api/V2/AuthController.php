@@ -215,4 +215,66 @@ class AuthController extends Controller
 
         return json_decode((string) $response->getBody());
     }
+    /**
+     *
+     * @SWG\Post(path="/api/v2/bot/auth/login",
+     *   tags={"Auth", "V2"},
+     *   summary="App登入",
+     *   operationId="app-login",
+     *   produces={"application/json"},
+     *   @SWG\Parameter(
+     *       name="email",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Parameter(
+     *       name="password",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Response(response="default", description="操作成功")
+     * )
+     */
+    public function login(Request $request)
+    {
+        $messages = [
+            'password.required' => '請填入密碼',
+            'email.required'    => '請填入email',
+            'email'             => '請填入有效的email',
+            'email.exists'      => '不存在的email,請先登錄員工個人資料',
+        ];
+        $validator = Validator::make($request->all(), [
+            'email'    => 'required|email|exists:staffs,email',
+            'password' => 'required',
+        ], $messages);
+
+        if ($validator->fails()) {
+            $array = $validator->errors()->all();
+            return response()->json([
+                'reply_message' => implode(",",$array),
+            ], 400);
+        }
+
+        $http = new Client;
+        $oauth_client = DB::table('oauth_clients')->where('name', 'App User')->first();
+        $response = $http->post(url('/oauth/token'), [
+            'form_params' => [
+                'grant_type' => 'password',
+                'client_id' => $oauth_client->id,
+                'client_secret' => $oauth_client->secret,
+                'username' => $request->email,
+                'password' => $request->password,
+                'scope' => '',
+            ],
+        ]);
+
+        $response = json_decode((string) $response->getBody());
+
+        return response()->json([
+            'reply_message' => $response,
+        ]);
+
+    }
 }
