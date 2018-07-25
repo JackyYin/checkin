@@ -49,4 +49,11 @@ class Controller extends BaseController
 
         return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
+
+    public function response($code, $data = [])
+    {
+        return response()->json([
+            'reply_message' => $data
+        ], $code);
+    }
 }
