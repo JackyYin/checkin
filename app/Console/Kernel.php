@@ -60,6 +60,7 @@ class Kernel extends ConsoleKernel
     private function autoNotify()
     {
         $generalChecks = Check::where('checkout_at', '>=', Carbon::today())
+            ->where('checkin_at', '<=', Carbon::tomorrow())
             ->isLeave()
             ->get()->pluck('id');
 
