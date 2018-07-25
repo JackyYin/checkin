@@ -91,11 +91,6 @@ class Staff extends Authenticatable
         return $this->count_checkin_today() - $this->count_checkout_today();
     }
 
-    public function range_one_day($from)
-    {
-        return $this->get_check_list->where('checkin_at', '>=', $from)->where('checkin_at', '<=', date('Y-m-d', strtotime($from.'+ 1 day' )));
-    }
-
     public function findForPassport($username)
     {
         return $this->where('email', $username)->first();
