@@ -285,8 +285,8 @@ class AuthController extends Controller
 
         $response = json_decode((string) $response->getBody());
 
-        return response()->json([
-            'reply_message' => $response,
+        return $this->response(200, [
+            'access_token' => $response->access_token,
         ]);
     }
 }
