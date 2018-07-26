@@ -36,15 +36,18 @@ Route::group(['namespace' => 'Api'], function () {
         });
         Route::group(['middleware' => ['auth.api.user']], function () {
             Route::group(['prefix' => 'leave'], function () {
-                Route::get('/', ['uses' => 'LeaveController@index']);
-                Route::get('/{leaveId}', ['uses' => 'LeaveController@show']);
-                Route::get('/types/list', ['uses' => 'LeaveController@getLeaveType']);
-                Route::get('/annual/stat', ['uses' => 'LeaveController@getAnnualStat']);
+                Route::get('/{leaveId}', ['uses' => 'LeaveController@show'])->where('leaveId', '[0-9]+');;
+                Route::get('/types', ['uses' => 'LeaveController@getLeaveType']);
                 Route::post('/', ['uses' => 'LeaveController@store']);
                 Route::post('/online', ['uses' => 'LeaveController@requestOnline']);
                 Route::post('/late', ['uses' => 'LeaveController@requestLate']);
                 Route::put('/{leaveId}', ['uses' => 'LeaveController@update']);
                 Route::delete('/{leaveId}', ['uses' => 'LeaveController@destroy']);
+
+                Route:: group(['prefix' => 'stat', 'namespace' => 'Leave'], function () {
+                    Route::get('/', ['uses' => 'StatController@index']);
+                    Route::get('/annual', ['uses' => 'StatController@getAnnualStat']);
+                });
             });
         //    Route::group(['prefix' => 'check'], function () {
         //        Route::post('/', ['uses' => 'CheckController@index']);
