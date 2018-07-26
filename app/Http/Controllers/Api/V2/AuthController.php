@@ -229,19 +229,13 @@ class AuthController extends Controller
      *       name="email",
      *       in="formData",
      *       type="string",
-     *       required=false,
+     *       required=true,
      *   ),
      *   @SWG\Parameter(
      *       name="password",
      *       in="formData",
      *       type="string",
-     *       required=false,
-     *   ),
-     *   @SWG\Parameter(
-     *       name="refresh_token",
-     *       in="formData",
-     *       type="string",
-     *       required=false,
+     *       required=true,
      *   ),
      *   @SWG\Response(response="default", description="操作成功")
      * )
@@ -249,14 +243,14 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $messages = [
-            'password.required_without' => '請填入密碼',
-            'email.required_without'    => '請填入email',
-            'email'                     => '請填入有效的email',
-            'email.exists'              => '不存在的email,請先登錄員工個人資料',
+            'password.required' => '請填入密碼',
+            'email.required'    => '請填入email',
+            'email'             => '請填入有效的email',
+            'email.exists'      => '不存在的email,請先登錄員工個人資料',
         ];
         $validator = Validator::make($request->all(), [
-            'email'    => 'required_without:refresh_token|email|exists:staffs,email',
-            'password' => 'required_without:refresh_token',
+            'email'    => 'required|email|exists:staffs,email',
+            'password' => 'required',
         ], $messages);
 
         if ($validator->fails()) {
@@ -269,25 +263,14 @@ class AuthController extends Controller
         $http = new Client;
         $oauth_client = DB::table('oauth_clients')->where('name', 'App User')->first();
 
-        if ($request->filled('refresh_token')) {
-            $form_params = [
-                'grant_type' => 'refresh_token',
-                'refresh_token' => $request->refresh_token,
-                'client_id' => $oauth_client->id,
-                'client_secret' => $oauth_client->secret,
-                'scope' => '',
-            ];
-        }
-        else {
-            $form_params = [
-                'grant_type' => 'password',
-                'client_id' => $oauth_client->id,
-                'client_secret' => $oauth_client->secret,
-                'username' => $request->email,
-                'password' => $request->password,
-                'scope' => '',
-            ];
-        }
+        $form_params = [
+            'grant_type' => 'password',
+            'client_id' => $oauth_client->id,
+            'client_secret' => $oauth_client->secret,
+            'username' => $request->email,
+            'password' => $request->password,
+            'scope' => '',
+        ];
 
         try {
             $response = $http->request('POST', url('/oauth/token'), [
