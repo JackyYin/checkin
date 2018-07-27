@@ -178,7 +178,7 @@ class StatController extends Controller
         }
         $select_string = substr($select_string, 0, -1);
 
-        $row = Check::where('staff_id', $staff->id)
+        $data = Check::where('staff_id', $staff->id)
             ->where(function ($query) use ($request) {
                 if ($request->filled('start_date')) {
                     $from = Carbon::createFromFormat('Y-m-d', $request->start_date);
@@ -192,8 +192,16 @@ class StatController extends Controller
             })
             ->selectRaw($select_string)->first();
 
+        $array = json_decode(json_encode($data), true);
+
+        foreach ($array as $key => $value) {
+            if (is_null($value)) {
+                $array{$key} = 0;
+            }
+        }
+
         return response()->json([
-            'reply_message' => $row
+            'reply_message' => $data
         ]);
         //$salt = $this->saveSVGGraph($EnumTypes, $row);
         //return response()->file(storage_path("app/chart/".$salt.".png"));
