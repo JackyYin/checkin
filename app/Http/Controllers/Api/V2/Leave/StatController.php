@@ -201,7 +201,7 @@ class StatController extends Controller
         }
 
         return response()->json([
-            'reply_message' => $data
+            'reply_message' => $array
         ]);
         //$salt = $this->saveSVGGraph($EnumTypes, $row);
         //return response()->file(storage_path("app/chart/".$salt.".png"));
