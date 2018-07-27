@@ -398,10 +398,13 @@ class LeaveController extends Controller
             ], 400);
         }
 
+        $checkin_at  = $request->filled('start_time') ? $request->start_time.":00" : $leave->checkin_at;
+        $checkout_at = $request->filled('end_time') ? $request->end_time.":00" : $leave->checkout_at;
+
         $leave->update([
             'type'        => $request->input('leave_type', $leave->type),
-            'checkin_at'  => $request->input('start_time', $leave->checkin_at),
-            'checkout_at' => $request->input('end_time', $leave->checkout_at),
+            'checkin_at'  => $checkin_at,
+            'checkout_at' => $checkout_at,
         ]);
 
         if ($request->filled('leave_reason')) {
