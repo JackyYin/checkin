@@ -36,17 +36,21 @@ Route::group(['namespace' => 'Api'], function () {
         });
         Route::group(['middleware' => ['auth.api.user']], function () {
             Route::group(['prefix' => 'leave'], function () {
-                Route::get('/{leaveId}', ['uses' => 'LeaveController@show'])->where('leaveId', '[0-9]+');;
+                Route::get('/{leaveId}', ['uses' => 'LeaveController@show'])->where('leaveId', '[0-9]+');
                 Route::get('/types', ['uses' => 'LeaveController@getLeaveType']);
                 Route::post('/', ['uses' => 'LeaveController@store']);
                 Route::post('/online', ['uses' => 'LeaveController@requestOnline']);
                 Route::post('/late', ['uses' => 'LeaveController@requestLate']);
                 Route::put('/{leaveId}', ['uses' => 'LeaveController@update']);
                 Route::delete('/{leaveId}', ['uses' => 'LeaveController@destroy']);
-
+                //統計相關
                 Route:: group(['prefix' => 'stat', 'namespace' => 'Leave'], function () {
                     Route::get('/', ['uses' => 'StatController@index']);
                     Route::get('/annual', ['uses' => 'StatController@getAnnualStat']);
+                });
+                //紀錄
+                Route:: group(['prefix' => 'record', 'namespace' => 'Leave'], function () {
+                    Route::get('/me', ['uses' => 'RecordController@me']);
                 });
             });
         //    Route::group(['prefix' => 'check'], function () {

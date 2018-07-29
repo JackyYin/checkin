@@ -21,6 +21,20 @@ class Check extends Model
     const NOON_START = "12:00:00"; //午休開始時間
     const NOON_END   = "13:00:00"; //午休結束時間
 
+    const TYPE_MAPPING = [
+        0  => "正常打卡",
+        1  => "事假",
+        2  => "特休",
+        3  => "出差",
+        4  => '病假',
+        5  => 'Online',
+        6  => '晚到',
+        7  => '喪假',
+        8  => '產假',
+        9  => '陪產假',
+        10 => '婚假',
+    ];
+
     protected $table = 'checks';
     /**
      * The attributes that are mass assignable.

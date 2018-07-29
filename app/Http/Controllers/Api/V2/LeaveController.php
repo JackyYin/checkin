@@ -485,9 +485,6 @@ class LeaveController extends Controller
         return $subscribers;
     }
     /**
-     * @SWG\Tag(name="Leave", description="請假")
-     */
-    /**
      *
      * @SWG\Get(path="/api/v2/leave/{leaveId}",
      *   tags={"Leave", "V2"},
@@ -542,9 +539,6 @@ class LeaveController extends Controller
             ]
         ]);
     }
-    /**
-     * @SWG\Tag(name="Leave", description="請假")
-     */
     /**
      *
      * @SWG\Delete(path="/api/v2/leave/{leaveId}",
