@@ -172,5 +172,6 @@ return [
         'year'                  => '年',
         'start_date'            => '開始日期',
         'end_date'              => '結束日期',
+        'leaveId'               => '假單編號',
     ],
 ];

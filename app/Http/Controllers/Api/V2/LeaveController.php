@@ -558,22 +558,8 @@ class LeaveController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function destroy(Request $request)
+    public function destroy(\App\Http\Requests\Api\V2\Leave\DestroyRequest $request)
     {
-        $messages = [
-            'leaveId.integer' => '假單編號需為正整數',
-            'leaveId.exists'  => '不存在的假單',
-        ];
-        $validator = Validator::make($request->route()->parameters(), [
-            'leaveId' => 'integer|exists:checks,id',
-        ], $messages);
-
-        if ($validator->fails()) {
-            $array = $validator->errors()->all();
-            return response()->json([
-                'reply_message' => implode(",", $array),
-            ], 400);
-        }
         $staff = Auth::guard('api')->user();
 
         $leave = Check::where('id', $request->route('leaveId'))->where('staff_id', $staff->id)->first();
