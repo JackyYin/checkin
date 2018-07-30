@@ -3,13 +3,9 @@
 namespace App\Http\Controllers\Api\V2\Leave;
 
 use App\Http\Controllers\Controller;
-use App\Helpers\StrideHelper;
 use App\Helpers\LeaveHelper;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Validator;
 use Carbon\Carbon;
-use SVGGraph;
 use Auth;
 use App\Models\Staff;
 use App\Models\Line;
@@ -126,30 +122,15 @@ class StatController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function index(Request $request)
+    public function index(\App\Http\Requests\Api\V2\Leave\Stat\IndexRequest $request)
     {
-        $messages = [
-            'start_date.date_format' => '請填入格式： YYYY-MM-DD',
-            'end_date.date_format'   => '請填入格式： YYYY-MM-DD',
-        ];
-        $validator = Validator::make($request->all(), [
-            'start_date' => 'date_format:Y-m-d',
-            'end_date'   => 'date_format:Y-m-d',
-        ], $messages);
-
-        if ($validator->fails()) {
-            $array = $validator->errors()->all();
-            return response()->json([
-                'reply_message' => implode(",", $array),
-            ], 400);
-        }
-
         if ($request->filled('start_date') && $request->filled('end_date')
             && strtotime($request->end_date." 00:00:00") <= strtotime($request->start_date." 00:00:00")) {
             return response()->json([
                 'reply_message' => "起始時間需在結束時間之前",
             ], 400);
         }
+
         $staff = Auth::guard('api')->user();
 
         $select_string = "";
@@ -178,19 +159,15 @@ class StatController extends Controller
         }
         $select_string = substr($select_string, 0, -1);
 
-        $data = Check::where('staff_id', $staff->id)
-            ->where(function ($query) use ($request) {
+        $data = $staff->get_check_list()->where(function ($query) use ($request) {
                 if ($request->filled('start_date')) {
-                    $from = Carbon::createFromFormat('Y-m-d', $request->start_date);
-                    $query->where('checkin_at', ">=", $from);
+                    $query->where('checkin_at', ">=", $request->start_date);
                 }
 
                 if ($request->filled('end_date')) {
-                    $to = Carbon::createFromFormat('Y-m-d', $request->end_date);
-                    $query->where('checkin_at', "<=", $to->addDay());
+                    $query->where('checkout_at', "<=", $request->end_date);
                 }
-            })
-            ->selectRaw($select_string)->first();
+        } )->selectRaw($select_string)->first();
 
         $array = json_decode(json_encode($data), true);
 
@@ -203,33 +180,5 @@ class StatController extends Controller
         return response()->json([
             'reply_message' => $array
         ]);
-        //$salt = $this->saveSVGGraph($EnumTypes, $row);
-        //return response()->file(storage_path("app/chart/".$salt.".png"));
-    }
-
-    private function saveSVGGraph($EnumTypes, $row)
-    {
-        //make svg graph
-        $settings = array(
-            'label_x' => 'types',
-            'label_y' => 'hours',
-        );
-        $graph = new SVGGraph(1000, 600, $settings);
-        $colours = array(array('red', 'yellow'));
-        $values = array();
-        foreach($EnumTypes as $type) {
-            $values[$type] = $row->{$type};
-        }
-        $graph->colours = $colours;
-        $graph->Values($values);
-        $svg = $graph->FETCH('BarGraph', FALSE, FALSE);
-
-        //save graph
-        $salt = str_random(30);
-        file_put_contents(storage_path('app/chart/').$salt.".svg", $svg);
-        $command = "inkscape ".storage_path('app/chart/').$salt.".svg -e ".storage_path('app/chart/'.$salt.".png");
-        exec($command);
-
-        return $salt;
     }
 }
