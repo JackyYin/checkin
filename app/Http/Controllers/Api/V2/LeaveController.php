@@ -6,13 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Helpers\StrideHelper;
 use App\Helpers\LeaveHelper;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Validator;
 use Carbon\Carbon;
-use SVGGraph;
 use Auth;
 use App\Models\Staff;
-use App\Models\Line;
 use App\Models\Check;
 use App\Models\LeaveReason;
 
@@ -510,13 +507,11 @@ class LeaveController extends Controller
         $leave = Check::where('id', $request->route('leaveId'))->where('staff_id', $staff->id)->first();
 
         if (!$leave) {
-            return response()->json([
-                'reply_message' => [
-                    'auth' => [
-                        '沒有權限刪除此假單'
-                    ]
-                 ],
-            ], 400);
+            return $this->response(400, [
+                'auth' => [
+                    '沒有權限刪除此假單'
+                ]
+            ]);
         }
 
         return response()->json([
@@ -555,13 +550,11 @@ class LeaveController extends Controller
         $leave = Check::where('id', $request->route('leaveId'))->where('staff_id', $staff->id)->first();
 
         if (!$leave) {
-            return response()->json([
-                'reply_message' => [
-                    'auth' => [
-                        '沒有權限刪除此假單'
-                    ]
-                 ],
-            ], 400);
+            return $this->response(400, [
+                'auth' => [
+                    '沒有權限刪除此假單'
+                ]
+            ]);
         }
 
         $leave->delete();
