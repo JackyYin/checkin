@@ -503,29 +503,19 @@ class LeaveController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function show(Request $request)
+    public function show(\App\Http\Requests\Api\V2\Leave\ShowRequest $request)
     {
-        $messages = [
-            'leaveId.integer' => '假單編號需為正整數',
-            'leaveId.exists'  => '不存在的假單',
-        ];
-        $validator = Validator::make($request->route()->parameters(), [
-            'leaveId' => 'integer|exists:checks,id',
-        ], $messages);
-
-        if ($validator->fails()) {
-            $array = $validator->errors()->all();
-            return response()->json([
-                'reply_message' => implode(",", $array),
-            ], 400);
-        }
         $staff = Auth::guard('api')->user();
 
         $leave = Check::where('id', $request->route('leaveId'))->where('staff_id', $staff->id)->first();
 
         if (!$leave) {
             return response()->json([
-                'reply_message' => "沒有權限查看此假單",
+                'reply_message' => [
+                    'auth' => [
+                        '沒有權限刪除此假單'
+                    ]
+                 ],
             ], 400);
         }
 
@@ -533,7 +523,7 @@ class LeaveController extends Controller
             'reply_message' => [
                 'id'           => $leave->id,
                 'leave_type'   => $leave->type,
-                'leave_reason' => $leave->leave_reason->reason,
+                'leave_reason' => $leave->leave_reason ? $leave->leave_reason->reason : '',
                 'start_time'   => $leave->checkin_at,
                 'end_time'     => $leave->checkout_at,
             ]
@@ -566,7 +556,11 @@ class LeaveController extends Controller
 
         if (!$leave) {
             return response()->json([
-                'reply_message' => "沒有權限刪除此假單",
+                'reply_message' => [
+                    'auth' => [
+                        '沒有權限刪除此假單'
+                    ]
+                 ],
             ], 400);
         }
 
