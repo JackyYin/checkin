@@ -514,14 +514,12 @@ class LeaveController extends Controller
             ]);
         }
 
-        return response()->json([
-            'reply_message' => [
-                'id'           => $leave->id,
-                'leave_type'   => $leave->type,
-                'leave_reason' => $leave->leave_reason ? $leave->leave_reason->reason : '',
-                'start_time'   => $leave->checkin_at,
-                'end_time'     => $leave->checkout_at,
-            ]
+        return $this->response(200, [
+            'id'           => $leave->id,
+            'leave_type'   => $leave->type,
+            'leave_reason' => $leave->leave_reason ? $leave->leave_reason->reason : '',
+            'start_time'   => $leave->checkin_at,
+            'end_time'     => $leave->checkout_at,
         ]);
     }
     /**
@@ -559,8 +557,6 @@ class LeaveController extends Controller
 
         $leave->delete();
 
-        return response()->json([
-            'reply_message' => "假單刪除成功",
-        ]);
+        return $this->response(200, "刪除假單成功");
     }
 }
