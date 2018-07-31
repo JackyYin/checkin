@@ -509,7 +509,7 @@ class LeaveController extends Controller
         if (!$leave) {
             return $this->response(400, [
                 'auth' => [
-                    '沒有權限刪除此假單'
+                    '沒有權限查看此假單'
                 ]
             ]);
         }
