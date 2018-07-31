@@ -172,6 +172,11 @@ return [
         'year'                  => '年',
         'start_date'            => '開始日期',
         'end_date'              => '結束日期',
+        'start_time'            => '開始時間',
+        'end_time'              => '結束時間',
         'leaveId'               => '假單編號',
+        'leave_type'            => '假別',
+        'leave_reason'          => '請假原因',
+
     ],
 ];

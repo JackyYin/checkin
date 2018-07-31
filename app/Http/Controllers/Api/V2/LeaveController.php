@@ -113,33 +113,9 @@ class LeaveController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function store(Request $request)
+    public function store(\App\Http\Requests\Api\V2\Leave\StoreRequest $request)
     {
-        $messages = [
-            'leave_type.required'    => '請填入假別',
-            'start_time.required'    => '請填入起始時間',
-            'start_time.date_format' => '請輸入格式： YYYY-MM-DD hh:mm',
-            'start_time.before'      => '起始時間必須在結束時間之前',
-            'end_time.required'      => '請填入結束時間',
-            'end_time.date_format'   => '請輸入格式： YYYY-MM-DD hh:mm',
-            'end_time.after'         => '結束時間必須在起始時間之後',
-            'leave_reason.required'  => '請填入請假原因',
-        ];
-        $validator = Validator::make($request->all(), [
-            'leave_type'   => 'required|numeric',
-            'start_time'   => 'required|date_format:Y-m-d H:i|before:end_time',
-            'end_time'     => 'required|date_format:Y-m-d H:i|after:start_time',
-            'leave_reason' => 'required',
-        ], $messages);
-
-        if ($validator->fails()) {
-            $array = $validator->errors()->all();
-            return response()->json([
-                'reply_message' => implode(",", $array),
-            ], 400);
-        }
-
-        return $this->LeaveHandler($request, $request->input('leave_type'));
+        return $this->LeaveHandler($request, $request->leave_type);
     }
     /**
      *
@@ -172,30 +148,8 @@ class LeaveController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function requestLate(Request $request)
+    public function requestLate(\App\Http\Requests\Api\V2\Leave\RequestLateRequest $request)
     {
-        $messages = [
-            'start_time.required'    => '請填入起始時間',
-            'start_time.date_format' => '請輸入格式： YYYY-MM-DD hh:mm',
-            'start_time.before'      => '起始時間必須在結束時間之前',
-            'end_time.required'      => '請填入結束時間',
-            'end_time.date_format'   => '請輸入格式： YYYY-MM-DD hh:mm',
-            'end_time.after'         => '結束時間必須在起始時間之後',
-            'leave_reason.required'  => '請填入請假原因',
-        ];
-        $validator = Validator::make($request->all(), [
-            'start_time'   => 'required|date_format:Y-m-d H:i|before:end_time',
-            'end_time'     => 'required|date_format:Y-m-d H:i|after:start_time',
-            'leave_reason' => 'required',
-        ], $messages);
-
-        if ($validator->fails()) {
-            $array = $validator->errors()->all();
-            return response()->json([
-                'reply_message' => implode(",", $array),
-            ], 400);
-        }
-
         return $this->LeaveHandler($request, Check::TYPE_LATE);
     }
     /**
@@ -229,41 +183,21 @@ class LeaveController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function requestOnline(Request $request)
+    public function requestOnline(\App\Http\Requests\Api\V2\Leave\RequestOnlineRequest $request)
     {
-        $messages = [
-            'start_time.required'    => '請填入起始時間',
-            'start_time.date_format' => '請輸入格式： YYYY-MM-DD hh:mm',
-            'start_time.before'      => '起始時間必須在結束時間之前',
-            'end_time.required'      => '請填入結束時間',
-            'end_time.date_format'   => '請輸入格式： YYYY-MM-DD hh:mm',
-            'end_time.after'         => '結束時間必須在起始時間之後',
-            'leave_reason.required'  => '請填入請假原因',
-        ];
-        $validator = Validator::make($request->all(), [
-            'start_time'   => 'required|date_format:Y-m-d H:i|before:end_time',
-            'end_time'     => 'required|date_format:Y-m-d H:i|after:start_time',
-            'leave_reason' => 'required',
-        ], $messages);
-
-        if ($validator->fails()) {
-            $array = $validator->errors()->all();
-            return response()->json([
-                'reply_message' => implode(",", $array),
-            ], 400);
-        }
-
         return $this->LeaveHandler($request, Check::TYPE_ONLINE);
     }
 
-    private function LeaveHandler(Request $request, $leave_type) 
+    private function LeaveHandler($request, $leave_type)
     {
         $staff = Auth::guard('api')->user();
 
-        if(!$this->CheckRepeat($staff->id, $request->input('start_time'), $request->input('end_time'))) {
-            return response()->json([
-                'reply_message' => "已存在重複的請假時間",
-            ], 400);
+        if(!$this->CheckRepeat($staff->id, $request->start_time, $request->end_time)) {
+            return $this->response(400, [
+                'repeat' => [
+                    '已存在重複的請假時間'
+                ]
+            ]);
         }
 
         $check = Check::create([
@@ -278,14 +212,14 @@ class LeaveController extends Controller
             'reason'   => $request->input('leave_reason'),
         ]);
 
+        StrideHelper::roomNotification($check, "Create");
+        StrideHelper::personalNotification($check, "Create");
+
         $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
                 ."姓名： ".$staff->name."\n"
                 ."假別： ".$this->CHECK_TYPE[$leave_type]."\n"
                 ."原因： ".$reason->reason."\n"
                 ."編號： ".$check->id;
-
-        StrideHelper::roomNotification($check, "Create");
-        StrideHelper::personalNotification($check, "Create");
 
         return response()->json([
             'reply_message' => $reply_message,
