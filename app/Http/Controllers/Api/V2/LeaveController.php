@@ -192,7 +192,7 @@ class LeaveController extends Controller
     {
         $staff = Auth::guard('api')->user();
 
-        if(!$this->CheckRepeat($staff->id, $request->start_time, $request->end_time)) {
+        if(!LeaveHelper::CheckRepeat($staff->id, $request->start_time.":00", $request->end_time.":00")) {
             return $this->response(400, [
                 'repeat' => [
                     '已存在重複的請假時間'
@@ -265,77 +265,31 @@ class LeaveController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function update($leaveId, Request $request)
+    public function update(\App\Http\Requests\Api\V2\Leave\UpdateRequest $request)
     {
-        $leave = Check::find($leaveId);
+        $staff = Auth::guard('api')->user();
+        $leave = Check::where('id', $request->route('leaveId'))->where('staff_id', $staff->id)->isLeave()->first();
 
         if (!$leave) {
-            return response()->json([
-                'reply_message' => "請輸入正確的請假id",
-            ], 400);
+            return $this->response(400, [
+                'permission' => [
+                    '沒有權限更新此假單'
+                ]
+            ]);
         }
 
-        $staff = Auth::guard('api')->user();
-
-        if ($leave->staff_id != $staff->id) {
-            return response()->json([
-                'reply_message' => "沒有權限編輯此筆假單",
-            ], 400);
-        } 
-
-        $messages = [
-            'start_time.date_format' => '請輸入格式： YYYY-MM-DD hh:mm',
-            'end_time.date_format'   => '請輸入格式： YYYY-MM-DD hh:mm',
-            'required_without_all'   => '請至少填入一個要修改的參數:開始時間、結束時間、請假原因、請假類別',
-        ];
-        $validator = Validator::make($request->all(), [
-            'leave_type'        => 'numeric',
-            'start_time'        => 'date_format:Y-m-d H:i',
-            'end_time'          => 'date_format:Y-m-d H:i',
-            'attribute_ensurer' => 'required_without_all:leave_type,start_time,end_time,leave_reason',
-        ], $messages);
-
-        if ($validator->fails()) {
-            $array = $validator->errors()->all();
-            return response()->json([
-                'reply_message' => implode(",", $array),
-            ], 400);
+        if (!LeaveHelper::CheckRepeat($staff->id, $request->start_time.":00", $request->end_time.":00", $request->route('leaveId'))) {
+            return $this->response(400, [
+                'repeat' => [
+                    '已存在重複的請假時間'
+                ]
+            ]);
         }
-
-        if ($request->filled('start_time') && !$request->filled('end_time') 
-            && strtotime($request->start_time.":00") >= strtotime($leave->checkout_at)) {
-            return response()->json([
-                'reply_message' => "起始時間需在結束時間之前",
-            ], 400);
-        }
-
-        if (!$request->filled('start_time') && $request->filled('end_time') 
-            && strtotime($request->end_time.":00") <= strtotime($leave->checkin_at)) {
-            return response()->json([
-                'reply_message' => "結束時間需在起始時間之後",
-            ], 400);
-        }
-
-        if ($request->filled('start_time') && $request->filled('end_time') 
-            && strtotime($request->end_time.":00") <= strtotime($request->start_time.":00")) {
-            return response()->json([
-                'reply_message' => "起始時間需在結束時間之前",
-            ], 400);
-        }
-
-        if (!$this->CheckRepeat($staff->id, $request->input('start_time', $leave->checkin_at), $request->input('end_time', $leave->checkout_at), $leaveId)) {
-            return response()->json([
-                'reply_message' => "已存在重複的請假時間",
-            ], 400);
-        }
-
-        $checkin_at  = $request->filled('start_time') ? $request->start_time.":00" : $leave->checkin_at;
-        $checkout_at = $request->filled('end_time') ? $request->end_time.":00" : $leave->checkout_at;
 
         $leave->update([
             'type'        => $request->input('leave_type', $leave->type),
-            'checkin_at'  => $checkin_at,
-            'checkout_at' => $checkout_at,
+            'checkin_at'  => $request->start_time.":00",
+            'checkout_at' => $request->end_time.":00",
         ]);
 
         if ($request->filled('leave_reason')) {
@@ -368,52 +322,12 @@ class LeaveController extends Controller
         ]);
     }
 
-    private function CheckRepeat($staff_id, $from, $to, $without = null)
-    {
-        $date = explode(" ", $from)[0];
-        $date_start = $date." 00:00:00";
-        $date_end   = $date." 23:59:59";
-
-        $past_checks = Check::where('staff_id', $staff_id)
-            ->isLeave()
-            ->where('checkin_at', '>=', $date_start)
-            ->where('checkin_at', '<=', $date_end)
-            ->where('checkout_at', '<=', $date_end)
-            ->where('id', '!=', $without)
-            ->get();
-
-        foreach ($past_checks as $check) {
-            $check_start = strtotime($check->checkin_at);
-            $check_end   = strtotime($check->checkout_at);
-            if (strtotime($from) <= $check_start) {
-                if (strtotime($to) <= $check_start) {
-                    continue;
-                }
-                elseif ($check_start < strtotime($to) && strtotime($to) < $check_end) {
-                    return false;
-                }
-                elseif ($check_end <= strtotime($to)) {
-                    $check->delete();
-                }
-            }
-            elseif ($check_start < strtotime($from) && strtotime($from) < $check_end) {
-                return false;
-            }
-            elseif ($check_end <= strtotime($from)) {
-                continue;
-            }
-        }
-
-        return true;
-    }
-
     private function getSubscribersExcept($staff_id)
     {
-        $subscribers = Staff::where('subscribed', STAFF::SUBSCRIBED)
-            ->where('active', STAFF::ACTIVE)
-            ->where('id', '!=', $staff_id)->get()->pluck('email');
-
-        return $subscribers;
+        return Staff::where('id', '!=', $staff_id)
+            ->subscribed()
+            ->active()
+            ->get()->pluck('email');
     }
     /**
      *
@@ -442,7 +356,7 @@ class LeaveController extends Controller
 
         if (!$leave) {
             return $this->response(400, [
-                'auth' => [
+                'permission' => [
                     '沒有權限查看此假單'
                 ]
             ]);
@@ -483,7 +397,7 @@ class LeaveController extends Controller
 
         if (!$leave) {
             return $this->response(400, [
-                'auth' => [
+                'permission' => [
                     '沒有權限刪除此假單'
                 ]
             ]);

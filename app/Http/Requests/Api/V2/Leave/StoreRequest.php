@@ -24,7 +24,7 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'leave_type'   => 'required|numeric',
+            'leave_type'   => 'required|integer|min:1',
             'start_time'   => 'required|date_format:Y-m-d H:i|before:end_time',
             'end_time'     => 'required|date_format:Y-m-d H:i|after:start_time',
             'leave_reason' => 'required',

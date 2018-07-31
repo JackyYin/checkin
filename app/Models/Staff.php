@@ -100,4 +100,14 @@ class Staff extends Authenticatable
     {
         return Hash::check($password, $this->registration_token) || Hash::check($password, $this->password);
     }
+
+    public function scopeSubscribed($query)
+    {
+        return $query->where('subscribed', self::SUBSCRIBED);
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('active', self::ACTIVE);
+    }
 }
