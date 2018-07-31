@@ -28,4 +28,20 @@ class GetMeRequest extends FormRequest
             'end_date'   => 'date_format:Y-m-d',
         ];
     }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @param  \Illuminate\Validation\Validator  $validator
+     * @return void
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            if ($this->filled('start_date') && $this->filled('end_date')
+            && strtotime($this->end_date." 00:00:00") <= strtotime($this->start_date." 00:00:00")) {
+                $validator->errors()->add('start_date', '起始時間需在結束時間之前');
+            }
+        });
+    }
 }

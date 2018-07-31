@@ -124,13 +124,6 @@ class StatController extends Controller
      */
     public function index(\App\Http\Requests\Api\V2\Leave\Stat\IndexRequest $request)
     {
-        if ($request->filled('start_date') && $request->filled('end_date')
-            && strtotime($request->end_date." 00:00:00") <= strtotime($request->start_date." 00:00:00")) {
-            return response()->json([
-                'reply_message' => "起始時間需在結束時間之前",
-            ], 400);
-        }
-
         $staff = Auth::guard('api')->user();
 
         $select_string = "";

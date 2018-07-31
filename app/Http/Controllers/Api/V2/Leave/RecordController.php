@@ -53,13 +53,6 @@ class RecordController extends Controller
      */
     public function me(\App\Http\Requests\Api\V2\Leave\Record\GetMeRequest $request)
     {
-        if ($request->filled('start_date') && $request->filled('end_date')
-            && strtotime($request->end_date." 00:00:00") <= strtotime($request->start_date." 00:00:00")) {
-            return response()->json([
-                'reply_message' => "起始時間需在結束時間之前",
-            ], JsonResponse::HTTP_BAD_REQUEST);
-        }
-
         $staff = Auth::guard('api')->user();
 
         $checks = $staff->get_check_list()->with(['leave_reason', 'staff'])->where(function ($query) use ($request) {
