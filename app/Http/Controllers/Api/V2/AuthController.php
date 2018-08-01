@@ -39,44 +39,24 @@ class AuthController extends Controller
      *       name="email",
      *       in="formData",
      *       type="string",
-     *       required=true,
      *   ),
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
 
-    public function auth(Request $request)
+    public function auth(\App\Http\Requests\Api\V2\Auth\AuthRequest $request)
     {
-        $messages = [
-            'email.required'   => '請填入email',
-            'email'            => '請填入有效的email',
-            'email.exists'     => '不存在的email,請先登錄員工個人資料',
-        ];
-        $validator = Validator::make($request->all(), [
-            'email'    => 'required|email|exists:staffs,email',
-        ], $messages);
-
-        if ($validator->fails()) {
-            $array = $validator->errors()->all();
-            return response()->json([
-                'reply_message' => implode(",",$array),
-            ], 400);
-        }
-
-        $new_staff = Staff::where('email', $request->input('email'))->first();
-        $bot = Auth::guard('bot')->user();
-        //驗證url
+        $new_staff = Staff::where('email', $request->email)->first();
         $registration_token = Uuid::uuid4();
+        //驗證url
         $new_staff->update([
             'registration_token' => Hash::make($registration_token),
         ]);
+        $confirmation_url = route('api.bot.auth.verify', ['bot_name' => $request->user()->name, 'registration_token' => $registration_token]);
 
-        $confirmation_url = route('api.bot.auth.verify', ['bot_name' => $bot->name, 'registration_token' => $registration_token]);
         Mail::send(new AuthenticationEmail($new_staff, $confirmation_url));
 
-        return response()->json([
-            'reply_message' => "請至信箱確認驗證信件.",
-        ], 200);
+        return $this->response(200, "請至信箱確認驗證信件.");
     }
     /**
      *
