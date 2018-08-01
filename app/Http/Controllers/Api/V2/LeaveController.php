@@ -90,25 +90,21 @@ class LeaveController extends Controller
      *       name="leave_type",
      *       in="formData",
      *       type="number",
-     *       required=true,
      *   ),
      *   @SWG\Parameter(
      *       name="leave_reason",
      *       in="formData",
      *       type="string",
-     *       required=true,
      *   ),
      *   @SWG\Parameter(
      *       name="start_time",
      *       in="formData",
      *       type="string",
-     *       required=true,
      *   ),
      *   @SWG\Parameter(
      *       name="end_time",
      *       in="formData",
      *       type="string",
-     *       required=true,
      *   ),
      *   @SWG\Response(response="default", description="操作成功")
      * )
@@ -131,19 +127,16 @@ class LeaveController extends Controller
      *       name="leave_reason",
      *       in="formData",
      *       type="string",
-     *       required=true,
      *   ),
      *   @SWG\Parameter(
      *       name="start_time",
      *       in="formData",
      *       type="string",
-     *       required=true,
      *   ),
      *   @SWG\Parameter(
      *       name="end_time",
      *       in="formData",
      *       type="string",
-     *       required=true,
      *   ),
      *   @SWG\Response(response="default", description="操作成功")
      * )
@@ -166,19 +159,16 @@ class LeaveController extends Controller
      *       name="leave_reason",
      *       in="formData",
      *       type="string",
-     *       required=true,
      *   ),
      *   @SWG\Parameter(
      *       name="start_time",
      *       in="formData",
      *       type="string",
-     *       required=true,
      *   ),
      *   @SWG\Parameter(
      *       name="end_time",
      *       in="formData",
      *       type="string",
-     *       required=true,
      *   ),
      *   @SWG\Response(response="default", description="操作成功")
      * )
