@@ -220,26 +220,8 @@ class AuthController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function login(Request $request)
+    public function login(\App\Http\Requests\Api\V2\Auth\LoginRequest $request)
     {
-        $messages = [
-            'password.required' => '請填入密碼',
-            'email.required'    => '請填入email',
-            'email'             => '請填入有效的email',
-            'email.exists'      => '不存在的email,請先登錄員工個人資料',
-        ];
-        $validator = Validator::make($request->all(), [
-            'email'    => 'required|email|exists:staffs,email',
-            'password' => 'required',
-        ], $messages);
-
-        if ($validator->fails()) {
-            $array = $validator->errors()->all();
-            return response()->json([
-                'reply_message' => implode(",",$array),
-            ], 400);
-        }
-
         $http = new Client;
         $oauth_client = DB::table('oauth_clients')->where('name', 'App User')->first();
 
@@ -258,9 +240,7 @@ class AuthController extends Controller
             ]);
         }
         catch (ClientException $e) {
-            return response()->json([
-                'reply_message' => '帳號或密碼錯誤'
-            ], 401);
+            return $this->response(401, '帳號或密碼錯誤');
         }
 
         $response = json_decode((string) $response->getBody());
