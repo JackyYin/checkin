@@ -27,7 +27,7 @@ class RequestOnlineRequest extends FormRequest
         return [
             'start_time'   => 'bail|required|date_format:Y-m-d H:i:s|before:end_time',
             'end_time'     => 'bail|required|date_format:Y-m-d H:i:s|after:start_time',
-            'leave_reason' => 'bail|required',
+            'reason'       => 'bail|required',
         ];
     }
 

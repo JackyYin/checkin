@@ -88,12 +88,12 @@ class LeaveController extends Controller
      *   operationId="request-leave",
      *   produces={"application/json", "text/plain"},
      *   @SWG\Parameter(
-     *       name="leave_type",
+     *       name="type",
      *       in="formData",
      *       type="number",
      *   ),
      *   @SWG\Parameter(
-     *       name="leave_reason",
+     *       name="reason",
      *       in="formData",
      *       type="string",
      *   ),
@@ -112,7 +112,7 @@ class LeaveController extends Controller
      */
     public function store(\App\Http\Requests\Api\V2\Leave\StoreRequest $request)
     {
-        return $this->LeaveHandler($request, $request->leave_type);
+        return $this->LeaveHandler($request, $request->type);
     }
     /**
      *
@@ -125,7 +125,7 @@ class LeaveController extends Controller
      *   operationId="request-late",
      *   produces={"application/json", "text/plain"},
      *   @SWG\Parameter(
-     *       name="leave_reason",
+     *       name="reason",
      *       in="formData",
      *       type="string",
      *   ),
@@ -157,7 +157,7 @@ class LeaveController extends Controller
      *   operationId="request-online",
      *   produces={"application/json", "text/plain"},
      *   @SWG\Parameter(
-     *       name="leave_reason",
+     *       name="reason",
      *       in="formData",
      *       type="string",
      *   ),
@@ -179,7 +179,7 @@ class LeaveController extends Controller
         return $this->LeaveHandler($request, Check::TYPE_ONLINE);
     }
 
-    private function LeaveHandler($request, $leave_type)
+    private function LeaveHandler($request, $type)
     {
         $staff = Auth::guard('api')->user();
 
@@ -187,12 +187,12 @@ class LeaveController extends Controller
             'staff_id'    => $staff->id,
             'checkin_at'  => $request->start_time,
             'checkout_at' => $request->end_time,
-            'type'        => $leave_type,
+            'type'        => $type,
         ]);
 
         $reason = LeaveReason::create([
             'check_id' => $check->id,
-            'reason'   => $request->input('leave_reason'),
+            'reason'   => $request->reason,
         ]);
 
         StrideHelper::roomNotification($check, "Create");
@@ -201,7 +201,7 @@ class LeaveController extends Controller
         if ($request->header('Accept') == 'text/plain') {
             $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
                     ."姓名： ".$staff->name."\n"
-                    ."假別： ".$this->CHECK_TYPE[$leave_type]."\n"
+                    ."假別： ".$this->CHECK_TYPE[$type]."\n"
                     ."原因： ".$reason->reason."\n"
                     ."編號： ".$check->id;
 

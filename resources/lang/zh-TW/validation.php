@@ -177,6 +177,8 @@ return [
         'leaveId'               => '假單編號',
         'leave_type'            => '假別',
         'leave_reason'          => '請假原因',
+        'type'                  => '假別',
+        'reason'                => '請假原因',
 
     ],
 ];
