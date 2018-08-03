@@ -25,8 +25,8 @@ class RequestOnlineRequest extends FormRequest
     public function rules()
     {
         return [
-            'start_time'   => 'bail|required|date_format:Y-m-d H:i:s|before:end_time',
-            'end_time'     => 'bail|required|date_format:Y-m-d H:i:s|after:start_time',
+            'checkin_at'   => 'bail|required|date_format:Y-m-d H:i:s|before:checkout_at',
+            'checkout_at'  => 'bail|required|date_format:Y-m-d H:i:s|after:checkin_at',
             'reason'       => 'bail|required',
         ];
     }
@@ -40,7 +40,7 @@ class RequestOnlineRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            if(!LeaveHelper::CheckRepeat($this->user()->id, $this->start_time, $this->end_time)) {
+            if(!LeaveHelper::CheckRepeat($this->user()->id, $this->checkin_at, $this->checkout_at)) {
                 $validator->errors()->add('repeat', '已存在重複的請假時間');
             }
         });

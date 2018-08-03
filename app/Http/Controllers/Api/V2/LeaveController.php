@@ -98,12 +98,12 @@ class LeaveController extends Controller
      *       type="string",
      *   ),
      *   @SWG\Parameter(
-     *       name="start_time",
+     *       name="checkin_at",
      *       in="formData",
      *       type="string",
      *   ),
      *   @SWG\Parameter(
-     *       name="end_time",
+     *       name="checkout_at",
      *       in="formData",
      *       type="string",
      *   ),
@@ -130,12 +130,12 @@ class LeaveController extends Controller
      *       type="string",
      *   ),
      *   @SWG\Parameter(
-     *       name="start_time",
+     *       name="checkin_at",
      *       in="formData",
      *       type="string",
      *   ),
      *   @SWG\Parameter(
-     *       name="end_time",
+     *       name="checkout_at",
      *       in="formData",
      *       type="string",
      *   ),
@@ -162,12 +162,12 @@ class LeaveController extends Controller
      *       type="string",
      *   ),
      *   @SWG\Parameter(
-     *       name="start_time",
+     *       name="checkin_at",
      *       in="formData",
      *       type="string",
      *   ),
      *   @SWG\Parameter(
-     *       name="end_time",
+     *       name="checkout_at",
      *       in="formData",
      *       type="string",
      *   ),
@@ -185,8 +185,8 @@ class LeaveController extends Controller
 
         $check = Check::create([
             'staff_id'    => $staff->id,
-            'checkin_at'  => $request->start_time,
-            'checkout_at' => $request->end_time,
+            'checkin_at'  => $request->checkin_at,
+            'checkout_at' => $request->checkout_at,
             'type'        => $type,
         ]);
 
