@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Transformer;
+namespace App\Transformers;
 
 use League\Fractal\TransformerAbstract;
 use App\Models\Check;

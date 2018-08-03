@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Validator;
 use Carbon\Carbon;
 use Auth;
-use App\Transformer\CheckTransformer;
+use App\Transformers\CheckTransformer;
 use App\Helpers\LeaveHelper;
 use App\Models\Staff;
 use App\Models\Check;
