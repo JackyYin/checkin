@@ -36,13 +36,13 @@ Route::group(['namespace' => 'Api'], function () {
         });
         Route::group(['middleware' => ['auth.api.user']], function () {
             Route::group(['prefix' => 'leave'], function () {
-                Route::get('/{leaveId}', ['uses' => 'LeaveController@show'])->where('leaveId', '[0-9]+');
+                Route::get('/{id}', ['uses' => 'LeaveController@show'])->where('id', '[0-9]+');
                 Route::get('/types', ['uses' => 'LeaveController@getLeaveType']);
                 Route::post('/', ['uses' => 'LeaveController@store']);
                 Route::post('/online', ['uses' => 'LeaveController@requestOnline']);
                 Route::post('/late', ['uses' => 'LeaveController@requestLate']);
-                Route::put('/{leaveId}', ['uses' => 'LeaveController@update']);
-                Route::delete('/{leaveId}', ['uses' => 'LeaveController@destroy']);
+                Route::put('/{id}', ['uses' => 'LeaveController@update'])->where('id', '[0-9]+');
+                Route::delete('/{id}', ['uses' => 'LeaveController@destroy'])->where('id', '[0-9]+');
                 //統計相關
                 Route:: group(['prefix' => 'stat', 'namespace' => 'Leave'], function () {
                     Route::get('/', ['uses' => 'StatController@index']);

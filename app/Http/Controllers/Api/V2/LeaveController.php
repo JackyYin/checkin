@@ -215,37 +215,37 @@ class LeaveController extends Controller
     }
     /**
      *
-     * @SWG\Put(path="/api/v2/leave/{leaveId}",
+     * @SWG\Put(path="/api/v2/leave/{id}",
      *   tags={"Leave", "V2"},
      *   security={
      *      {"api-user": {}}
      *   },
      *   summary="編輯請假",
-     *   operationId="edit-leave",
-     *   produces={"application/json"},
+     *   operationId="update-leave",
+     *   produces={"application/json", "text/plain"},
      *   @SWG\Parameter(
-     *       name="leaveId",
+     *       name="id",
      *       in="path",
      *       type="number",
      *       required=true,
      *   ),
      *   @SWG\Parameter(
-     *       name="leave_type",
+     *       name="type",
      *       in="formData",
      *       type="number",
      *   ),
      *   @SWG\Parameter(
-     *       name="leave_reason",
+     *       name="reason",
      *       in="formData",
      *       type="string",
      *   ),
      *   @SWG\Parameter(
-     *       name="start_time",
+     *       name="checkin_at",
      *       in="formData",
      *       type="string",
      *   ),
      *   @SWG\Parameter(
-     *       name="end_time",
+     *       name="checkout_at",
      *       in="formData",
      *       type="string",
      *   ),
@@ -255,9 +255,13 @@ class LeaveController extends Controller
     public function update(\App\Http\Requests\Api\V2\Leave\UpdateRequest $request)
     {
         $staff = Auth::guard('api')->user();
-        $leave = Check::where('id', $request->route('leaveId'))->where('staff_id', $staff->id)->isLeave()->first();
+        $leave = Check::where('id', $request->route('id'))->where('staff_id', $staff->id)->isLeave()->first();
 
         if (!$leave) {
+            if ($request->header('Accept') == 'text/plain') {
+                return response("沒有權限更新此假單", 400);
+            }
+
             return $this->response(400, [
                 'permission' => [
                     '沒有權限更新此假單'
@@ -265,7 +269,11 @@ class LeaveController extends Controller
             ]);
         }
 
-        if (!LeaveHelper::CheckRepeat($staff->id, $request->start_time.":00", $request->end_time.":00", $request->route('leaveId'))) {
+        if (!LeaveHelper::CheckRepeat($staff->id, $request->checkin_at, $request->checkout_at, $request->route('id'))) {
+            if ($request->header('Accept') == 'text/plain') {
+                return response("已存在重複的請假時間", 400);
+            }
+
             return $this->response(400, [
                 'repeat' => [
                     '已存在重複的請假時間'
@@ -274,37 +282,35 @@ class LeaveController extends Controller
         }
 
         $leave->update([
-            'type'        => $request->input('leave_type', $leave->type),
-            'checkin_at'  => $request->start_time.":00",
-            'checkout_at' => $request->end_time.":00",
+            'type'        => $request->input('type', $leave->type),
+            'checkin_at'  => $request->checkin_at,
+            'checkout_at' => $request->checkout_at,
         ]);
 
-        if ($request->filled('leave_reason')) {
-            if ($leave->leave_reason) {
-                $leave->leave_reason->update([
-                    'reason' => $request->leave_reason,
-                ]);
-            }
-            else {
-                LeaveReason::create([
-                    'check_id' => $leave->id,
-                    'reason'   => $request->leave_reason,
-                ]);
-            }
+        if ($request->filled('reason')) {
+            LeaveReason::updateOrCreate([
+                'check_id' => $leave->id
+            ], [
+                'reason' => $request->reason
+            ]);
         }
 
         StrideHelper::roomNotification($leave, "Edit");
         StrideHelper::personalNotification($leave, "Edit");
 
-        $reply_message = 
-            "編號: ".$leave->id." 編輯成功\n"
-            ."時間: ".date("Y-m-d", strtotime($leave->checkin_at))." (".$this->WEEK_DAY[date("l", strtotime($leave->checkin_at))].") ".date("H:i", strtotime($leave->checkin_at))." ~ ".date("H:i", strtotime($leave->checkout_at))."\n"
-            ."姓名: ".$leave->staff->name."\n"
-            ."假別: ".$this->CHECK_TYPE[$leave->type]."\n"
-            ."原因: ".$leave->leave_reason->reason."\n";
+        if ($request->header('Accept') == 'text/plain') {
+            $reply_message =
+                "編號: ".$leave->id." 編輯成功\n"
+                ."時間: ".date("Y-m-d", strtotime($leave->checkin_at))." (".$this->WEEK_DAY[date("l", strtotime($leave->checkin_at))].") ".date("H:i", strtotime($leave->checkin_at))." ~ ".date("H:i", strtotime($leave->checkout_at))."\n"
+                ."姓名: ".$leave->staff->name."\n"
+                ."假別: ".$this->CHECK_TYPE[$leave->type]."\n"
+                ."原因: ".$leave->leave_reason->reason."\n";
+
+            return response($reply_message, 200);
+        }
 
         return response()->json([
-            'reply_message' => $reply_message,
+            'reply_message' => fractal($leave, new CheckTransformer(), new \League\Fractal\Serializer\ArraySerializer()),
             'subscribers'   => $this->getSubscribersExcept($staff->id),
         ]);
     }
@@ -318,7 +324,7 @@ class LeaveController extends Controller
     }
     /**
      *
-     * @SWG\Get(path="/api/v2/leave/{leaveId}",
+     * @SWG\Get(path="/api/v2/leave/{id}",
      *   tags={"Leave", "V2"},
      *   security={
      *      {"api-user": {}}
@@ -327,7 +333,7 @@ class LeaveController extends Controller
      *   operationId="get-specific-leave",
      *   produces={"application/json"},
      *   @SWG\Parameter(
-     *       name="leaveId",
+     *       name="id",
      *       in="path",
      *       type="integer",
      *       required=true,
@@ -339,7 +345,7 @@ class LeaveController extends Controller
     {
         $staff = Auth::guard('api')->user();
 
-        $leave = Check::where('id', $request->route('leaveId'))->where('staff_id', $staff->id)->first();
+        $leave = Check::where('id', $request->route('id'))->where('staff_id', $staff->id)->first();
 
         if (!$leave) {
             return $this->response(400, [
@@ -353,7 +359,7 @@ class LeaveController extends Controller
     }
     /**
      *
-     * @SWG\Delete(path="/api/v2/leave/{leaveId}",
+     * @SWG\Delete(path="/api/v2/leave/{id}",
      *   tags={"Leave", "V2"},
      *   security={
      *      {"api-user": {}}
@@ -362,7 +368,7 @@ class LeaveController extends Controller
      *   operationId="delete-specific-leave",
      *   produces={"application/json"},
      *   @SWG\Parameter(
-     *       name="leaveId",
+     *       name="id",
      *       in="path",
      *       type="integer",
      *       required=true,
@@ -374,7 +380,7 @@ class LeaveController extends Controller
     {
         $staff = Auth::guard('api')->user();
 
-        $leave = Check::where('id', $request->route('leaveId'))->where('staff_id', $staff->id)->first();
+        $leave = Check::where('id', $request->route('id'))->where('staff_id', $staff->id)->first();
 
         if (!$leave) {
             return $this->response(400, [

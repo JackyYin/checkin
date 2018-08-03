@@ -38,10 +38,10 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'leaveId'           => 'integer|exists:checks,id',
-            'leave_type'        => 'integer|min:1',
-            'start_time'        => 'required|date_format:Y-m-d H:i|before:end_time',
-            'end_time'          => 'required|date_format:Y-m-d H:i|after:start_time',
+            'id'                => 'integer|exists:checks,id',
+            'type'              => 'integer|min:1',
+            'checkin_at'        => 'required|date_format:Y-m-d H:i:s|before:checkout_at',
+            'checkout_at'       => 'required|date_format:Y-m-d H:i:s|after:checkin_at',
         ];
     }
 }

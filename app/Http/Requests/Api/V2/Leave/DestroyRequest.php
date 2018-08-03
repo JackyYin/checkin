@@ -24,7 +24,7 @@ class DestroyRequest extends FormRequest
     public function rules()
     {
         return [
-            'leaveId' => 'integer|exists:checks,id',
+            'id' => 'integer|exists:checks,id',
         ];
     }
 
