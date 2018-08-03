@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Controllers\Controller;
-use App\Helpers\StrideHelper;
-use App\Helpers\LeaveHelper;
 use Illuminate\Http\Request;
 use Validator;
 use Carbon\Carbon;
 use Auth;
+use App\Helpers\StrideHelper;
+use App\Helpers\LeaveHelper;
+use App\Transformers\CheckTransformer;
 use App\Models\Staff;
 use App\Models\Check;
 use App\Models\LeaveReason;
@@ -85,7 +86,7 @@ class LeaveController extends Controller
      *   },
      *   summary="請假申請",
      *   operationId="request-leave",
-     *   produces={"application/json"},
+     *   produces={"application/json", "text/plain"},
      *   @SWG\Parameter(
      *       name="leave_type",
      *       in="formData",
@@ -122,7 +123,7 @@ class LeaveController extends Controller
      *   },
      *   summary="申請晚到",
      *   operationId="request-late",
-     *   produces={"application/json"},
+     *   produces={"application/json", "text/plain"},
      *   @SWG\Parameter(
      *       name="leave_reason",
      *       in="formData",
@@ -154,7 +155,7 @@ class LeaveController extends Controller
      *   },
      *   summary="申請online",
      *   operationId="request-online",
-     *   produces={"application/json"},
+     *   produces={"application/json", "text/plain"},
      *   @SWG\Parameter(
      *       name="leave_reason",
      *       in="formData",
@@ -182,18 +183,10 @@ class LeaveController extends Controller
     {
         $staff = Auth::guard('api')->user();
 
-        if(!LeaveHelper::CheckRepeat($staff->id, $request->start_time.":00", $request->end_time.":00")) {
-            return $this->response(400, [
-                'repeat' => [
-                    '已存在重複的請假時間'
-                ]
-            ]);
-        }
-
         $check = Check::create([
             'staff_id'    => $staff->id,
-            'checkin_at'  => $request->input('start_time').":00",
-            'checkout_at' => $request->input('end_time').":00",
+            'checkin_at'  => $request->start_time,
+            'checkout_at' => $request->end_time,
             'type'        => $leave_type,
         ]);
 
@@ -205,14 +198,18 @@ class LeaveController extends Controller
         StrideHelper::roomNotification($check, "Create");
         StrideHelper::personalNotification($check, "Create");
 
-        $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
-                ."姓名： ".$staff->name."\n"
-                ."假別： ".$this->CHECK_TYPE[$leave_type]."\n"
-                ."原因： ".$reason->reason."\n"
-                ."編號： ".$check->id;
+        if ($request->header('Accept') == 'text/plain') {
+            $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
+                    ."姓名： ".$staff->name."\n"
+                    ."假別： ".$this->CHECK_TYPE[$leave_type]."\n"
+                    ."原因： ".$reason->reason."\n"
+                    ."編號： ".$check->id;
+
+            return response($reply_message, 200);
+        }
 
         return response()->json([
-            'reply_message' => $reply_message,
+            'reply_message' => fractal($check, new CheckTransformer(), new \League\Fractal\Serializer\ArraySerializer()),
             'subscribers'   => $this->getSubscribersExcept($staff->id),
         ], 200);
     }
@@ -352,13 +349,7 @@ class LeaveController extends Controller
             ]);
         }
 
-        return $this->response(200, [
-            'id'           => $leave->id,
-            'leave_type'   => $leave->type,
-            'leave_reason' => $leave->leave_reason ? $leave->leave_reason->reason : '',
-            'start_time'   => $leave->checkin_at,
-            'end_time'     => $leave->checkout_at,
-        ]);
+        return $this->response(200, fractal($leave, new CheckTransformer(), new \League\Fractal\Serializer\ArraySerializer()));
     }
     /**
      *
