@@ -25,7 +25,7 @@ class CheckTransformer extends TransformerAbstract
     {
         return [
             'id'          => (int) $check->id,
-            'type'        => Check::TYPE_MAPPING[$check->type],
+            'type'        => $check->type,
             'checkin_at'  => $check->checkin_at,
             'checkout_at' => $check->checkout_at,
             'reason'      => $check->leave_reason ? $check->leave_reason->reason : '' ,
