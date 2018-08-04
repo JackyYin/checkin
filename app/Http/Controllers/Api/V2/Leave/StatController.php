@@ -126,7 +126,6 @@ class StatController extends Controller
     {
         $staff = Auth::guard('api')->user();
 
-        $select_string = "";
         $EnumTypes = array (
             Check::TYPE_PERSONAL_LEAVE  => "personal",
             Check::TYPE_ANNUAL_LEAVE    => "annual",
@@ -144,15 +143,16 @@ class StatController extends Controller
             $EnumTypes = array_only($EnumTypes, $request->types);
         }
 
-        $noon_start = explode(":", Check::NOON_START)[0];
-        $noon_end = explode(":", Check::NOON_END)[0];
+        $noon_start = explode(":", config('check.noon.start'))[0];
+        $noon_end = explode(":", config('check.noon.end'))[0];
+        $select_string = "";
 
         foreach( $EnumTypes as $key => $value) {
             $select_string .= "SUM(IF(type = ".$key.",  IF(checkin_at <= DATE_ADD(DATE(checkin_at), INTERVAL ".$noon_start."  HOUR) && checkout_at >= DATE_ADD(DATE(checkin_at), INTERVAL ".$noon_end." HOUR), TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at) - 60, TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at)), 0) / 60) as ".$value.",";
         }
         $select_string = substr($select_string, 0, -1);
 
-        $data = $staff->get_check_list()->where(function ($query) use ($request) {
+        $data = $staff->get_check_list()->isLeave()->where(function ($query) use ($request) {
                 if ($request->filled('start_date')) {
                     $query->where('checkin_at', ">=", $request->start_date);
                 }

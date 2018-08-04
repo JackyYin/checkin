@@ -129,8 +129,7 @@ class CheckController extends Controller
             "SELECT name, DATE(checkin_at) as date";
 
         foreach ($conditions['type'] as $type) {
-            $mysql =
-                $mysql.", SUM(IF(type = ".$type.",IF(checkin_at <= DATE_ADD(DATE(checkin_at), INTERVAL 12 HOUR) && checkout_at >= DATE_ADD(DATE(checkin_at), INTERVAL 13 HOUR), TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at) - 60, TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at)), 0)) as ".$this->CHECK_ENG_TYPE[$type]."_time";
+            $mysql .= ", SUM(IF(type = ".$type.",IF(checkin_at <= DATE_ADD(DATE(checkin_at), INTERVAL 12 HOUR) && checkout_at >= DATE_ADD(DATE(checkin_at), INTERVAL 13 HOUR), TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at) - 60, TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at)), 0)) as ".$this->CHECK_ENG_TYPE[$type]."_time";
         }
 
         $mysql =
