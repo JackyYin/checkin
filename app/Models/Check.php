@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Enums;
 
 class Check extends Model
 {
+    use Enums;
+
     const TYPE_NORMAL          = 0;
     const TYPE_PERSONAL_LEAVE  = 1;  //事假
     const TYPE_ANNUAL_LEAVE    = 2;  //特休
@@ -18,21 +21,22 @@ class Check extends Model
     const TYPE_PATERNITY_LEAVE = 9;  //陪產假
     const TYPE_MARRIAGE_LEAVE  = 10; //婚假
 
-    const NOON_START = "12:00:00"; //午休開始時間
-    const NOON_END   = "13:00:00"; //午休結束時間
+    protected $enumTypes = [
+        self::TYPE_NORMAL           => "正常打卡",
+        self::TYPE_PERSONAL_LEAVE   => "事假",
+        self::TYPE_ANNUAL_LEAVE     => "特休",
+        self::TYPE_OFFICIAL_LEAVE   => "出差",
+        self::TYPE_SICK_LEAVE       => '病假',
+        self::TYPE_ONLINE           => 'Online',
+        self::TYPE_LATE             => '晚到',
+        self::TYPE_MOURNING_LEAVE   => '喪假',
+        self::TYPE_MATERNITY_LEAVE  => '產假',
+        self::TYPE_PATERNITY_LEAVE  => '陪產假',
+        self::TYPE_MARRIAGE_LEAVE   => '婚假',
+    ];
 
-    const TYPE_MAPPING = [
-        0  => "正常打卡",
-        1  => "事假",
-        2  => "特休",
-        3  => "出差",
-        4  => '病假',
-        5  => 'Online',
-        6  => '晚到',
-        7  => '喪假',
-        8  => '產假',
-        9  => '陪產假',
-        10 => '婚假',
+    protected $casts = [
+        'type' => 'integer',
     ];
 
     protected $table = 'checks';
@@ -51,6 +55,7 @@ class Check extends Model
      * @var array
      */
     protected $hidden = [];
+
     public $timestamps = false;
 
     public function leave_reason()

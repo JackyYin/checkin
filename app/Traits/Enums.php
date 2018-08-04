@@ -34,9 +34,9 @@ trait Enums
             if (!$this->isValidEnum($field, $value)) {
                 throw new InvalidEnumException("Invalid value for " . static::class . "::$field ($value)");
             }
-            if ($this->isKeyedEnum($field, $value)) {
-                $value = $this->getKeyedEnum($field, $value);
-            }
+//            if ($this->isKeyedEnum($field, $value)) {
+//                $value = $this->getKeyedEnum($field, $value);
+//            }
         }
         return parent::setAttribute($field, $value);
     }
@@ -81,7 +81,7 @@ trait Enums
      */
     protected function isKeyedEnum(string $field, $key)
     {
-        return in_array($key, array_keys(static::getEnum($field)), true);
+        return in_array($key, array_keys(static::getEnum($field)), false);
     }
     /**
      * Is the value a valid enum in any way
