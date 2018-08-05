@@ -21,6 +21,71 @@ class RecordController extends Controller
      */
     /**
      *
+     * @SWG\Get(path="/api/v2/leave/record",
+     *   tags={"Leave", "V2", "Record"},
+     *   security={
+     *      {"api-user": {}}
+     *   },
+     *   summary="取得所有請假紀錄",
+     *   operationId="get-leave-records",
+     *   produces={"application/json"},
+     *   @SWG\Parameter(
+     *       name="start_date",
+     *       in="query",
+     *       type="string",
+     *   ),
+     *   @SWG\Parameter(
+     *       name="end_date",
+     *       in="query",
+     *       type="string",
+     *   ),
+     *   @SWG\Parameter(
+     *       name="types[]",
+     *       in="query",
+     *       type="array",
+     *       collectionFormat="multi",
+     *       @SWG\Items(
+     *          type="integer",
+     *       ),
+     *   ),
+     *   @SWG\Parameter(
+     *       name="staff_ids[]",
+     *       in="query",
+     *       type="array",
+     *       collectionFormat="multi",
+     *       @SWG\Items(
+     *          type="integer",
+     *       ),
+     *   ),
+     *   @SWG\Response(response="default", description="操作成功")
+     * )
+     */
+    public function index(\App\Http\Requests\Api\V2\Leave\Record\IndexRequest $request)
+    {
+        $checks = Check::with(['leave_reason', 'staff'])
+            ->whereHas('staff', function ($query) use ($request) {
+                if ($request->filled('staff_ids')) {
+                    $query->whereIn('id', $request->staff_ids);
+                }
+            })
+            ->where(function ($query) use ($request) {
+                if ($request->filled('start_date')) {
+                    $query->where('checkin_at', ">=", $request->start_date);
+                }
+
+                if ($request->filled('end_date')) {
+                    $query->where('checkout_at', "<=", $request->end_date);
+                }
+
+                if ($request->filled('types')) {
+                    $query->whereIn('type', $request->types);
+                }
+        } )->isLeave()->get();
+
+        return $this->response(200, fractal()->collection($checks, new CheckTransformer));
+    }
+    /**
+     *
      * @SWG\Get(path="/api/v2/leave/record/me",
      *   tags={"Leave", "V2", "Record"},
      *   security={
