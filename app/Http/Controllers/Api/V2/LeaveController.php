@@ -259,10 +259,10 @@ class LeaveController extends Controller
 
         if (!$leave) {
             if ($request->header('Accept') == 'text/plain') {
-                return response("沒有權限更新此假單", 400);
+                return response("沒有權限更新此假單", 403);
             }
 
-            return $this->response(400, [
+            return $this->response(403, [
                 'permission' => [
                     '沒有權限更新此假單'
                 ]
@@ -348,7 +348,7 @@ class LeaveController extends Controller
         $leave = Check::where('id', $request->route('id'))->where('staff_id', $staff->id)->first();
 
         if (!$leave) {
-            return $this->response(400, [
+            return $this->response(403, [
                 'permission' => [
                     '沒有權限查看此假單'
                 ]
@@ -383,7 +383,7 @@ class LeaveController extends Controller
         $leave = Check::where('id', $request->route('id'))->where('staff_id', $staff->id)->first();
 
         if (!$leave) {
-            return $this->response(400, [
+            return $this->response(403, [
                 'permission' => [
                     '沒有權限刪除此假單'
                 ]
