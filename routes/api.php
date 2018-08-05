@@ -54,6 +54,9 @@ Route::group(['namespace' => 'Api'], function () {
                     Route::get('/me', ['uses' => 'RecordController@me']);
                 });
             });
+            Route::group(['prefix' => 'staff'], function () {
+                Route::get('/me', ['uses' => 'StaffController@me']);
+            });
         //    Route::group(['prefix' => 'check'], function () {
         //        Route::post('/', ['uses' => 'CheckController@index']);
         //        Route::get('start', ['uses' => 'CheckController@start']);
