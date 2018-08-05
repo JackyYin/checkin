@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Validator;
 use Carbon\Carbon;
 use Auth;
 use App\Helpers\StrideHelper;
