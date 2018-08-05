@@ -62,7 +62,7 @@ class RecordController extends Controller
      */
     public function index(\App\Http\Requests\Api\V2\Leave\Record\IndexRequest $request)
     {
-        $checks = Check::with(['leave_reason', 'staff'])
+        $leaves = Check::with(['leave_reason', 'staff'])
             ->whereHas('staff', function ($query) use ($request) {
                 if ($request->filled('staff_ids')) {
                     $query->whereIn('id', $request->staff_ids);
@@ -82,7 +82,7 @@ class RecordController extends Controller
                 }
         } )->isLeave()->get();
 
-        return $this->response(200, fractal()->collection($checks, new CheckTransformer));
+        return $this->response(200, fractal()->collection($leaves, new CheckTransformer));
     }
     /**
      *
@@ -120,7 +120,7 @@ class RecordController extends Controller
     {
         $staff = Auth::guard('api')->user();
 
-        $checks = $staff->get_check_list()->with(['leave_reason', 'staff'])->where(function ($query) use ($request) {
+        $leaves = $staff->get_check_list()->with(['leave_reason', 'staff'])->where(function ($query) use ($request) {
                 if ($request->filled('start_date')) {
                     $query->where('checkin_at', ">=", $request->start_date);
                 }
@@ -134,6 +134,6 @@ class RecordController extends Controller
                 }
         } )->isLeave()->get();
 
-        return $this->response(200, fractal()->collection($checks, new CheckTransformer));
+        return $this->response(200, fractal()->collection($leaves, new CheckTransformer));
     }
 }
