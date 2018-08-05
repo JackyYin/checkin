@@ -24,8 +24,16 @@ class Bot
             return $next($request);
         }
 
+        if ($request->header('Accept') == 'text/plain') {
+            return response("Unauthenticated Bot.", 401);
+        }
+
         return response()->json([
-            "reply_message" => "Unauthenticated Bot.",
+            "reply_message" => [
+                "auth" => [
+                    "Unauthenticated Bot."
+                ]
+            ]
         ], 401);
     }
 }

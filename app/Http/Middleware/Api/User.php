@@ -24,8 +24,16 @@ class User
             return $next($request);
         }
 
+        if ($request->header('Accept') == 'text/plain') {
+            return response("Unauthenticated Api User.", 401);
+        }
+
         return response()->json([
-            "reply_message" => "Unauthenticated Api User.",
+            "reply_message" => [
+                "auth" => [
+                    "Unauthenticated Api User."
+                ]
+            ]
         ], 401);
     }
 }
