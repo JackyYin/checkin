@@ -30,9 +30,12 @@ Route::group(['namespace' => 'Api'], function () {
     Route::group(['prefix' => 'v2', 'namespace' => 'V2'], function () {
         Route::post('/bot/auth/login', ['uses' => 'AuthController@login']);
         Route::get('bot/{bot_name}/auth/verify/{registration_token}', ['as' => 'api.bot.auth.verify', 'uses' => 'AuthController@verify']);
-        Route::group(['middleware' => ['auth.api.bot']], function () {
-            Route::post('/bot/auth', ['uses' => 'AuthController@auth']);
-            Route::post('/bot/auth/refresh', ['uses' => 'AuthController@refresh']);
+        Route::group(['middleware' => ['auth.api.bot'], 'prefix' => 'bot'], function () {
+            Route::post('/auth', ['uses' => 'AuthController@auth']);
+            Route::post('/auth/refresh', ['uses' => 'AuthController@refresh']);
+
+            Route::get('/me', ['uses' => 'BotController@me']);
+            Route::patch('/{id}', ['uses' => 'BotController@update'])->where('id', '[0-9]+');
         });
         Route::group(['middleware' => ['auth.api.user']], function () {
             Route::group(['prefix' => 'leave'], function () {
