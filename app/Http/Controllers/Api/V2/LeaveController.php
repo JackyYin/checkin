@@ -15,6 +15,13 @@ use App\Models\LeaveReason;
 
 class LeaveController extends Controller
 {
+    protected $StrideHelper;
+
+    public function __construct()
+    {
+        $this->StrideHelper = new StrideHelper();
+    }
+
     /**
      * @SWG\Tag(name="Leave", description="請假")
      */
@@ -194,8 +201,8 @@ class LeaveController extends Controller
             'reason'   => $request->reason,
         ]);
 
-        StrideHelper::roomNotification($check, "Create");
-        StrideHelper::personalNotification($check, "Create");
+        $this->StrideHelper->roomNotification($check, "Create");
+        $this->StrideHelper->personalNotification($check, "Create");
 
         if ($request->header('Accept') == 'text/plain') {
             $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
@@ -294,8 +301,8 @@ class LeaveController extends Controller
             ]);
         }
 
-        StrideHelper::roomNotification($leave, "Edit");
-        StrideHelper::personalNotification($leave, "Edit");
+        $this->StrideHelper->roomNotification($leave, "Edit");
+        $this->StrideHelper->personalNotification($leave, "Edit");
 
         if ($request->header('Accept') == 'text/plain') {
             $reply_message =

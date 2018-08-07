@@ -26,6 +26,7 @@ class StrideNotify extends Command
      */
     protected $description = 'Send Notification For All Leaves Today To Stride';
 
+    protected $StrideHelper;
     /**
      * Create a new command instance.
      *
@@ -34,6 +35,8 @@ class StrideNotify extends Command
     public function __construct()
     {
         parent::__construct();
+
+        $this->StrideHelper = new StrideHelper();
     }
 
     /**
@@ -54,17 +57,17 @@ class StrideNotify extends Command
         $action = $this->choice('What is The Action?', ['Create', 'Edit'], 0);
 
         if ($this->option('panel')) {
-            StrideHelper::sendPanel();
+            $this->StrideHelper->sendPanel();
         }
 
         if ($scope == 'Room') {
             foreach ($checks as $check) {
-                StrideHelper::roomNotification($check, $action);
+                $this->StrideHelper->roomNotification($check, $action);
             }
         }
         elseif ($scope == 'Personal') {
             foreach ($checks as $check) {
-                StrideHelper::personalNotification($check, $action);
+                $this->StrideHelper->personalNotification($check, $action);
             }
         }
     }

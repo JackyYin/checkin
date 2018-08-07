@@ -14,6 +14,12 @@ use App\Models\LeaveReason;
 
 class LeaveController extends Controller
 {
+    protected $StrideHelper;
+
+    public function __construct()
+    {
+        $this->StrideHelper = new StrideHelper();
+    }
     /**
      * @SWG\Tag(name="Leave", description="請假")
      */
@@ -194,8 +200,8 @@ class LeaveController extends Controller
             'reason'   => $request->input('leave_reason'),
         ]);
 
-        StrideHelper::roomNotification($check, "Create");
-        StrideHelper::personalNotification($check, "Create");
+        $this->StrideHelper->roomNotification($check, "Create");
+        $this->StrideHelper->personalNotification($check, "Create");
 
         $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
                 ."姓名： ".$staff->name.",\n"
@@ -450,8 +456,8 @@ class LeaveController extends Controller
             'reason'   => $request->input('leave_reason'),
         ]);
 
-        StrideHelper::roomNotification($check, "Create");
-        StrideHelper::personalNotification($check, "Create");
+        $this->StrideHelper->roomNotification($check, "Create");
+        $this->StrideHelper->personalNotification($check, "Create");
 
         $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
                 ."姓名： ".$staff->name.",\n"

@@ -8,6 +8,8 @@ use Carbon\Carbon;
 
 class StrideHelper
 {
+    protected $client;
+
     private static function CHECK_TYPE($type)
     {
         $mapping = [
@@ -41,24 +43,27 @@ class StrideHelper
         return $mapping[$day];
     }
 
-    public static function roomNotification(Check $check, $action)
+    public function __construct()
     {
-        if ($action == 'Create') {
-            self::createNotification($check);
-        }
-        elseif ($action == 'Edit') {
-            self::editNotification($check);
-        }
-    }
-
-    private static function createNotification(Check $check)
-    {
-        $http = new Client([
+        $this->client = new Client([
             'headers' => [
                 'Content-Type'  => 'application/json',
             ]
         ]);
+    }
 
+    public function roomNotification(Check $check, $action)
+    {
+        if ($action == 'Create') {
+            $this->createNotification($check);
+        }
+        elseif ($action == 'Edit') {
+            $this->editNotification($check);
+        }
+    }
+
+    private function createNotification(Check $check)
+    {
         $checkin_at = Carbon::createFromFormat('Y-m-d H:i:s', $check->checkin_at);
         $checkout_at = Carbon::createFromFormat('Y-m-d H:i:s', $check->checkout_at);
 
@@ -76,7 +81,7 @@ class StrideHelper
                 ."原因: ".$check->leave_reason->reason."\n";
         }
 
-        $response = $http->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
+        $response = $this->client->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
             'json' => [
                 'action' => 'Leave Create Notification',
                 'reply_message' => $body,
@@ -84,14 +89,8 @@ class StrideHelper
         ]);
     }
 
-    private static function editNotification(Check $check)
+    private function editNotification(Check $check)
     {
-        $http = new Client([
-            'headers' => [
-                'Content-Type'  => 'text/plain',
-            ]
-        ]);
-
         $checkin_at = Carbon::createFromFormat('Y-m-d H:i:s', $check->checkin_at);
         $checkout_at = Carbon::createFromFormat('Y-m-d H:i:s', $check->checkout_at);
 
@@ -110,7 +109,7 @@ class StrideHelper
             $body .= "假別: ".self::CHECK_TYPE($check->type)."\n"
                 ."原因: ".$check->leave_reason->reason."\n";
         }
-        $response = $http->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
+        $response = $this->client->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
             'json' => [
                 'action' => 'Leave Edit Notification',
                 'reply_message' => $body,
@@ -118,14 +117,8 @@ class StrideHelper
         ]);
     }
 
-    public static function personalNotification(Check $check, $action)
+    public function personalNotification(Check $check, $action)
     {
-        $http = new Client([
-            'headers' => [
-                'Content-Type'  => 'text/plain',
-            ]
-        ]);
-
         if ($action == "Edit") {
             $body = "編號: ".$check->id." 編輯成功\n";
         }
@@ -147,7 +140,7 @@ class StrideHelper
             ."假別: ".self::CHECK_TYPE($check->type)."\n"
             ."原因: ".$check->leave_reason->reason."\n";
 
-        $response = $http->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
+        $response = $this->client->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
             'json' => [
                 'action' => 'Personal Leave Notification',
                 'reply_message' => $body,
@@ -156,18 +149,12 @@ class StrideHelper
         ]);
     }
 
-    public static function sendPanel()
+    public function sendPanel()
     {
-        $http = new Client([
-            'headers' => [
-                'Content-Type'  => 'text/plain',
-            ]
-        ]);
-
         $today = Carbon::today();
         $body = $today->toDateString()." (".self::WEEK_DAY($today->format('l')).") 出缺勤狀況";
 
-        $response = $http->request('POST', config('stride.bot.url')."/checkin/panel", [
+        $response = $this->client->request('POST', config('stride.bot.url')."/checkin/panel", [
             'json' => [
                 'action' => 'Panel',
                 'reply_message' => $body,
