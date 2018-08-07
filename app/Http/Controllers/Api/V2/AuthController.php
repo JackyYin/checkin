@@ -164,9 +164,11 @@ class AuthController extends Controller
     public function refresh(Request $request)
     {
         if (!$request->filled('refresh_token')) {
-            return response()->json([
-                'reply_message' => "請填入refresh_token",
-            ], 400);
+            return $this->response(400, [
+                'refresh_token' => [
+                    '請填入refresh_token'
+                ]
+            ]);
         }
 
         $bot = Auth::guard('bot')->user();
