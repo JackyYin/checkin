@@ -143,7 +143,7 @@ class AuthController extends Controller
             ]);
         }
         catch (ClientException $e) {
-            return $e->getResponse();
+            return "無法與機器人: ".$bot->name." 連結";
         }
 
         if ($response->getStatusCode() == 200) {
