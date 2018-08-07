@@ -122,23 +122,31 @@ class AuthController extends Controller
     private function sendToken(Staff $staff, Bot $bot, $access_token, $refresh_token)
     {
         //送token給line-bot
-        $client = new Client();
-        $response = $client->request('POST', $bot->auth_hook_url, [
-            'json' => [
-                'action' => 'User Authorized',
-                'reply_message' => [
-                    'email' => $staff->email,
-                    'access_token' => $access_token,
-                    'refresh_token' => $refresh_token,
-                ]
+        $client = new Client([
+            'headers' => [
+                'Content-Type'  => 'application/json',
             ]
         ]);
 
-        if ($response->getStatusCode() == 200) {
-            $staff->update([
-                'active' => Staff::ACTIVE,
-            ]);
+        $json = [
+            'action' => 'User Authorized',
+            'reply_message' => [
+                'email' => $staff->email,
+                'access_token' => $access_token,
+                'refresh_token' => $refresh_token,
+            ]
+        ];
 
+        try {
+            $response = $http->request('POST', $bot->auth_hook_url, [
+                'json' => $json
+            ]);
+        }
+        catch (ClientException $e) {
+            return $e->getResponse();
+        }
+
+        if ($response->getStatusCode() == 200) {
             return "帳號驗證成功";
         }
     }
