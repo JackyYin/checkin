@@ -128,18 +128,16 @@ class AuthController extends Controller
             ]
         ]);
 
-        $json = [
-            'action' => 'User Authorized',
-            'reply_message' => [
-                'email' => $staff->email,
-                'access_token' => $access_token,
-                'refresh_token' => $refresh_token,
-            ]
-        ];
-
         try {
             $response = $client->request('POST', $bot->auth_hook_url, [
-                'json' => $json
+                'json' => [
+                    'action' => 'User Authorized',
+                    'reply_message' => [
+                        'email' => $staff->email,
+                        'access_token' => $access_token,
+                        'refresh_token' => $refresh_token,
+                    ]
+                ]
             ]);
         }
         catch (ClientException $e) {
