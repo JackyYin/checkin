@@ -138,7 +138,7 @@ class AuthController extends Controller
         ];
 
         try {
-            $response = $http->request('POST', $bot->auth_hook_url, [
+            $response = $client->request('POST', $bot->auth_hook_url, [
                 'json' => $json
             ]);
         }
