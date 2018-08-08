@@ -30,11 +30,17 @@ jobs:
       - run:
           name: Install mysql
           command: |
-            sudo apt update
-            sudo apt install -y mysql-client
+            sudo apt-get update
+            sudo apt-get install -y mysql-client
 
-      - run: sudo docker-php-ext-install zip
-      - run: sudo composer self-update
+      - run:
+          name: Install PHP
+          command: |
+            sudo add-apt-repository -y ppa:ondrej/php
+            sudo apt-get update
+            sudo apt-get install -y php7.2
+            sudo apt-get install -y php7.2-pdo php7.2-gd php7.2-mysql
+
 
       - run: cp .env.circleci .env
 
