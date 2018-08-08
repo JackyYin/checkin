@@ -25,10 +25,10 @@ jobs:
       - checkout
 
       - run:
-        name: Install Extensions
-        command: |
-          sudo apt update
-          sudo apt install -y mysql-client
+          name: Install Extensions
+          command: |
+            sudo apt update
+            sudo apt install -y mysql-client
 
       - run: cp .env.circleci .env
       - run:
