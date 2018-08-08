@@ -5,8 +5,8 @@ SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
-CREATE DATABASE `larvata-checkin` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `larvata-checkin`;
+CREATE DATABASE `checkin` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `checkin`;
 
 SET NAMES utf8mb4;
 
@@ -559,4 +559,4 @@ INSERT INTO `staff_profile` (`id`, `staff_id`, `staff_code`, `name`, `ID_card_nu
 (7,	10,	NULL,	'殷豪',	'A111111111',	0,	0,	NULL,	'jjyyg1123@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	'2017-07-11',	NULL,	'2018-05-24',	NULL,	'2018-05-24',	NULL,	NULL,	NULL,	NULL,	'2018-05-24 16:11:26',	'2018-05-29 18:55:37'),
 (8,	11,	'L003',	'test12345',	'J111111211',	0,	1,	NULL,	'test12345@test.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	'2018-05-29',	NULL,	'2018-05-29',	NULL,	'2018-05-29',	'2018-07-20',	NULL,	NULL,	NULL,	'2018-05-29 18:56:05',	'2018-07-24 10:41:47');
 
--- 2018-08-08 02:58:36
+-- 2018-08-08 06:01:49
