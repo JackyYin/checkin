@@ -12,7 +12,7 @@ jobs:
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
-      -image: mysql:5.7
+      - image: mysql:5.7
 
       environment:
         MYSQL_USER: root
@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - checkout
-
+      - run: cp .env.circleci .env
       - run:
           name: Create test Mysql database
           command: mysql -h 127.0.0.1 -u root -e "create database checkin;"
@@ -75,7 +75,7 @@ jobs:
         image: circleci/classic:latest
     steps:
       - checkout
-      - run: cp .env.exsample .env
+      - run: cp .env.example .env
       - run:
           name: Bundle Install
           command: bundle check || bundle install
