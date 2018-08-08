@@ -22,7 +22,15 @@ jobs:
 
     steps:
       - checkout
+
+      - run:
+          name: Install mysql
+          command: |
+            sudo apt update
+            sudo apt install -y mysql-client
+
       - run: cp .env.circleci .env
+
       - run:
           name: Create test Mysql database
           command: mysql -h 127.0.0.1 -u root -e "create database checkin;"
