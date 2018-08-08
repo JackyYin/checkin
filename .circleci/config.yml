@@ -29,6 +29,7 @@ jobs:
           command: |
             sudo apt update
             sudo apt install -y mysql-client
+            sudo docker-php-ext-install pdo pdo_mysql gd
 
       - run: cp .env.circleci .env
       - run:
