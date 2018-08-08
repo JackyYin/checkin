@@ -1,0 +1,562 @@
+-- Adminer 4.6.2 MySQL dump
+
+SET NAMES utf8;
+SET time_zone = '+00:00';
+SET foreign_key_checks = 0;
+SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
+
+CREATE DATABASE `larvata-checkin` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `larvata-checkin`;
+
+SET NAMES utf8mb4;
+
+DROP TABLE IF EXISTS `admin`;
+CREATE TABLE `admin` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `staff_id` int(10) unsigned NOT NULL,
+  `name` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `admin_email_unique` (`email`),
+  KEY `admin_staff_id_foreign` (`staff_id`),
+  CONSTRAINT `admin_staff_id_foreign` FOREIGN KEY (`staff_id`) REFERENCES `staffs` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `admin` (`id`, `staff_id`, `name`, `email`, `password`, `created_at`, `updated_at`, `remember_token`) VALUES
+(3,	10,	'殷豪',	'jjyyg1123@gmail.com',	'$2y$10$tkdeneqKWldIxHp28SPDx.Z4Va3wbneiL0jyuRjFrrepzFrNPtLbO',	NULL,	'2018-05-24 16:12:05',	'SsoMd40ACsXSwnxtTuBxClyz2nWWoYkj0R7iraOoI6ruPZjggdVH0nfjTIqb');
+
+DROP TABLE IF EXISTS `bots`;
+CREATE TABLE `bots` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `auth_hook_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `notify_hook_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `bots` (`id`, `name`, `auth_hook_url`, `notify_hook_url`) VALUES
+(1,	'Line',	NULL,	NULL),
+(2,	'Stride',	'https://real-rowboat.glitch.me/checkin/auth/verify',	'https://real-rowboat.glitch.me/checkin/leave/notify');
+
+DROP TABLE IF EXISTS `checks`;
+CREATE TABLE `checks` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `staff_id` int(10) unsigned NOT NULL,
+  `checkin_at` datetime NOT NULL,
+  `checkout_at` datetime DEFAULT NULL,
+  `type` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `checks_staff_id_foreign` (`staff_id`),
+  CONSTRAINT `checks_staff_id_foreign` FOREIGN KEY (`staff_id`) REFERENCES `staffs` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `checks` (`id`, `staff_id`, `checkin_at`, `checkout_at`, `type`) VALUES
+(28,	3,	'2018-05-28 09:00:00',	'2018-05-28 10:30:00',	1),
+(73,	3,	'2018-05-28 10:30:00',	'2018-05-28 18:46:59',	0),
+(74,	4,	'2018-05-28 09:07:48',	'2018-05-28 18:47:22',	0),
+(75,	6,	'2018-05-28 09:02:29',	'2018-05-28 18:59:40',	0),
+(76,	10,	'2018-07-01 09:00:00',	'2018-07-03 18:00:00',	0),
+(90,	3,	'2018-05-30 15:53:09',	'2018-05-30 15:53:17',	0),
+(91,	3,	'2018-06-04 05:00:00',	'2018-06-04 06:00:00',	1),
+(92,	3,	'2018-06-04 09:11:30',	'2018-06-04 18:35:34',	0),
+(93,	4,	'2018-06-04 09:06:49',	'2018-06-04 18:57:56',	0),
+(94,	6,	'2018-06-04 09:01:12',	'2018-06-04 18:35:59',	0),
+(95,	10,	'2018-06-04 09:12:29',	'2018-06-04 18:48:44',	0),
+(96,	11,	'2018-06-04 09:09:54',	'2018-06-04 18:48:07',	0),
+(97,	3,	'2018-06-05 09:28:45',	'2018-06-05 18:38:33',	0),
+(98,	4,	'2018-06-05 09:25:05',	'2018-06-05 18:56:09',	0),
+(99,	6,	'2018-06-05 09:15:08',	'2018-06-05 18:47:52',	0),
+(101,	11,	'2018-06-05 09:16:11',	'2018-06-05 18:55:28',	0),
+(102,	14,	'2018-06-05 09:27:06',	'2018-06-05 18:34:51',	0),
+(107,	3,	'2018-06-06 09:00:00',	'2018-06-06 12:00:00',	1),
+(108,	3,	'2018-06-07 09:18:46',	'2018-06-07 18:53:05',	0),
+(109,	4,	'2018-06-07 09:26:45',	'2018-06-07 18:50:36',	0),
+(110,	6,	'2018-06-07 09:06:23',	'2018-06-07 18:56:57',	0),
+(112,	11,	'2018-06-07 09:27:30',	'2018-06-07 18:46:13',	0),
+(113,	14,	'2018-06-07 09:06:56',	'2018-06-07 18:45:52',	0),
+(114,	3,	'2018-06-08 09:00:00',	'2018-06-08 10:00:00',	1),
+(115,	3,	'2018-06-13 09:09:35',	'2018-06-13 18:42:03',	0),
+(116,	4,	'2018-06-13 09:11:38',	'2018-06-13 18:40:46',	0),
+(117,	6,	'2018-06-13 09:12:24',	'2018-06-13 18:49:10',	0),
+(118,	10,	'2018-06-13 09:16:32',	'2018-06-13 18:45:35',	0),
+(119,	11,	'2018-06-13 09:28:12',	'2018-06-13 18:31:59',	0),
+(120,	14,	'2018-06-13 09:08:39',	'2018-06-13 18:38:37',	0),
+(121,	3,	'2018-06-15 09:09:15',	'2018-06-15 18:42:52',	0),
+(122,	4,	'2018-06-15 09:01:32',	'2018-06-15 18:41:17',	0),
+(123,	6,	'2018-06-15 09:23:55',	'2018-06-15 18:38:56',	0),
+(124,	10,	'2018-06-15 09:09:48',	'2018-06-15 18:50:27',	0),
+(125,	11,	'2018-06-15 09:02:55',	'2018-06-15 18:48:22',	0),
+(126,	14,	'2018-06-15 09:08:29',	'2018-06-15 18:43:55',	0),
+(127,	3,	'2018-06-18 09:19:00',	'2018-06-18 18:32:12',	0),
+(128,	4,	'2018-06-18 09:11:43',	'2018-06-18 18:40:03',	0),
+(129,	6,	'2018-06-18 09:16:43',	'2018-06-18 18:48:04',	0),
+(130,	10,	'2018-06-18 09:27:39',	'2018-06-18 18:52:58',	0),
+(131,	11,	'2018-06-18 09:08:18',	'2018-06-18 18:59:53',	0),
+(132,	14,	'2018-06-18 09:24:44',	'2018-06-18 18:50:33',	0),
+(133,	3,	'2018-06-20 09:08:22',	'2018-06-20 18:32:57',	0),
+(134,	4,	'2018-06-20 09:29:44',	'2018-06-20 18:38:15',	0),
+(135,	6,	'2018-06-20 09:00:56',	'2018-06-20 18:44:45',	0),
+(136,	10,	'2018-06-20 09:12:14',	'2018-06-20 18:57:11',	0),
+(137,	11,	'2018-06-20 09:08:07',	'2018-06-20 18:58:46',	0),
+(138,	14,	'2018-06-20 09:01:47',	'2018-06-20 18:59:54',	0),
+(140,	10,	'2018-06-22 09:00:00',	'2018-06-22 14:00:00',	2),
+(141,	3,	'2018-06-25 09:28:34',	'2018-06-25 18:59:56',	0),
+(142,	4,	'2018-06-25 09:23:23',	'2018-06-25 18:35:22',	0),
+(143,	6,	'2018-06-25 09:25:59',	'2018-06-25 18:59:14',	0),
+(144,	10,	'2018-06-25 09:11:31',	'2018-06-25 18:30:41',	0),
+(145,	11,	'2018-06-25 09:01:44',	'2018-06-25 18:35:13',	0),
+(146,	14,	'2018-06-25 09:18:08',	'2018-06-25 18:33:59',	0),
+(150,	10,	'2018-06-28 09:00:00',	'2018-06-28 10:00:00',	5),
+(153,	10,	'2018-06-28 10:00:00',	'2018-06-28 11:00:00',	1),
+(173,	10,	'2018-06-28 11:00:00',	'2018-06-28 12:00:00',	6),
+(174,	3,	'2018-06-28 09:18:33',	'2018-06-28 18:52:26',	0),
+(175,	4,	'2018-06-28 09:13:09',	'2018-06-28 18:40:28',	0),
+(176,	6,	'2018-06-28 09:19:55',	'2018-06-28 18:43:02',	0),
+(177,	11,	'2018-06-28 09:28:30',	'2018-06-28 18:59:34',	0),
+(178,	14,	'2018-06-28 09:28:28',	'2018-06-28 18:40:44',	0),
+(181,	10,	'2018-06-29 10:00:00',	'2018-06-29 11:00:00',	3),
+(182,	10,	'2018-06-29 11:00:00',	'2018-06-29 12:00:00',	3),
+(188,	10,	'2018-06-29 14:00:00',	'2018-06-29 15:00:00',	4),
+(195,	10,	'2018-06-30 14:00:00',	'2018-06-30 15:00:00',	5),
+(197,	10,	'2018-07-02 14:00:00',	'2018-07-02 15:00:00',	5),
+(198,	10,	'2018-07-03 14:00:00',	'2018-07-03 15:00:00',	5),
+(202,	3,	'2018-06-29 09:03:03',	'2018-06-29 18:49:58',	0),
+(203,	4,	'2018-06-29 09:03:38',	'2018-06-29 18:47:00',	0),
+(204,	6,	'2018-06-29 09:23:40',	'2018-06-29 18:55:56',	0),
+(205,	11,	'2018-06-29 09:12:53',	'2018-06-29 18:50:32',	0),
+(206,	14,	'2018-06-29 09:15:13',	'2018-06-29 18:56:56',	0),
+(210,	10,	'2018-07-06 14:00:00',	'2018-07-06 15:00:00',	5),
+(227,	10,	'2018-06-29 09:00:00',	'2018-06-29 10:00:00',	6),
+(257,	10,	'2018-07-02 10:00:00',	'2018-07-02 11:00:00',	3),
+(258,	3,	'2018-07-02 09:24:40',	'2018-07-02 18:50:51',	0),
+(259,	4,	'2018-07-02 09:04:38',	'2018-07-02 18:45:39',	0),
+(260,	6,	'2018-07-02 09:21:36',	'2018-07-02 18:42:13',	0),
+(261,	11,	'2018-07-02 09:07:42',	'2018-07-02 18:54:29',	0),
+(262,	14,	'2018-07-02 09:07:02',	'2018-07-02 18:32:04',	0),
+(264,	10,	'2018-07-04 09:00:00',	'2018-07-04 18:00:00',	2),
+(266,	10,	'2018-02-02 09:00:00',	'2018-02-02 18:00:00',	2),
+(273,	10,	'2018-07-05 09:00:00',	'2018-07-05 10:00:00',	2),
+(274,	10,	'2018-07-08 09:00:00',	'2018-07-08 09:30:00',	1),
+(275,	3,	'2018-07-09 09:02:49',	'2018-07-09 18:45:09',	0),
+(276,	4,	'2018-07-09 09:25:12',	'2018-07-09 18:54:04',	0),
+(277,	6,	'2018-07-09 09:18:32',	'2018-07-09 18:54:15',	0),
+(278,	10,	'2018-07-09 09:20:22',	'2018-07-09 18:55:54',	0),
+(279,	11,	'2018-07-09 09:29:11',	'2018-07-09 18:30:52',	0),
+(280,	14,	'2018-07-09 09:14:20',	'2018-07-09 18:44:26',	0),
+(281,	3,	'2018-07-10 09:13:46',	'2018-07-10 18:44:05',	0),
+(282,	4,	'2018-07-10 09:15:12',	'2018-07-10 18:37:37',	0),
+(283,	6,	'2018-07-10 09:01:35',	'2018-07-10 18:30:43',	0),
+(284,	10,	'2018-07-10 09:20:35',	'2018-07-10 18:33:48',	0),
+(285,	11,	'2018-07-10 09:18:09',	'2018-07-10 18:33:34',	0),
+(286,	14,	'2018-07-10 09:08:26',	'2018-07-10 18:37:00',	0),
+(291,	10,	'2018-07-12 09:30:00',	'2018-07-12 18:30:00',	1),
+(292,	10,	'2018-07-13 09:00:00',	'2018-07-13 10:00:00',	1),
+(324,	10,	'2018-07-16 09:00:00',	'2018-07-16 10:00:00',	1),
+(325,	10,	'2018-07-18 09:00:00',	'2018-07-18 18:00:00',	1),
+(326,	3,	'2018-07-18 09:17:27',	'2018-07-18 18:35:37',	0),
+(327,	4,	'2018-07-18 09:26:58',	'2018-07-18 18:54:49',	0),
+(328,	6,	'2018-07-18 09:23:50',	'2018-07-18 18:37:03',	0),
+(329,	10,	'2018-07-18 18:04:24',	'2018-07-18 18:40:59',	0),
+(330,	11,	'2018-07-18 09:13:37',	'2018-07-18 18:59:53',	0),
+(331,	14,	'2018-07-18 09:02:08',	'2018-07-18 18:36:34',	0),
+(332,	10,	'2018-07-19 09:00:00',	'2018-07-19 10:00:00',	1),
+(334,	3,	'2018-07-19 09:16:00',	'2018-07-19 18:30:26',	0),
+(335,	4,	'2018-07-19 09:01:29',	'2018-07-19 18:51:42',	0),
+(336,	6,	'2018-07-19 09:07:55',	'2018-07-19 18:35:58',	0),
+(337,	11,	'2018-07-19 09:06:09',	'2018-07-19 18:54:14',	0),
+(338,	14,	'2018-07-19 09:08:01',	'2018-07-19 18:54:09',	0),
+(393,	10,	'2018-07-23 15:03:21',	'2018-07-24 12:43:21',	3),
+(505,	10,	'2018-07-27 09:00:00',	'2018-07-27 10:00:00',	5),
+(513,	10,	'2018-07-31 09:00:00',	'2018-07-31 10:00:00',	6),
+(514,	10,	'2018-08-01 09:00:00',	'2018-08-01 10:00:00',	0),
+(515,	10,	'2018-08-01 09:00:00',	'2018-08-01 10:00:00',	0),
+(516,	10,	'2018-08-01 09:00:00',	'2018-08-01 10:00:00',	1),
+(517,	10,	'0000-00-00 00:00:00',	'0000-00-00 00:00:00',	5),
+(536,	10,	'2018-08-02 09:00:00',	'2018-08-02 10:00:00',	0),
+(537,	10,	'2018-08-02 09:00:00',	'2018-08-02 10:00:00',	0),
+(538,	10,	'2018-08-02 09:00:00',	'2018-08-02 10:00:00',	0),
+(541,	10,	'2018-08-02 09:00:00',	'2018-08-02 10:00:00',	1),
+(544,	10,	'2018-08-07 09:30:00',	'2018-08-07 10:30:00',	2);
+
+DROP TABLE IF EXISTS `leave_reason`;
+CREATE TABLE `leave_reason` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `check_id` int(10) unsigned NOT NULL,
+  `reason` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `leave_reason_check_id_foreign` (`check_id`),
+  CONSTRAINT `leave_reason_check_id_foreign` FOREIGN KEY (`check_id`) REFERENCES `checks` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `leave_reason` (`id`, `check_id`, `reason`) VALUES
+(1,	91,	'test'),
+(4,	107,	'rrrrrrr'),
+(5,	114,	'rrrr'),
+(7,	140,	'test2'),
+(9,	150,	'爽'),
+(11,	153,	'請假94爽'),
+(29,	173,	'爽爽爽'),
+(32,	181,	'請假94爽'),
+(33,	182,	'請假94爽'),
+(39,	188,	'請假94爽'),
+(46,	195,	'請假94爽'),
+(48,	197,	'請假94爽'),
+(49,	198,	'請假94爽'),
+(56,	210,	'請假94爽'),
+(73,	227,	'請假94爽'),
+(101,	257,	'123'),
+(103,	264,	'test'),
+(110,	273,	'test'),
+(111,	274,	'test'),
+(115,	291,	'test'),
+(116,	292,	'test'),
+(148,	324,	'test'),
+(149,	325,	'test'),
+(150,	332,	'test test'),
+(152,	393,	'test'),
+(153,	505,	'test'),
+(161,	513,	'2222'),
+(162,	514,	'test'),
+(163,	515,	'test'),
+(164,	516,	'test'),
+(183,	536,	'234'),
+(184,	537,	'234'),
+(186,	541,	'234'),
+(189,	544,	'123');
+
+DROP TABLE IF EXISTS `managers`;
+CREATE TABLE `managers` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `staff_id` int(10) unsigned NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `managers_email_unique` (`email`),
+  KEY `managers_staff_id_foreign` (`staff_id`),
+  CONSTRAINT `managers_staff_id_foreign` FOREIGN KEY (`staff_id`) REFERENCES `staffs` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `migrations`;
+CREATE TABLE `migrations` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
+(1,	'2016_06_01_000001_create_oauth_auth_codes_table',	1),
+(2,	'2016_06_01_000002_create_oauth_access_tokens_table',	1),
+(3,	'2016_06_01_000003_create_oauth_refresh_tokens_table',	1),
+(4,	'2016_06_01_000004_create_oauth_clients_table',	1),
+(5,	'2016_06_01_000005_create_oauth_personal_access_clients_table',	1),
+(6,	'2018_04_19_023846_create_staffs_table',	1),
+(7,	'2018_04_20_020457_create_checks_table',	1),
+(8,	'2018_04_20_024726_create_admin_table',	1),
+(9,	'2018_04_20_033925_create_staff_line_table',	1),
+(10,	'2018_04_20_034932_create_staff_auth_table',	1),
+(11,	'2018_04_24_030300_create_staff_profile_table',	1),
+(12,	'2018_05_21_092720_create_leave_reason_table',	2),
+(14,	'2018_05_22_162034_add_column_staffs_subscription',	3),
+(16,	'2018_05_24_161342_create_managers_table',	4),
+(17,	'2018_05_25_094349_add_column_admin_remember_token',	4),
+(18,	'2018_05_29_182152_add_column_staff_profile_identity',	5),
+(19,	'2018_06_08_115241_create_bots_table',	6),
+(20,	'2018_06_09_221529_create_registration_token_table',	7),
+(21,	'2018_06_20_163827_drop_registration_token_table',	8),
+(22,	'2018_06_20_164113_add_column_staffs_registration_token',	8),
+(23,	'2018_07_07_163007_add_column_bots',	9),
+(26,	'2018_07_24_172832_add_password_to_staffs_table',	10),
+(29,	'2018_08_07_163815_add_notify_hook_url_to_bots_table',	11);
+
+DROP TABLE IF EXISTS `oauth_access_tokens`;
+CREATE TABLE `oauth_access_tokens` (
+  `id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `client_id` int(11) NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `scopes` text COLLATE utf8mb4_unicode_ci,
+  `revoked` tinyint(1) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `expires_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `oauth_access_tokens_user_id_index` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `oauth_access_tokens` (`id`, `user_id`, `client_id`, `name`, `scopes`, `revoked`, `created_at`, `updated_at`, `expires_at`) VALUES
+('1eb472515296d9cc6e2aad592a434662f355c215b8c1c7aff7487ad7126fc9de69c47830012c84ab',	10,	11,	NULL,	'[]',	0,	'2018-07-29 15:50:00',	'2018-07-29 15:50:00',	'2018-08-28 15:50:00'),
+('259867794ded0c939e492c33e8f0967d602e60b62211c90eed9cf946819216103df24b02d611f96d',	10,	11,	NULL,	'[]',	0,	'2018-07-13 16:31:43',	'2018-07-13 16:31:43',	'2018-08-12 16:31:42'),
+('304b6101346c66ceebb56299144102f452d6f49e49ade1a7b3e9a9b98589f281c6c07b3640f0cd9f',	10,	14,	NULL,	'[]',	0,	'2018-08-02 13:55:31',	'2018-08-02 13:55:31',	'2018-09-01 13:55:31'),
+('3d25eefea17ed4280a1a5f9b06c97361c65a97396e2787e0de4b2e057dc77e28a6e81352f4b19d26',	10,	10,	NULL,	'[]',	0,	'2018-07-11 13:22:40',	'2018-07-11 13:22:40',	'2018-08-10 13:22:38'),
+('488ae00a44bbcf25ba10ea66579508c9ae2b21d29fd73cd16300b76bb1cc93efc0663e5d09ce8934',	10,	11,	NULL,	'[]',	0,	'2018-07-19 12:13:29',	'2018-07-19 12:13:29',	'2018-08-18 12:13:29'),
+('559d70f11140b4b329ebc5c1fbc7a38e8a8dcc58a47292ea8e3e3c6353ac5b979a8e59d5125c46b4',	10,	14,	NULL,	'[]',	1,	'2018-07-25 12:32:32',	'2018-07-25 12:32:32',	'2018-08-24 12:32:32'),
+('58a392a4e01e1504fcb3069550b6075659acd9bb09dc121ff02d35e3e8434471d1bf1502e953c03b',	10,	14,	NULL,	'[]',	0,	'2018-07-26 11:59:50',	'2018-07-26 11:59:50',	'2018-08-25 11:59:49'),
+('5ce4ca1c07ef49758a3f7df49a4f3771679200179fe7d16044d23f08d45f297e3a1e87afeb4bc954',	10,	11,	NULL,	'[]',	0,	'2018-07-13 11:05:10',	'2018-07-13 11:05:10',	'2018-08-12 11:05:09'),
+('5ef4faa32cef7062e2d4073dfef921cadac8d38bf5f0c3affe6334e9f8dbb75872a11150e1a49d4f',	10,	14,	NULL,	'[]',	1,	'2018-07-25 12:32:07',	'2018-07-25 12:32:07',	'2018-08-24 12:32:07'),
+('634c37bbcf3c519c3bfa9dd0792c4acf1f9429aa368af8adfcdc91fec2885b7da26d7e8c62e5960f',	10,	11,	NULL,	'[]',	0,	'2018-07-30 17:07:41',	'2018-07-30 17:07:41',	'2018-08-29 17:07:40'),
+('69a301f9e72805b4899baa0c6e5a4f32590e3edb3ad8b814a281cf5a84567ceb076a28e59494b509',	10,	11,	NULL,	'[]',	0,	'2018-07-13 11:06:01',	'2018-07-13 11:06:01',	'2018-08-12 11:06:00'),
+('7171444abbbd77e8c4a308185818367c115808bc5bde430b1bf6a6a218a108084d4b4bf0e7348a79',	10,	14,	NULL,	'[]',	0,	'2018-07-25 12:30:31',	'2018-07-25 12:30:31',	'2018-08-24 12:30:30'),
+('7a8066554632b22fac534b7ad187cdfc7e7157273b319dee0a4ef6520c8026d7febcb10fac54e882',	10,	14,	NULL,	'[]',	0,	'2018-07-25 11:20:18',	'2018-07-25 11:20:18',	'2018-08-24 11:20:17'),
+('7fbe9809967ac449346c401a38557633b2b1d3c7f42c0296533725f4b7c5c9c534c2df26de78f1b7',	1,	3,	'bot',	'[\'*\']',	0,	'2018-06-08 14:26:23',	'2018-06-08 14:26:23',	'2019-06-08 14:26:23'),
+('8078af56069ba907f525be4dbd8f84781121c4924d2b2da929c71cb5a5dcfe5fc62dbadc12cb93d5',	10,	11,	NULL,	'[]',	0,	'2018-07-25 11:23:52',	'2018-07-25 11:23:52',	'2018-08-24 11:23:52'),
+('8597bbf0dc4490d7c32f872bbf41d4b707a618ca6ec4270d3e8a130935115ada8595f6826d8e0945',	10,	14,	NULL,	'[]',	0,	'2018-07-25 12:32:20',	'2018-07-25 12:32:20',	'2018-08-24 12:32:19'),
+('95fef08427f5f375924dfa857abc95eb14b16b69eac36ce2834073691b996eab026730c8f63a77b9',	2,	12,	'Bot',	'[]',	0,	'2018-07-13 10:59:53',	'2018-07-13 10:59:53',	'2019-07-13 10:59:53'),
+('a4c0a8034b643c8a77dee76f490c56889493a77e572ec9dbdeed5316f534418d81c05d41625a9269',	10,	11,	NULL,	'[]',	0,	'2018-07-27 16:38:16',	'2018-07-27 16:38:16',	'2018-08-26 16:38:15'),
+('af4aed968e10e592bba2e9379d68739159b87663fb7f9169762858bbfa35ab4f70ec0d882bdcad64',	10,	10,	NULL,	'[]',	0,	'2018-07-08 12:10:51',	'2018-07-08 12:10:51',	'2018-08-07 12:10:50'),
+('b203d7d7914306b251d07186efbeb524da29f2cb16feb94a9679ec0a4b6826214e12629d3b156d9f',	10,	14,	NULL,	'[]',	0,	'2018-07-25 11:25:38',	'2018-07-25 11:25:38',	'2018-08-24 11:25:38'),
+('b8bfaa86125123ba780311a397a67689c58a925cc17837ce575054285ebe3ce9d736d94e94f94c2c',	10,	11,	NULL,	'[]',	0,	'2018-07-25 11:23:33',	'2018-07-25 11:23:33',	'2018-08-24 11:23:33'),
+('c18c9100f26fac7abcaaecc1acb6ce1709f65f18f1f85446df73789a3e9eabff65c4bfe8c954a43f',	10,	14,	NULL,	'[]',	0,	'2018-07-25 12:32:44',	'2018-07-25 12:32:44',	'2018-08-24 12:32:44'),
+('c3e441f4a737d680feff0a58dafb758feb8a48737c783e0faaa6286e4d67b7a874b130202d696d55',	14,	11,	NULL,	'[]',	0,	'2018-08-05 16:13:12',	'2018-08-05 16:13:12',	'2018-09-04 16:13:09'),
+('cc7d533272629c571dad0208979f37691415a0812067471a2ce61de60886eaec592f330f4a1e2de9',	10,	14,	NULL,	'[]',	0,	'2018-07-25 11:19:53',	'2018-07-25 11:19:53',	'2018-08-24 11:19:52'),
+('d65d71f1f7cd31289860864016c2d698b760d358c8e9b34e8c62fed3cfac73065a3bb3d90ac1c0a9',	10,	10,	NULL,	'[]',	0,	'2018-07-09 09:57:41',	'2018-07-09 09:57:41',	'2018-08-08 09:57:40'),
+('d7de3ddffdd4e5e40796d3f44fb20c9a25449ef579daeed464f0e7f57f9590e22787fa62db15ad26',	10,	11,	NULL,	'[]',	0,	'2018-07-26 13:56:24',	'2018-07-26 13:56:24',	'2018-08-25 13:56:23'),
+('f7dd60db7cdc50467978504105af41a177b7d0957022eeecbf50ec971269ba2c0eb12dc9d315747b',	2,	12,	'Bot',	'[]',	0,	'2018-07-13 11:00:34',	'2018-07-13 11:00:34',	'2019-07-13 11:00:34'),
+('fe75d686683867472e1ea9616b671e46539c1a1c9e1055e9136eab2a52c5180ba16d6dd17b0648f2',	10,	14,	NULL,	'[]',	0,	'2018-07-26 11:58:44',	'2018-07-26 11:58:44',	'2018-08-25 11:58:44');
+
+DROP TABLE IF EXISTS `oauth_auth_codes`;
+CREATE TABLE `oauth_auth_codes` (
+  `id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `client_id` int(11) NOT NULL,
+  `scopes` text COLLATE utf8mb4_unicode_ci,
+  `revoked` tinyint(1) NOT NULL,
+  `expires_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `oauth_clients`;
+CREATE TABLE `oauth_clients` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `secret` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `redirect` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `personal_access_client` tinyint(1) NOT NULL,
+  `password_client` tinyint(1) NOT NULL,
+  `revoked` tinyint(1) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `oauth_clients_user_id_index` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `oauth_clients` (`id`, `user_id`, `name`, `secret`, `redirect`, `personal_access_client`, `password_client`, `revoked`, `created_at`, `updated_at`) VALUES
+(3,	NULL,	'Bot',	'6KMwFj1Lwm1DEgJ95CRftFFDrecSxH0ooW8NHxzG',	'http://localhost',	1,	0,	0,	'2018-06-08 14:25:56',	'2018-06-08 14:25:56'),
+(10,	NULL,	'Line User',	'cLs9QxC4XoIQfseqNlpNk3ktk0DrYQ7acvrgrRBl',	'http://localhost',	0,	1,	0,	'2018-07-07 16:01:34',	'2018-07-07 16:01:34'),
+(11,	NULL,	'Stride User',	'3kGzrZBSJ3cOZNk69GpqTSG7wezRV6V5puUOUVX6',	'http://localhost',	0,	1,	0,	'2018-07-07 16:01:41',	'2018-07-07 16:01:41'),
+(12,	NULL,	'Laravel Personal Access Client',	'BD4Q6SPhrFWGD9GKetgBDHnl1K3Z9ren9RFaHLEZ',	'http://localhost',	1,	0,	0,	'2018-07-13 10:59:43',	'2018-07-13 10:59:43'),
+(13,	NULL,	'Laravel Password Grant Client',	'CfZI8PmwI1mjfKpJWctTqL8XQeRjrOBwmXbWqJqR',	'http://localhost',	0,	1,	0,	'2018-07-13 10:59:43',	'2018-07-13 10:59:43'),
+(14,	NULL,	'App User',	'C2HRun82ttlXVb9J4nPdSGbD6UKcKRPGIaAtW4EI',	'http://localhost',	0,	1,	0,	'2018-07-25 11:03:06',	'2018-07-25 11:03:06');
+
+DROP TABLE IF EXISTS `oauth_personal_access_clients`;
+CREATE TABLE `oauth_personal_access_clients` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `oauth_personal_access_clients_client_id_index` (`client_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `oauth_personal_access_clients` (`id`, `client_id`, `created_at`, `updated_at`) VALUES
+(1,	3,	'2018-06-08 14:25:56',	'2018-06-08 14:25:56'),
+(2,	4,	'2018-06-08 15:04:11',	'2018-06-08 15:04:11'),
+(3,	8,	'2018-07-07 15:59:31',	'2018-07-07 15:59:31'),
+(4,	9,	'2018-07-07 15:59:39',	'2018-07-07 15:59:39'),
+(5,	12,	'2018-07-13 10:59:43',	'2018-07-13 10:59:43');
+
+DROP TABLE IF EXISTS `oauth_refresh_tokens`;
+CREATE TABLE `oauth_refresh_tokens` (
+  `id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `access_token_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `revoked` tinyint(1) NOT NULL,
+  `expires_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `oauth_refresh_tokens_access_token_id_index` (`access_token_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `oauth_refresh_tokens` (`id`, `access_token_id`, `revoked`, `expires_at`) VALUES
+('01a2a6c6cebf9aa21a48e57615c6d3b7225b70b3e47ffb0ddb219c49d2311ec3d521e970cd27013a',	'5642a52794a3fb2f91b311324018af38ddec057f7fc7f00ae76cca36bb0fb1ea70e159fc9c851454',	0,	'2018-10-03 11:02:48'),
+('03b6a65011d3d93cc0da319d20cae7830444aa94f03880f07b8f6f0ec154fb412bcd4aba1fcaa73f',	'5a43f74b5d53ea5f390f80fbbb232237094df89d629be9c1097c0fdeabbf156e0bfafc4b82955c5c',	0,	'2018-09-20 09:47:26'),
+('051e99c299b648ac3d139cafa7eefde1df1fe579d944b2f81fb95c14d05a7b9e7c15fe7a09b50033',	'a740dac20823c2363142eaa6444c8913ac9b1ec999fc771cd2a5ae42a6ad9cc06a0030482db58c3c',	0,	'2018-10-03 11:11:57'),
+('07af808c0ce399c62ebdeb5183cadfe6386a40975af1fc8044a1d7791452e93ee55cc530596b9306',	'bc11bed619e77b8029683a869e3de2f4f619faea5e40a0f55aa9e9c6f59f376d263df62f2183c361',	1,	'2018-09-22 14:19:33'),
+('0ad83dc12d28dbbe209f2ac9322437dd3a660df0213802caeec1adbb36411a5124a3ff20edd930e8',	'559d70f11140b4b329ebc5c1fbc7a38e8a8dcc58a47292ea8e3e3c6353ac5b979a8e59d5125c46b4',	1,	'2018-10-23 12:32:32'),
+('0dc3c498b56633670f68bbcf6723223ac3ab2cc1eff817865df7a8cc2de5a521ceffe36e084a3d7f',	'5da77fc992a3940e03fe1949f31be2cdc97074896a83d3df840e500fe0e835894a7b846b32f81d6c',	0,	'2018-10-03 11:20:48'),
+('1136b2facc814ffc7e16c9657b3a093fc605ab15742dcd850c73932675dcb214e64f237bee2a1a7d',	'db9c884bb7cb7f46231ae9847ab1e4529c7ebf68b8c11805ef4fc3e3bd9e50c6442e436a8373e4cf',	0,	'2018-09-18 17:36:46'),
+('131a409cf2a3982d6c108564880829d96c9568adb8d255c050861cea96eead4534c4610e18db48b7',	'4f0789244900197cb922bb9dc4ea09217e55aed9c059e6b82ff5920840b2990b69f7c47adc29e279',	1,	'2018-09-22 12:34:44'),
+('1a0f1bede1aebf70178ec40986420ef116fe8aacee8a0a76930f48a1f7cc20435b46b00de633effa',	'35f45874bcd4ed40b394331ff6f29a2301337feadd08e01cba7a27c901f5ec38c4bb89446ce1445a',	0,	'2018-09-22 14:23:04'),
+('1eccd86034ebf3410feb72e1a0108357f822c5517b0c56a22b59ce747fc51aa370e44727c0881893',	'63fc8dea287fe854b9d43d9dc955c2e5542937e21749dc592d8b36460e16cc2459a9146228a606b6',	0,	'2018-09-22 14:09:10'),
+('22a22064a4b853314e6b180956823d83ac92ae4507c2c57c75b6072b1d1d8033323a92b0eec01486',	'fe75d686683867472e1ea9616b671e46539c1a1c9e1055e9136eab2a52c5180ba16d6dd17b0648f2',	0,	'2018-10-24 11:58:44'),
+('25495b68ef453c62e956a03e0bfbf9debe943bfde109596bd1cbc13c7ca3834c8f20198931ed39d4',	'b203d7d7914306b251d07186efbeb524da29f2cb16feb94a9679ec0a4b6826214e12629d3b156d9f',	0,	'2018-10-23 11:25:38'),
+('26dccf8709e67f41e88c2986f544d844a62a1a68350fb90d94f5afee73125bf58c6d101e46b8df8b',	'64375a69b4f9086395355b3715e3f2e8162b53392c38f9a61117ad027505c312fd828a83f5477fed',	0,	'2018-09-22 12:35:08'),
+('2cfd38d2a7cac66b2afb90c7ccb15e7ce01ca5cc3fb43d7c0d0c52c3bf6f976c61a8fbc7ccee882c',	'8597bbf0dc4490d7c32f872bbf41d4b707a618ca6ec4270d3e8a130935115ada8595f6826d8e0945',	0,	'2018-10-23 12:32:19'),
+('2fb1f1a6138e25003aaf9b50673c7f48ab79f1e5ebffcc85baa3c6dcc71866f6e75cc1e2d6503066',	'1f3192ab6c8ddc85b98e309aecba79a0e353ed8633119cfb3940d559793a0bc2a7d335bd2461ac46',	0,	'2018-09-18 17:27:41'),
+('36b4377ede4c83eccf03884a659e803c32f5c39e87e84d83ff8b1c32a97749627085fb5d482c7180',	'9b138a01a4f392d14fb1d5e9bfbb5de705f89cee2fc57364b191ea93002546a2e91af250d9a5a629',	0,	'2018-10-03 10:48:54'),
+('3a3930210159c9419a26440bdc5787cb08bed2b0c68c9071e85432e990a4c3cb58c8ff41def11c75',	'0db788d377966c808e065f24b81118198227d230fc875e084670229d300f2ace859245cb8dd93045',	0,	'2018-10-03 11:07:07'),
+('46a87884c87c5f7a438b1e39d06fb4fce73b487a4b4ed3899f0f2428a2b2e682370b4e83d4c6417f',	'12bfbf4e09b3ebd7c999ed35ef377513c42f95286abf7173bdd9e2760203635e2624ce22ada725de',	0,	'2018-09-18 17:31:21'),
+('4c23bfd392178e2dc37e821e62248a0a9670cfd5904cf1acbee3235fa8781d7f3acec0e489e60492',	'af7f7ad05e2bff46922c416f415ab4e427afa3fb27709212cbbdf642ae766224415b6bd84e71a17c',	0,	'2018-10-03 10:49:30'),
+('4dc4207e3ce7fc4b809e7327eb2a13161851a9a292bf3f5259caeb117010dc3b06d6ba92b72319ae',	'8078af56069ba907f525be4dbd8f84781121c4924d2b2da929c71cb5a5dcfe5fc62dbadc12cb93d5',	0,	'2018-10-23 11:23:52'),
+('51ce24aed84d16b3c84ce94320038a4af8b02bb1a426eef712596b74d4c03ce9398165bb5d0ce771',	'7a8066554632b22fac534b7ad187cdfc7e7157273b319dee0a4ef6520c8026d7febcb10fac54e882',	0,	'2018-10-23 11:20:17'),
+('5305b351220b9e560a30d125305dd633fec116186133b6f8270485ec1bdc8e2db8621c27e758be15',	'c18c9100f26fac7abcaaecc1acb6ce1709f65f18f1f85446df73789a3e9eabff65c4bfe8c954a43f',	0,	'2018-10-23 12:32:44'),
+('581810f3df1b962124d1a6225dd25737c5c0fd6ebac74db628078d80f08afd7af5ada86667f0098b',	'caae9055bb8daabf6c05bfaf0f50dd6fac4154f71c0d3824a18e07fa214e294a537631c28eb78318',	0,	'2018-09-30 18:06:16'),
+('59a0c255167b07e19a789bbccec37c300794ad17ee23a75ae0e1afdf2e8dfa164fa8b5d4115cfa14',	'c3cf481037190cc291fa52f888166e2033060196db30ef7a4ac0d8eba616f7cc35fce469216f79a7',	0,	'2018-10-03 11:09:12'),
+('5b4273655e1a85ca8b450ae7d4fef06c112b25fb31a9944b7ca4d098c706172e3f611640d3122581',	'eef7bcab18481b9a931db160321526547986b3daa499acd9e87b64356a57eac50a8f2961be9a6735',	0,	'2018-10-03 11:29:36'),
+('5ba7ea43aa901b19786e31fc6c65dbd118130c33a28cee39e49c328275c19dab22e716153cd5ab4e',	'69a301f9e72805b4899baa0c6e5a4f32590e3edb3ad8b814a281cf5a84567ceb076a28e59494b509',	0,	'2018-10-11 11:06:00'),
+('61f17b8adc847063ed6f62ca1c311e0d48d8e4a79e3a7002d218847df8cdf3bb4680db93104e9c0c',	'7171444abbbd77e8c4a308185818367c115808bc5bde430b1bf6a6a218a108084d4b4bf0e7348a79',	0,	'2018-10-23 12:30:30'),
+('62066444a44352a7ba745b60db4ed6cd9d956084d1cc168b1778013190fb9b12a4e8a4292576753d',	'0144209e0d69334c9ccaeffdcececea8de24bb3bc087f66bfc75075d80ba8fb6a743a4f268423f68',	0,	'2018-09-22 14:17:18'),
+('620a8bdeda36f2ed3d9718ba02c7ca08b50a9b8413defd559e6a6ab64d8e02e831be1687cef2327a',	'c3e441f4a737d680feff0a58dafb758feb8a48737c783e0faaa6286e4d67b7a874b130202d696d55',	0,	'2018-11-03 16:13:09'),
+('63dc057c14fd0bce940ba7579194fb753c11f327b5ba42ea1a811a981a37d956646a56846ee1f76c',	'c46c7d1c126d6443ec1c8d79b254d9bf065e231a039698944994bc31d357d80cd5df292df5f1525e',	0,	'2018-10-03 11:03:09'),
+('6538447085487c6d2bfdd1cd83542ac0ca0cf8d9cc21432285bc9db64c5b2ca1c8f274e9b5ea6ef6',	'9062bbe646a258bd61ccf8a59acc25ab5877e2feff579982c1630bcf417b3430ce535671808df850',	0,	'2018-10-03 11:32:33'),
+('666061569e533f6d4473d212ce784f0e86d08e909fb6695f54ef7cf74d319a46e0522b8760818a80',	'd65d71f1f7cd31289860864016c2d698b760d358c8e9b34e8c62fed3cfac73065a3bb3d90ac1c0a9',	0,	'2018-10-07 09:57:41'),
+('70795b4135b8789a33729b2b8487f55731e57b0e7d579237a02bf59445daf3c36e73800667efbc5b',	'52557c7c61ffa30917cbaee006edd2da34eb021a2388f10f2fb35f0cacd78574291cf839b6c1ac65',	0,	'2018-10-03 11:10:47'),
+('743ebc86f7467de6fcca56dbb47bc8cad62bd4f6716b44646f96c35a79dcc28e83296fc9ab8e8fee',	'8de495e6dfd53cc4442e65553f72c85064760bb878a1551cc2469f8413eec5aa3cbbe67584425d31',	0,	'2018-10-03 11:19:17'),
+('7c33587f3876031f4774082e1276d079b1776d7f5250109510be5fd61941a4a1344a9a69b8c85ac1',	'94c89f21c5c6fa534e66d0e07b0361e550d83cd9503dc0f36b04068bc6ae571b892c9d7fd18708ba',	0,	'2018-09-18 17:31:42'),
+('81debcc24a3a44e8b17f85ee9db65d0468789133ac82f6ca54a32f58d48e20deb74a660ad4b16d35',	'5e176c4a4a2d5b6ac1e7ca6cb39ddeeace01b5b49a86e2c23c13e5e130efbf84ddbe9ad4d547ea31',	0,	'2018-09-18 17:32:00'),
+('8a0049a883a41613464064df0bd3d4557164d9b8641082e0595897c729b29cda064f17a0ccb13e68',	'3d25eefea17ed4280a1a5f9b06c97361c65a97396e2787e0de4b2e057dc77e28a6e81352f4b19d26',	0,	'2018-10-09 13:22:38'),
+('8abcd2b2d0b1e4a91d9f46b65083244067d78bf0d043e0fcddf05b4503da2cf4f357dcec00cf1e88',	'9063bfc6a404e44ae3bf66365b7065f1b1d302534512d08ddd7efd238ed7bdc866d78633145248d0',	0,	'2018-10-03 11:41:26'),
+('8bb0846d30b5aa2c9d2d4d2e6bd58a80b63a3277c76ee560ac6bc67b3de79158ab44b165ffb7528a',	'fbfe561969fce5d70d0b8289d996223e9a370834e924f5eafdfc0f5de8362dd0633d2e7214788f5d',	0,	'2018-09-18 17:37:37'),
+('93ffe745919607614d6ab8a6503e62fe94002da6c7d506118cf905dd790a206da3d61ba8322a45d2',	'f1d21fbb3f92c0eacb19cadf4685b47e7057b03c9258ef07f83bf54bf48020ab333fa002c759f1c7',	0,	'2018-10-03 11:03:43'),
+('96654828ccdb1ed05e1df44569f1c4e9beaeb406006ec51597b1f3affd92cecfe437cde056b0d28e',	'518de54dc82b40c087008eeced63555d509157234a5fd964e169ed546c3211446bc40fbf6ec49d84',	0,	'2018-09-18 17:38:04'),
+('96667da655abd156cc0b9cf55ecab8dd653c529fb85c9d485c7feaecc90bd4c061557b74c0a1575a',	'e0ddf70f149cf6504e452bbc586b8d90cff09359950176dbcf2dcf060431960c28393f14f376145b',	0,	'2018-09-18 17:38:31'),
+('9a2f2f26abff9dc358b3b3a93824336338510349daf139704861f0317ca2c773333067513f4a7e67',	'1d0348eaf36445c3abf399da13532ae6b53cc0921ef40b6cff9310d4bc4747d040e88f039fd85f92',	0,	'2018-09-26 17:47:15'),
+('9afbabad6f82eedcd17c63c5a809f552855defab7d060ea7ea8814219cfb0ce86eba1a5949ca0de6',	'5699c7e169e1f575264c7d46b055c10815a2438dfbb9520371364a7e7d6dfe9eb88780e3f1736081',	0,	'2018-10-03 11:39:16'),
+('a612d9db3bea12c33534ce603e7016eca89103359012431c2ddf4419d0b3b73dfbdd2a635a32c419',	'5c5f513a5b52b9954d07fb3d4bead093a15aa9c1ac2ad9df2fe2654c4e4308b1b8f26239909b2f67',	0,	'2018-09-22 14:06:23'),
+('a9618494f85e2c509f1494aaaeebea09b5c8ed13f9aa1783ca6f2d4014717b3a59a4ca682474b819',	'01288fd0375f4ed40c41181ca3f30ee0f45403fed3426faaa7a343baa48ebc32a93b99b59fb5dc1e',	0,	'2018-10-03 11:40:54'),
+('ae23937611f8496adc9bf940b8cd04fa4f7566319f83416d0a3d7a2f39b44617f1329b8625244d97',	'968c8f20173817ccc21c0dbd0e5c0ec6ec9bba797abf873b35427ebc961dbf6fabaaddd9df2d02cc',	0,	'2018-10-03 10:47:33'),
+('b2414a47c99116a96696b2816084555177a6913780a1f60a44cb1c247e41714d41cbe8b9052329ee',	'cab265cc4a8d325b19ccb4069ade61a0a2fc921150b004f030e31257fe8f585dd7137031d50b5067',	0,	'2018-10-03 11:11:35'),
+('bdf419f7f8396762852cd3b9adf188b8cf0123574823c1747d4b2c2d3628bc70d893a2e6a6e758ca',	'b8bfaa86125123ba780311a397a67689c58a925cc17837ce575054285ebe3ce9d736d94e94f94c2c',	0,	'2018-10-23 11:23:33'),
+('c02e86ca7a905615166f19a3f495bc4df0502ed2bdc0366e30ebf3630eaa238bd9ad5e5a44e13f3a',	'bb8fee856fbd74cbaf17bf71fec9775e5d11eac54c7578c691bb927aa629c6e3ef728cff943550d0',	0,	'2018-09-18 17:35:59'),
+('c286ebe2e280a47e4130888f4799364f4e4633edf6066163a9c4327f7597456e2c4b9ee74baac086',	'488ae00a44bbcf25ba10ea66579508c9ae2b21d29fd73cd16300b76bb1cc93efc0663e5d09ce8934',	0,	'2018-10-17 12:13:29'),
+('c30d934cbc010d7f895fe53f7fb64f27d8bfa273cb11a19d119e4e9d3becfbed72ef58dc2df0fd93',	'11603df6a7cb908c8fdb95c9af182bd28ecb28370409bf560b7c88a74062f570ecc9180f230c0866',	0,	'2018-10-03 13:03:17'),
+('c7092afb2b899114beb0855cf5734b60d5e45a34a12b88fad717380a84985eb797b118b8e205a6ee',	'cc7d533272629c571dad0208979f37691415a0812067471a2ce61de60886eaec592f330f4a1e2de9',	0,	'2018-10-23 11:19:52'),
+('c810a46dd01fea7be39ae49f5c49b14db445f1524ed5b7bf0b03524c02af89a51fca99229fbb3cde',	'af4aed968e10e592bba2e9379d68739159b87663fb7f9169762858bbfa35ab4f70ec0d882bdcad64',	0,	'2018-10-06 12:10:50'),
+('c981b7d06fc347d578e5949b93e4a9244af14a27e743b7c0f211e29d30288812a32e9c922b907814',	'4e09b7a976c083aad7f9c42ecf62f8f226aea9d6b393b40690ff0cecc7ad0b5ca560600de2f87a3e',	0,	'2018-10-03 10:52:08'),
+('cc5a71a529d09d12a79e5d84ab7a825b6d5cd5041c09026bfc70eaebca02ce8e6709c8ac5e8d89f1',	'6ef40d1e89a2f1c2d42cab42d00774cf82a57f3dabdc2914def4c712567a37b0e73049a1523bb3f2',	0,	'2018-10-03 10:51:24'),
+('cdd67af626cf5253faa56567bcaf9c0ec7e4bf8453de3ad4d1ef359d4912c9351ee4b133c6c9f1d6',	'259867794ded0c939e492c33e8f0967d602e60b62211c90eed9cf946819216103df24b02d611f96d',	0,	'2018-10-11 16:31:42'),
+('d1132c93d21b9ecf702a7a962a4d8b04722379dd1e6c9dc6dde24431d03b6ff95400a879a023439f',	'd7fa5aaf6efff873ed16f35af13157d6cc93346054b22f5ae0263eb0160a376ce8e00dda75da3754',	0,	'2018-09-19 11:49:37'),
+('d7bb794acd86ad8d46a6e680d4c3f081514a3cbe579debb869b1d5af930379bb3a3b4d7661158705',	'58a392a4e01e1504fcb3069550b6075659acd9bb09dc121ff02d35e3e8434471d1bf1502e953c03b',	0,	'2018-10-24 11:59:49'),
+('d8d3b714fb8113bc0406de97dd72a91d3d062882d68453b5f85a8bf62b82365e5c1c0b37fe3025d2',	'a4c0a8034b643c8a77dee76f490c56889493a77e572ec9dbdeed5316f534418d81c05d41625a9269',	0,	'2018-10-25 16:38:16'),
+('dae7d09355541995bec19bc147fba995459751094a61b17842a0b493c9c7911b9162e92bee3ec5f1',	'd7de3ddffdd4e5e40796d3f44fb20c9a25449ef579daeed464f0e7f57f9590e22787fa62db15ad26',	0,	'2018-10-24 13:56:24'),
+('db804c690a52d1e87a870d5326afae6ad4afbef201613f68546ce760c3a77f137549e71f5fb19daf',	'8b3408522d16f1c32bdc8f2bdbe762b730a41b7752bdfa11b137c44cb011e84d4e68f2c0d5da5f17',	0,	'2018-10-03 11:14:35'),
+('df8f02e185892977c671398e009aaf9c25c9abe1d4711eb1fa9c26d8f1bbc5f9e6a0be9ab7ef4bd6',	'5ef4faa32cef7062e2d4073dfef921cadac8d38bf5f0c3affe6334e9f8dbb75872a11150e1a49d4f',	1,	'2018-10-23 12:32:07'),
+('e3f7a0ab05ae88b73477b6491b41b9cc2ffc03601c86002b711d81492d4612105da26fe9fbf8059e',	'5c1d03765e0a3dbbee558c228167c52117da1cc8730dc7ea5c45251228323af40101cd81930dc5d2',	0,	'2018-10-03 10:49:58'),
+('e4789661ce9c96cbb26892cf33c3e02ede519b968f6bcd75b1653e3785cbb0e22d1d4c57b876a352',	'42170efb5e7c64f0b757bb8c97a9eeb64dc34491626af2164e4ad9e8eef1bbdea02d7943ff8a0aaa',	0,	'2018-09-18 17:39:49'),
+('e58fea586a7c1ebe143fd233b150750ea8316876356d2e796ab38fa4506b2833f53d14e24bcb8c90',	'5ce4ca1c07ef49758a3f7df49a4f3771679200179fe7d16044d23f08d45f297e3a1e87afeb4bc954',	0,	'2018-10-11 11:05:09'),
+('ea3a96d33764b2f0941db112585a7a2ae874968b14c7a21a8220b7813a15ce831f442aa5c1dab750',	'09733c1c36c66f5ab130501f9f8706a84586bf6d4bdb7d51fd7e5e21531787463bfbe7566e998162',	1,	'2018-09-22 14:01:54'),
+('edf97fba417d2ea9c8afc96bd8cebb160be92d6b3e16bd39857a5a37ee8a53c772c2d8f1e4fa2db6',	'706f30190f6a36c7cf2cced90b71fe0b17451516b202c53d227f0ff70231c275ff1c1e057c2225bd',	0,	'2018-09-22 14:13:21'),
+('eea16752d3458958a09f551a8d4a153d183604a35beed0a20ef1e5d76d706f62c55cbf5c2607c883',	'3f588961b9384fd105f5b8b113be528796b7d7691395d12f7bc924e6a4adbcce6e279bf18a9b5ad8',	0,	'2018-09-22 14:02:12'),
+('eebba9db09d0aa9356fe0944b21a2c723178d00dd75d208a31fb21d979dec28c1d523fc00558b85f',	'0a2b9a77ba0793c0dcee670b3ef104a84b994ba6436ab5c6dcbc16fb7a250a344ca34e2d026d8c37',	0,	'2018-09-22 12:32:54'),
+('f0ef793d619bfdc930132a967a7c0b9167f67339a1c763b97e751b8dd2339ea33efaca2981eabed6',	'1b546eaaee8356b9fe41943d2454faaa469730efd1fcfb64518d4f3b1b1429ea9b1f4ae4f51a5f79',	0,	'2018-10-03 11:37:08'),
+('f24582577b82963c252d53c40366609aaf5035e8498f71ade60fa86be67eb705e71d631ba1f9bed3',	'1eb472515296d9cc6e2aad592a434662f355c215b8c1c7aff7487ad7126fc9de69c47830012c84ab',	0,	'2018-10-27 15:50:00'),
+('f6cd26b4889820214ed7088596a48ec2db512916723c11762b7c67ed997acec2eeae4d76046334c6',	'cf609d3c95abd04f0f5d3a57e96fa60256f7a213b340009bb167536a783de3a8860ba6d66cdafc6c',	0,	'2018-09-26 17:04:22'),
+('f77fa910814e07de44b589db2b01f28aea52d426cf0abb97584f9cdbe13aecfb3ac530616adb8aec',	'634c37bbcf3c519c3bfa9dd0792c4acf1f9429aa368af8adfcdc91fec2885b7da26d7e8c62e5960f',	0,	'2018-10-28 17:07:41'),
+('faf8fc0fea199823929db13bab3b80cc47e1ee03bbb0b972a09032fd95ec622c569ef4997f6430a8',	'11aae061435cc5858ab36e9476e53adc93a9c9dab8265dfa3df32ca868ee68d8d7ea505e03fbb646',	1,	'2018-09-20 09:47:50'),
+('fbd8d898851198a27f50aaca5944745d5c71f2df497db033b65e6a4ecdb2812345978db83650612e',	'304b6101346c66ceebb56299144102f452d6f49e49ade1a7b3e9a9b98589f281c6c07b3640f0cd9f',	0,	'2018-10-31 13:55:31'),
+('fe8f33d268a6db015269ab64ea24163b4b6f1c29a0a906227012d01a3894770c44487ceea53e273f',	'ad2857a5ce380590fe3a799f6223d559b6cc2aebabbafe2a2f06792afb73a32c02426ff7455dfddd',	0,	'2018-10-03 10:45:56');
+
+DROP TABLE IF EXISTS `staffs`;
+CREATE TABLE `staffs` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `active` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `staff_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `subscribed` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '是否訂閱請假推播',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `registration_token` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `staffs_email_unique` (`email`),
+  UNIQUE KEY `staffs_staff_code_unique` (`staff_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `staffs` (`id`, `name`, `email`, `active`, `staff_code`, `subscribed`, `created_at`, `updated_at`, `registration_token`, `password`) VALUES
+(3,	'joe',	't9590345@gmail.com',	1,	NULL,	0,	'2018-05-02 17:31:04',	'2018-07-25 10:43:13',	NULL,	'$2y$10$/zKCCkEsv7SA.RemZqlZ/ONqWdLQvM2wOr5bRw7KKwhftZx5PrRjy'),
+(4,	'danny',	'ranjay0908@gmail.com',	0,	NULL,	1,	'2018-05-04 11:24:46',	'2018-07-25 10:43:13',	NULL,	'$2y$10$/rWISS.kq2erllu4MrIaK.3UyTcb86Uub9LXKqR9A5AbMKZNxs34m'),
+(6,	'魏宏昇',	'seanwei.larvata@gmail.com',	0,	'L002',	1,	'2018-05-23 11:22:53',	'2018-07-25 10:43:13',	NULL,	'$2y$10$j1QXMUfHsT0EZa5Eg8rb9O0Qu6EjuZVvF1Oh5QYoepSvetQ1tyJ4W'),
+(10,	'殷豪',	'jjyyg1123@gmail.com',	1,	NULL,	1,	'2018-05-24 16:11:26',	'2018-08-05 16:12:01',	'$2y$10$PcJxXREikn.GtE8xs9W9puKacoLvT1RLHq1sjBE1jCikb.DMqEaJu',	'$2y$10$wMoVav9wTq5P.sBFtUhHkel7oaS5sc2sSR.LoqJgwkNQL.z4ayW4y'),
+(11,	'test12345',	'test12345@test.com',	1,	'L003',	0,	'2018-05-29 18:56:05',	'2018-07-25 10:43:14',	NULL,	'$2y$10$xEQ4aWCcQ.fVUt1At8gwtu3DiLo/..WbxE5RwlBWWU5Tr0D33KfeK'),
+(14,	'test333',	'hao.jjyyg1123@gmail.com',	0,	'L004',	1,	'2018-06-05 13:21:04',	'2018-08-05 16:12:23',	'$2y$10$hz5iYT4/z/SK1S1dzdEc8OnJjZzy2HHrlxEN2nyByeBjCSVx0eC42',	'$2y$10$fjR7/wm59xMYeEkoq465Ju5WwCd9FPq/b/RODX.eOYKXOcXsYZ5f2');
+
+DROP TABLE IF EXISTS `staff_auth`;
+CREATE TABLE `staff_auth` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `staff_id` int(10) unsigned NOT NULL,
+  `auth_code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `staff_auth_staff_id_foreign` (`staff_id`),
+  CONSTRAINT `staff_auth_staff_id_foreign` FOREIGN KEY (`staff_id`) REFERENCES `staffs` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `staff_line`;
+CREATE TABLE `staff_line` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `staff_id` int(10) unsigned NOT NULL,
+  `line_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `staff_line_staff_id_foreign` (`staff_id`),
+  CONSTRAINT `staff_line_staff_id_foreign` FOREIGN KEY (`staff_id`) REFERENCES `staffs` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `staff_line` (`id`, `staff_id`, `line_id`) VALUES
+(3,	3,	'321321'),
+(4,	10,	'123123'),
+(5,	11,	'333');
+
+DROP TABLE IF EXISTS `staff_profile`;
+CREATE TABLE `staff_profile` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `staff_id` int(10) unsigned NOT NULL,
+  `staff_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ID_card_number` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `identity` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `gender` tinyint(3) unsigned DEFAULT NULL,
+  `phone_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `home_address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '戶籍地址',
+  `mailing_address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '通訊地址',
+  `bank_account` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `emergency_contact` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `emergency_contact_phone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `position` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '職稱',
+  `on_board_date` date DEFAULT NULL COMMENT '到職日',
+  `off_board_date` date DEFAULT NULL COMMENT '離職日',
+  `birth` date DEFAULT NULL,
+  `salary` int(10) unsigned DEFAULT NULL,
+  `add_insurance_date` date DEFAULT NULL COMMENT '加保日期',
+  `cancel_insurance_date` date DEFAULT NULL COMMENT '退保日期',
+  `highest_education` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '最高學歷',
+  `experience` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `group` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `staff_profile_id_card_number_unique` (`ID_card_number`),
+  UNIQUE KEY `staff_profile_email_unique` (`email`),
+  UNIQUE KEY `staff_profile_staff_code_unique` (`staff_code`),
+  KEY `staff_profile_staff_id_foreign` (`staff_id`),
+  CONSTRAINT `staff_profile_staff_id_foreign` FOREIGN KEY (`staff_id`) REFERENCES `staffs` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `staff_profile` (`id`, `staff_id`, `staff_code`, `name`, `ID_card_number`, `identity`, `gender`, `phone_number`, `email`, `home_address`, `mailing_address`, `bank_account`, `emergency_contact`, `emergency_contact_phone`, `position`, `on_board_date`, `off_board_date`, `birth`, `salary`, `add_insurance_date`, `cancel_insurance_date`, `highest_education`, `experience`, `group`, `created_at`, `updated_at`) VALUES
+(1,	3,	NULL,	'joe',	'J111111111',	0,	1,	NULL,	't9590345@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	'2018-05-02',	NULL,	'2018-05-02',	333333,	'2018-05-02',	'2018-05-02',	'博士',	NULL,	NULL,	'2018-05-02 17:31:04',	'2018-05-23 18:00:06'),
+(2,	4,	NULL,	'danny',	'J111111112',	0,	1,	NULL,	'ranjay0908@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	'2018-05-04',	NULL,	'2018-05-04',	NULL,	'2018-05-04',	NULL,	NULL,	'帥\r\n我帥\r\n我超帥\r\n我超級帥\r\n我超他媽帥',	NULL,	'2018-05-04 11:24:46',	'2018-05-30 10:27:43'),
+(3,	6,	NULL,	'魏宏昇',	'M121576331',	0,	1,	NULL,	'seanwei.larvata@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	'2017-07-24',	NULL,	'1978-01-07',	NULL,	'2017-07-24',	'2018-05-23',	NULL,	NULL,	NULL,	'2018-05-23 11:22:53',	'2018-05-23 11:22:53'),
+(7,	10,	NULL,	'殷豪',	'A111111111',	0,	0,	NULL,	'jjyyg1123@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	'2017-07-11',	NULL,	'2018-05-24',	NULL,	'2018-05-24',	NULL,	NULL,	NULL,	NULL,	'2018-05-24 16:11:26',	'2018-05-29 18:55:37'),
+(8,	11,	'L003',	'test12345',	'J111111211',	0,	1,	NULL,	'test12345@test.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	'2018-05-29',	NULL,	'2018-05-29',	NULL,	'2018-05-29',	'2018-07-20',	NULL,	NULL,	NULL,	'2018-05-29 18:56:05',	'2018-07-24 10:41:47');
+
+-- 2018-08-08 02:58:36
