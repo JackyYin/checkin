@@ -5,7 +5,6 @@ SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
-CREATE DATABASE `checkin` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `checkin`;
 
 SET NAMES utf8mb4;
