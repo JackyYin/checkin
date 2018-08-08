@@ -2,13 +2,15 @@
 
 namespace App\Helpers;
 
-use App\Models\Check;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
+use App\Models\Check;
+use App\Models\Bot;
 
 class StrideHelper
 {
     protected $client;
+    protected $bot;
 
     private static function CHECK_TYPE($type)
     {
@@ -50,6 +52,8 @@ class StrideHelper
                 'Content-Type'  => 'application/json',
             ]
         ]);
+
+        $this->bot = Bot::where('name', 'Stride')->first();
     }
 
     public function roomNotification(Check $check, $action)
@@ -81,7 +85,7 @@ class StrideHelper
                 ."原因: ".$check->leave_reason->reason."\n";
         }
 
-        $response = $this->client->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
+        $response = $this->client->request('POST', $this->bot->notify_hook_url, [
             'json' => [
                 'action' => 'Leave Create Notification',
                 'reply_message' => $body,
@@ -109,7 +113,7 @@ class StrideHelper
             $body .= "假別: ".self::CHECK_TYPE($check->type)."\n"
                 ."原因: ".$check->leave_reason->reason."\n";
         }
-        $response = $this->client->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
+        $response = $this->client->request('POST', $this->bot->notify_hook_url, [
             'json' => [
                 'action' => 'Leave Edit Notification',
                 'reply_message' => $body,
@@ -140,7 +144,7 @@ class StrideHelper
             ."假別: ".self::CHECK_TYPE($check->type)."\n"
             ."原因: ".$check->leave_reason->reason."\n";
 
-        $response = $this->client->request('POST', config('stride.bot.url')."/checkin/leave/notify", [
+        $response = $this->client->request('POST', $this->bot->notify_hook_url, [
             'json' => [
                 'action' => 'Personal Leave Notification',
                 'reply_message' => $body,
@@ -154,7 +158,7 @@ class StrideHelper
         $today = Carbon::today();
         $body = $today->toDateString()." (".self::WEEK_DAY($today->format('l')).") 出缺勤狀況";
 
-        $response = $this->client->request('POST', config('stride.bot.url')."/checkin/panel", [
+        $response = $this->client->request('POST', $this->bot->notify_hook_url, [
             'json' => [
                 'action' => 'Panel',
                 'reply_message' => $body,
