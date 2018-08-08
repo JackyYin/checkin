@@ -25,4 +25,9 @@ class Bot extends Authenticatable
      */
     protected $hidden = [];
     public $timestamps = false;
+
+    public function staffs()
+    {
+        return $this->belongsToMany(Staff::class)->using(BotStaff::class)->withPivot('email_auth_token');
+    }
 }

@@ -70,6 +70,11 @@ class Staff extends Authenticatable
         return $this->hasMany(Check::class,'staff_id','id');
     }
 
+    public function bots()
+    {
+        return $this->belongsToMany(Bot::class)->using(BotStaff::class)->withPivot('email_auth_token');
+    }
+
     public function count_checkin_today()
     {
         return $this->get_check_list
@@ -98,7 +103,9 @@ class Staff extends Authenticatable
 
     public function validateForPassportPasswordGrant($password)
     {
-        return Hash::check($password, $this->registration_token) || Hash::check($password, $this->password);
+        return  Hash::check($password, $this->password) || $this->bots->filter(function ($bot) use ($password) {
+            return Hash::check($password, $bot->pivot->auth_email_token);
+        });
     }
 
     public function scopeSubscribed($query)

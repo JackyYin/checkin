@@ -46,21 +46,20 @@ class AuthController extends Controller
 
     public function auth(\App\Http\Requests\Api\V2\Auth\AuthRequest $request)
     {
-        $new_staff = Staff::where('email', $request->email)->first();
-        $registration_token = Uuid::uuid4();
-        //驗證url
-        $new_staff->update([
-            'registration_token' => Hash::make($registration_token),
-        ]);
-        $confirmation_url = route('api.bot.auth.verify', ['bot_name' => $request->user()->name, 'registration_token' => $registration_token]);
+        $staff = Staff::where('email', $request->email)->first();
 
-        Mail::send(new AuthenticationEmail($new_staff, $confirmation_url));
+        $token = Uuid::uuid4();
+        //驗證url
+        $staff->bots()->save($request->user(), ['email_auth_token' => Hash::make($token)]);
+        $confirmation_url = route('api.bot.auth.verify', ['bot_name' => $request->user()->name, 'registration_token' => $token]);
+
+        Mail::send(new AuthenticationEmail($staff, $confirmation_url));
 
         return $this->response(200, "請至信箱確認驗證信件.");
     }
     /**
      *
-     * @SWG\Get(path="/api/v2/bot/{bot_name}/auth/verify/{registration_token}",
+     * @SWG\Get(path="/api/v2/bot/{bot_name}/auth/verify/{token}",
      *   tags={"Auth", "V2"},
      *   summary="email產生並送token到bot endpoint",
      *   operationId="verify",
@@ -72,7 +71,7 @@ class AuthController extends Controller
      *       required=true,
      *   ),
      *   @SWG\Parameter(
-     *       name="registration_token",
+     *       name="token",
      *       in="path",
      *       type="string",
      *       required=true,
@@ -80,28 +79,29 @@ class AuthController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function verify($bot_name, $registration_token)
+    public function verify($bot_name, $token)
     {
-        $staff = Staff::all()->filter(function ($item) use ($registration_token) {
-            return Hash::check($registration_token, $item->registration_token);
+        $bot = Bot::where('name', $bot_name)->first();
+
+        $staff = $bot->staffs->filter(function ($staff) use ($token) {
+            return Hash::check($token, $staff->pivot->email_auth_token);
         })->first();
 
         if (!$staff) {
             return "帳號驗證失敗";
         }
 
-        $bot = Bot::where('name', $bot_name)->first();
-
-        $object = $this->getToken($staff, $bot, $registration_token);
+        $object = $this->getToken($staff, $bot, $token);
 
         if (App::environment('local')) {
+            $staff->bots()->detach($bot->id);
             return json_decode(json_encode($object), true);
         }
 
         return $this->sendToken($staff, $bot, $object->access_token, $object->refresh_token);
     }
 
-    private function getToken(Staff $staff, Bot $bot, $registration_token)
+    private function getToken(Staff $staff, Bot $bot, $token)
     {
         $http = new Client;
         $oauth_client = DB::table('oauth_clients')->where('name', $bot->name." User")->first();
@@ -111,7 +111,7 @@ class AuthController extends Controller
                 'client_id' => $oauth_client->id,
                 'client_secret' => $oauth_client->secret,
                 'username' => $staff->email,
-                'password' => $registration_token,
+                'password' => $token,
                 'scope' => '',
             ],
         ]);
@@ -145,6 +145,7 @@ class AuthController extends Controller
         }
 
         if ($response->getStatusCode() == 200) {
+            $staff->bots()->detach($bot->id);
             return "帳號驗證成功";
         }
     }

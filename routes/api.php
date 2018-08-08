@@ -29,7 +29,7 @@ Route::group(['namespace' => 'Api'], function () {
     //api v2
     Route::group(['prefix' => 'v2', 'namespace' => 'V2'], function () {
         Route::post('/bot/auth/login', ['uses' => 'AuthController@login']);
-        Route::get('bot/{bot_name}/auth/verify/{registration_token}', ['as' => 'api.bot.auth.verify', 'uses' => 'AuthController@verify']);
+        Route::get('bot/{bot_name}/auth/verify/{token}', ['as' => 'api.bot.auth.verify', 'uses' => 'AuthController@verify']);
         Route::group(['middleware' => ['auth.api.bot'], 'prefix' => 'bot'], function () {
             Route::post('/auth', ['uses' => 'AuthController@auth']);
             Route::post('/auth/refresh', ['uses' => 'AuthController@refresh']);
