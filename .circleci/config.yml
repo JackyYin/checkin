@@ -42,10 +42,6 @@ jobs:
           name: Dump data to DB
           command: mysql -h 127.0.0.1 -u root checkin < ./database/circleci/checkin.sql
 
-      - run:
-          name: Laravel migration
-          command: sudo php artisan migrate
-
       # Download and cache dependencies
       - restore_cache:
           keys:
