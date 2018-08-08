@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Carbon\Carbon;
 use App\Helpers\StrideHelper;
 use App\Models\Check;
 
@@ -14,10 +15,11 @@ class StrideNotify extends Command
      * @var string
      */
     protected $signature = 'stride:notify 
-        {check* : The IDs of the Check}
+        {check*? : The IDs of the Check}
         {--scope=}
         {--action=}
-        {--panel} : Display the Content Panel';
+        {--panel} : Display the Content Panel
+        {--daily} : Push daily Notification without other arguments';
 
     /**
      * The console command description.
@@ -46,6 +48,20 @@ class StrideNotify extends Command
      */
     public function handle()
     {
+        if ($this->option('daily')) {
+            $generalChecks = Check::where('checkout_at', '>=', Carbon::today())
+                ->where('checkin_at', '<=', Carbon::tomorrow())
+                ->isLeave()
+                ->get();
+
+            $this->StrideHelper->sendPanel();
+
+            foreach ($generalChecks as $check) {
+                $this->StrideHelper->roomNotification($check, "Create");
+            }
+            return;
+        }
+
         $checks = Check::whereIn('id', $this->argument('check'))->get();
 
         if (!$checks) {
