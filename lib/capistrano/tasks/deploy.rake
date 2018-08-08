@@ -16,6 +16,6 @@ namespace :deploy do
     end
   end
 
-  before :deploy, "deploy:revision_checker"
+ # before :deploy, "deploy:revision_checker"
 
 end
