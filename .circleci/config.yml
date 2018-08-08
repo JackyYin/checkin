@@ -13,6 +13,7 @@ jobs:
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
       - image: mysql:5.7
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin --innodb-large-prefix=true --innodb-file-format=Barracuda
 
         environment:
           MYSQL_USER: root
@@ -35,11 +36,7 @@ jobs:
       - run: cp .env.circleci .env
 
       - run:
-          name: Create test Mysql database
-          command: mysql -h 127.0.0.1 -u root -e "create database checkin;"
-
-      - run:
-          name: Dump data to DB
+          name: Create checkin database
           command: mysql -h 127.0.0.1 -u root checkin < ./database/circleci/checkin.sql
 
       # Download and cache dependencies
