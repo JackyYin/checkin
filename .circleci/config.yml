@@ -22,18 +22,14 @@ jobs:
 
     steps:
       - checkout
-      - run:
-          name: Install mysql
-          command: |
-            sudo apt update
-            sudo apt install -y mysql-client
 
       - run:
-          name: Install PHP Extensions
+          name: Install Extensions
           command: |
             sudo apt update
             sudo apt install -y mysql-client --no-install-recommends libpng-dev libgmp3-dev
             sudo docker-php-ext-install pdo pdo_mysql gd
+            sudo composer self-update
 
 
       - run: cp .env.circleci .env
@@ -43,9 +39,12 @@ jobs:
           command: mysql -h 127.0.0.1 -u root -e "create database checkin;"
 
       - run:
-          name: Run pre-migrate for testing
+          name: Dump data to DB
           command: mysql -h 127.0.0.1 -u root checkin < ./database/circleci/checkin.sql
 
+      - run:
+          name: Laravel migration
+          command: sudo php artisan migrate
 
       # Download and cache dependencies
       - restore_cache:
