@@ -36,6 +36,7 @@ jobs:
       - run:
           name: Install PHP
           command: |
+            sudo apt-get update
             sudo apt-get install -y php7.2-pdo php7.2-gd php7.2-mysql
 
 
