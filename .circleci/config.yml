@@ -14,9 +14,9 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       - image: mysql:5.7
 
-      environment:
-        MYSQL_USER: root
-        MYSQL_ALLOW_EMPTY_PASSWORD: true
+        environment:
+          MYSQL_USER: root
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
 
     working_directory: ~/repo
 
