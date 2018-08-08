@@ -12,11 +12,6 @@ jobs:
       # specify the version you desire here
       - image: circleci/php:latest
 
-        environment:
-          MYSQL_HOST: 127.0.0.1
-          MYSQL_DB: checkin
-          MYSQL_USER: root
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -37,15 +32,9 @@ jobs:
             sudo apt-get install -y mysql-client
 
       - run:
-          name: Install PHP
+          name: Install PHP Extensions
           command: |
-            sudo apt-get update
-            sudo apt-get install -y locales
-            locale-gen en_US.UTF-8
-            sudo apt-get install -y software-properties-common
-            sudo apt-add-repository -y  ppa:ondrej/php
-            sudo apt-get update
-            sudo apt-get install -y php7.2-pdo php7.2-gd php7.2-mysql
+            sudo docker-php-ext-install pdo pdo_mysql gd
 
 
       - run: cp .env.circleci .env
