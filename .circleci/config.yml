@@ -5,6 +5,9 @@
 version: 2
 jobs:
   build:
+    environment:
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
     docker:
       # specify the version you desire here
       - image: circleci/php:latest
@@ -39,8 +42,6 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y locales
             locale-gen en_US.UTF-8
-            export LANG = en_US.UTF-8
-            export LC_ALL = en_US.UTF-8
             sudo apt-get install software-properties-common
             sudo apt-add-repository ppa:ondrej/php
             sudo apt-get update
