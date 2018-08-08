@@ -28,7 +28,7 @@ jobs:
           name: Install Extensions
           command: |
             sudo apt update
-            sudo apt install -y mysql-client
+            sudo apt install -y mysql-client libpng-dev
             sudo docker-php-ext-install pdo pdo_mysql gd
 
       - run: cp .env.circleci .env
