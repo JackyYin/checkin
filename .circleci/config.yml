@@ -25,13 +25,10 @@ jobs:
       - checkout
 
       - run:
-          name: Install Extensions
-          command: |
-            sudo apt update
-            sudo apt install -y mysql-client --no-install-recommends libpng-dev libgmp3-dev
-            sudo docker-php-ext-install pdo pdo_mysql gd
-            sudo composer self-update
-
+        name: Install Extensions
+        command: |
+          sudo apt update
+          sudo apt install -y mysql-client
 
       - run: cp .env.circleci .env
       - run:
