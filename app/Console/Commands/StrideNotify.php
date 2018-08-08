@@ -36,9 +36,8 @@ class StrideNotify extends Command
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->StrideHelper = new StrideHelper();
+        parent::__construct();
     }
 
     /**
