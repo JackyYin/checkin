@@ -101,7 +101,7 @@ class AuthController extends Controller
         return $this->sendToken($staff, $bot, $object->access_token, $object->refresh_token);
     }
 
-    private function getToken(Staff $staff, Bot $bot, $token)
+    private function getToken(Staff $staff, Bot $bot, $email_auth_token)
     {
         $http = new Client;
         $oauth_client = DB::table('oauth_clients')->where('name', $bot->name." User")->first();
@@ -111,7 +111,7 @@ class AuthController extends Controller
                 'client_id' => $oauth_client->id,
                 'client_secret' => $oauth_client->secret,
                 'username' => $staff->email,
-                'password' => $token,
+                'password' => $email_auth_token,
                 'scope' => '',
             ],
         ]);
