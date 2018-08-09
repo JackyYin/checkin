@@ -15,7 +15,7 @@ class StrideNotify extends Command
      * @var string
      */
     protected $signature = 'stride:notify 
-        {check*? : The IDs of the Check}
+        {check?* : The IDs of the Check}
         {--scope=}
         {--action=}
         {--panel} : Display the Content Panel
