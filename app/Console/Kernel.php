@@ -7,7 +7,6 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Helpers\StrideHelper;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
-use Artisan;
 use App\Models\Check;
 use App\Models\Staff;
 use App\Models\Profile;
@@ -22,6 +21,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\AutoCheck::class,
         \App\Console\Commands\StrideNotify::class,
+        \Laravel\Passport\Console\ClientCommand::class,
     ];
 
     /**
