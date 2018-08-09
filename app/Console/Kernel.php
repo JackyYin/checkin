@@ -40,9 +40,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('auto:check')->dailyAt('23:59');
 
         //自動發通知到stride
-        $schedule->call(function () {
-            $this->autoNotify();
-        })->dailyAt('09:00');
+        $schedule->command('stride:notify --daily')->dailyAt('09:00');
     }
 
     /**
@@ -55,21 +53,5 @@ class Kernel extends ConsoleKernel
         $this->load(__DIR__.'/Commands');
 
         require base_path('routes/console.php');
-    }
-
-    private function autoNotify()
-    {
-        $generalChecks = Check::where('checkout_at', '>=', Carbon::today())
-            ->where('checkin_at', '<=', Carbon::tomorrow())
-            ->isLeave()
-            ->get()->pluck('id');
-
-        Artisan::call('stride:notify', [
-            'check'    => $generalChecks,
-            '--scope'  => 'Room',
-            '--action' => 'Create',
-            '--panel'  =>  true,
-        ]);
-
     }
 }
