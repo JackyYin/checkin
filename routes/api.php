@@ -28,14 +28,22 @@ Route::group(['namespace' => 'Api'], function () {
     Route::post('request-online', ['uses' => 'LeaveController@requestOnline']);
     //api v2
     Route::group(['prefix' => 'v2', 'namespace' => 'V2'], function () {
-        Route::post('/bot/auth/login', ['uses' => 'AuthController@login']);
-        Route::get('bot/{bot_name}/auth/verify/{token}', ['as' => 'api.bot.auth.verify', 'uses' => 'AuthController@verify']);
-        Route::group(['middleware' => ['auth.api.bot'], 'prefix' => 'bot'], function () {
-            Route::post('/auth', ['uses' => 'AuthController@auth']);
-            Route::post('/auth/refresh', ['uses' => 'AuthController@refresh']);
-
-            Route::get('/me', ['uses' => 'BotController@me']);
-            Route::patch('/{id}', ['uses' => 'BotController@update'])->where('id', '[0-9]+');
+        Route::group(['prefix' => 'bot'], function () {
+            //App登入
+            Route::post('auth/login', ['uses' => 'AuthController@login']);
+            //信箱驗證連結
+            Route::get('{bot_name}/auth/verify/{token}', ['as' => 'api.bot.auth.verify', 'uses' => 'AuthController@verify']);
+            //機器人新增
+            Route::post('/', ['uses' => 'BotController@store']);
+            Route::group(['middleware' => ['auth.api.bot']], function () {
+                //寄發驗證信件
+                Route::post('/auth', ['uses' => 'AuthController@auth']);
+                //重發token機制
+                Route::post('/auth/refresh', ['uses' => 'AuthController@refresh']);
+                //機器人查看、更新
+                Route::get('/me', ['uses' => 'BotController@me']);
+                Route::patch('/me', ['uses' => 'BotController@update']);
+            });
         });
         Route::group(['middleware' => ['auth.api.user']], function () {
             Route::group(['prefix' => 'leave'], function () {
