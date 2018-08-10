@@ -9,4 +9,5 @@ gem 'capistrano-wal-e'
 gem 'capistrano-ssh-doctor' # $ bundle exec cap production ssh:doctor
 gem 'capistrano-safe-deploy-to'
 gem 'capistrano-deploy_hooks'
-gem 'capistrano-stride', '~> 0.3', require: false
+gem 'capistrano-stride', '~> 0.2', require: false
+
