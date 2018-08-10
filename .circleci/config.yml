@@ -83,6 +83,7 @@ jobs:
     machine:
         image: circleci/classic:latest
     steps:
+      - add-ssh-keys
       - checkout
       - run: cp .env.circleci .env
       - run:
