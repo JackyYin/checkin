@@ -12,7 +12,7 @@ install_plugin Capistrano::SCM::Git
 
 if ENV['STRIDE_URI']
   require 'capistrano/stride'
-  set :stride_url, ENV['STRIDE_URI']
+  set :stride_url, ENV['STRIDE_URL']
   set :stride_token, ENV['STRIDE_TOKEN']
 end
 
