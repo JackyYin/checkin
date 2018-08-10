@@ -6,15 +6,15 @@ require "capistrano/setup"
 # Include default deployment tasks
 require "capistrano/deploy"
 
-# Load the SCM plugin appropriate to your project:
-require "capistrano/scm/git"
-install_plugin Capistrano::SCM::Git
-
-if ENV['STRIDE_URI']
+if ENV['STRIDE_URL']
   require 'capistrano/stride'
   set :stride_url, ENV['STRIDE_URL']
   set :stride_token, ENV['STRIDE_TOKEN']
 end
+
+# Load the SCM plugin appropriate to your project:
+require "capistrano/scm/git"
+install_plugin Capistrano::SCM::Git
 
 SSHKit::Backend::Netssh.configure do |ssh|
   ssh.connection_timeout = 30
