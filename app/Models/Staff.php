@@ -65,7 +65,7 @@ class Staff extends Authenticatable
         return $this->hasMany(RegistrationToken::class,'staff_id','id');
     }
 
-    public function get_check_list()
+    public function checks()
     {
         return $this->hasMany(Check::class,'staff_id','id');
     }
@@ -73,27 +73,6 @@ class Staff extends Authenticatable
     public function bots()
     {
         return $this->belongsToMany(Bot::class)->using(BotStaff::class)->withPivot('email_auth_token');
-    }
-
-    public function count_checkin_today()
-    {
-        return $this->get_check_list
-            ->where('type', Check::TYPE_NORMAL)
-            ->where('checkin_at', '>=', Carbon::today())->count();
-    }
-
-    public function count_checkout_today()
-    {
-        return $this->get_check_list
-            ->where('type', Check::TYPE_NORMAL)
-            ->where('checkin_at', '>=', Carbon::today())
-            ->where('checkout_at', '>=', Carbon::today())
-            ->count();
-    }
-
-    public function count_check_diff_today()
-    {
-        return $this->count_checkin_today() - $this->count_checkout_today();
     }
 
     public function findForPassport($username)

@@ -298,7 +298,7 @@ class CheckController extends Controller
         switch ($request->input('action_type')) {
 
             case 'lookup':
-                $rows = Staff::with(['profile', 'get_check_list'])
+                $rows = Staff::with(['profile', 'checks'])
                     ->whereIn('id', $request->input('id'))
                     ->get()
                     ->map(function ($item, $key) {
@@ -370,7 +370,7 @@ class CheckController extends Controller
     {
         $on_board_date = Carbon::createFromFormat('Y-m-d', $staff->profile->on_board_date);
 
-        $checks = $staff->get_check_list
+        $checks = $staff->checks
             ->where('type', Check::TYPE_ANNUAL_LEAVE)
             ->where('checkin_at', ">=", $on_board_date->addMonths($months));
 

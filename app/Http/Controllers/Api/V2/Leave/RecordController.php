@@ -120,7 +120,7 @@ class RecordController extends Controller
     {
         $staff = Auth::guard('api')->user();
 
-        $leaves = $staff->get_check_list()->with(['leave_reason', 'staff'])->where(function ($query) use ($request) {
+        $leaves = $staff->checks()->with(['leave_reason', 'staff'])->where(function ($query) use ($request) {
                 if ($request->filled('start_date')) {
                     $query->where('checkin_at', ">=", $request->start_date);
                 }

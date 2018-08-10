@@ -46,7 +46,7 @@ class AutoCheck extends Command
         }
         //$fakeTime = Carbon::create(2018,6,1,8);
         //Carbon::setTestNow($fakeTime);
-        $staffs = Staff::with(['get_check_list'])
+        $staffs = Staff::with(['checks'])
             ->whereHas('profile', function ($query) {
                 $query->where('identity', Profile::ID_FULL_TIME);
             })->get();
@@ -69,8 +69,7 @@ class AutoCheck extends Command
             $noon_start_random_time = $noon_start->copy()->subMinutes(10)->addMinutes(rand(0,20))->addSeconds(rand(0,60));
             //12:50~13:10
             $noon_end_random_time = $noon_end->copy()->subMinutes(10)->addMinutes(rand(0,20))->addSeconds(rand(0,60));
-            $leaves = $staff->get_check_list
-                ->isLeave()
+            $leaves = $staff->checks->isLeave()
                 ->where('checkin_at', '>=', $checkin_start)
                 ->where('checkin_at', '<=', $checkout_end)
                 ->where('checkout_at', '<=', $checkout_end);

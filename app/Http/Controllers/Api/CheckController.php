@@ -136,7 +136,7 @@ class CheckController extends Controller
                 break; 
 
             case 1:
-                $check = $staff->get_check_list
+                $check = $staff->checks
                     ->where('checkin_at', '>=', Carbon::today())
                     ->where('checkout_at', null)
                     ->first();

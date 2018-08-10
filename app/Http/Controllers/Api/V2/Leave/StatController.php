@@ -84,7 +84,7 @@ class StatController extends Controller
     {
         $on_board_date = Carbon::createFromFormat('Y-m-d', $staff->profile->on_board_date);
 
-        $checks = $staff->get_check_list
+        $checks = $staff->checks
             ->where('type', Check::TYPE_ANNUAL_LEAVE)
             ->where('checkin_at', ">=", $on_board_date->addMonths($added_months));
 
@@ -152,7 +152,7 @@ class StatController extends Controller
         }
         $select_string = substr($select_string, 0, -1);
 
-        $data = $staff->get_check_list()->isLeave()->where(function ($query) use ($request) {
+        $data = $staff->checks()->isLeave()->where(function ($query) use ($request) {
                 if ($request->filled('start_date')) {
                     $query->where('checkin_at', ">=", $request->start_date);
                 }
