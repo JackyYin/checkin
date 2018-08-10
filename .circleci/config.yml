@@ -64,7 +64,8 @@ jobs:
           name: Notify To Stride When Test Success
           when: on_success
           command: |
-            curl -X POST \-H 'Content-Type: application/json' \
+            curl -X POST \
+            -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer '"${STRIDE_TOKEN}"'' \
             -d '{"body":{"version":1,"type":"doc","content":[{"type":"applicationCard","attrs": {"text": "test message","collapsible":true,"title":{"text":"Circle CI Report","user":{"icon":{"url":"https://a.slack-edge.com/7f1a0/plugins/circleci/assets/service_512.png","label":"Circle CI"}}},"description":{"text":"'"${CIRCLE_USERNAME}"' built '"${CIRCLE_PROJECT_REPONAME}"' '"${CIRCLE_BRANCH}"'"},"details":[{"lozenge": {"text": "Build Success","appearance": "success"}}],"link":{"url":"'"${CIRCLE_BUILD_URL}"'"}}}]}}' \
             --url "${STRIDE_URL}"
@@ -83,13 +84,32 @@ jobs:
         image: circleci/classic:latest
     steps:
       - checkout
-      - run: cp .env.example .env
+      - run: cp .env.circleci .env
       - run:
           name: Bundle Install
           command: bundle check || bundle install
       - run:
           name: Deploy if tests pass and branch is Master
           command: bundle exec cap production deploy
+      # notification to stride
+      - run:
+          name: Notify To Stride When Test Success
+          when: on_success
+          command: |
+            curl -X POST \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer '"${STRIDE_TOKEN}"'' \
+            -d '{"body":{"version":1,"type":"doc","content":[{"type":"applicationCard","attrs": {"text": "test message","collapsible":true,"title":{"text":"Circle CI Report","user":{"icon":{"url":"https://a.slack-edge.com/7f1a0/plugins/circleci/assets/service_512.png","label":"Circle CI"}}},"description":{"text":"'"${CIRCLE_USERNAME}"' built '"${CIRCLE_PROJECT_REPONAME}"' '"${CIRCLE_BRANCH}"'"},"details":[{"lozenge": {"text": "Build Success","appearance": "success"}}],"link":{"url":"'"${CIRCLE_BUILD_URL}"'"}}}]}}' \
+            --url "${STRIDE_URL}"
+      - run:
+          name: Notify To Stride When Test Fail
+          when: on_fail
+          command: |
+            curl -X POST \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer '"${STRIDE_TOKEN}"'' \
+            -d '{"body":{"version":1,"type":"doc","content":[{"type":"applicationCard","attrs": {"text": "test message","collapsible":true,"title":{"text":"Circle CI Report","user":{"icon":{"url":"https://a.slack-edge.com/7f1a0/plugins/circleci/assets/service_512.png","label":"Circle CI"}}},"description":{"text":"'"${CIRCLE_USERNAME}"' built '"${CIRCLE_PROJECT_REPONAME}"' '"${CIRCLE_BRANCH}"'"},"details":[{"lozenge": {"text": "Build Failed","appearance": "removed"}}],"link":{"url":"'"${CIRCLE_BUILD_URL}"'"}}}]}}' \
+            --url "${STRIDE_URL}"
 
 workflows:
   version: 2
