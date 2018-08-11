@@ -6,12 +6,6 @@ require "capistrano/setup"
 # Include default deployment tasks
 require "capistrano/deploy"
 
-if ENV['STRIDE_URL']
-  require 'capistrano/stride'
-  set :stride_url, ENV['STRIDE_URL']
-  set :stride_token, ENV['STRIDE_TOKEN']
-end
-
 # Load the SCM plugin appropriate to your project:
 require "capistrano/scm/git"
 install_plugin Capistrano::SCM::Git
