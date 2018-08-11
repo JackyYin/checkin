@@ -34,7 +34,6 @@ namespace :deploy do
   after 'deploy:published', 'docker:build'
   after 'docker:build', 'docker:compose'
 
-  ### Yii (base on Docker) flow
   after 'docker:compose', 'custom:post_setup'
 
   ### Rollback flow
