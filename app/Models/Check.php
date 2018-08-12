@@ -72,4 +72,14 @@ class Check extends Model
     {
         return $query->where('type', '!=', self::TYPE_NORMAL);
     }
+
+    public function isLeave()
+    {
+        return $this->type != Check::TYPE_NORMAL;
+    }
+
+    public function isSimple()
+    {
+        return $this->isLeave() && $this->type != Check::TYPE_ONLINE && $this->type != Check::TYPE_OFFICIAL_LEAVE;
+    }
 }

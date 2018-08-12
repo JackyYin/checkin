@@ -62,6 +62,7 @@ Route::group(['namespace' => 'Api'], function () {
                 //紀錄
                 Route:: group(['prefix' => 'record', 'namespace' => 'Leave'], function () {
                     Route::get('/', ['uses' => 'RecordController@index']);
+                    Route::get('/search', ['uses' => 'RecordController@search']);
                     Route::get('/me', ['uses' => 'RecordController@me']);
                 });
             });

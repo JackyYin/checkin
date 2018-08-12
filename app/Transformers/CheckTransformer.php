@@ -17,12 +17,33 @@ class CheckTransformer extends TransformerAbstract
     ];
 
     /**
+     * If contains simple return (not including reason)
+     *
+     * @var bool
+     */
+    protected $simple;
+
+    public function __construct($simple)
+    {
+        $this->simple = $simple;
+    }
+    /**
      * Turn this item object into a generic array
      *
      * @return array
      */
     public function transform(Check $check)
     {
+        if ($this->simple && $check->isSimple()) {
+            return [
+                'id'          => (int) $check->id,
+                'type'        => $check->type,
+                'checkin_at'  => $check->checkin_at,
+                'checkout_at' => $check->checkout_at,
+                'name'        => $check->staff->name,
+            ];
+        }
+
         return [
             'id'          => (int) $check->id,
             'type'        => $check->type,

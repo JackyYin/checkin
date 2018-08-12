@@ -86,6 +86,59 @@ class RecordController extends Controller
     }
     /**
      *
+     * @SWG\Get(path="/api/v2/leave/record/search",
+     *   tags={"Leave", "V2", "Record"},
+     *   security={
+     *      {"api-user": {}}
+     *   },
+     *   summary="搜尋請假紀錄",
+     *   operationId="search-leave-records",
+     *   produces={"application/json"},
+     *   @SWG\Parameter(
+     *       name="checkin_at",
+     *       in="query",
+     *       type="string",
+     *   ),
+     *   @SWG\Parameter(
+     *       name="checkout_at",
+     *       in="query",
+     *       type="string",
+     *   ),
+     *   @SWG\Parameter(
+     *       name="keyword",
+     *       in="query",
+     *       type="string",
+     *   ),
+     *   @SWG\Response(response="default", description="操作成功")
+     * )
+     */
+    public function search(\App\Http\Requests\Api\V2\Leave\Record\SearchRequest $request)
+    {
+        $leaves = Check::with(['leave_reason', 'staff.profile'])
+            ->whereHas('staff', function ($query) use ($request) {
+                if ($request->filled('keyword')) {
+                    $query->where('name', 'like', "%{$request->keyword}%")
+                        ->orWhere('email', 'like', "%{$request->keyword}%")
+                        ->orWhereHas('profile', function ($query) use ($request) {
+                            $query->where('gender', 'like', "%{$request->keyword}%")
+                                ->orWhere('group', 'like', "%{$request->keyword}%");
+                        });
+                }
+            })
+            ->where(function ($query) use ($request) {
+                if ($request->filled('checkin_at')) {
+                    $query->where('checkin_at', ">=", $request->checkin_at);
+                }
+
+                if ($request->filled('checkout_at')) {
+                    $query->where('checkout_at', "<=", $request->checkout_at);
+                }
+        })->isLeave()->get();
+
+        return $this->response(200, fractal()->collection($leaves, new CheckTransformer(true)));
+    }
+    /**
+     *
      * @SWG\Get(path="/api/v2/leave/record/me",
      *   tags={"Leave", "V2", "Record"},
      *   security={
