@@ -23,7 +23,7 @@ class CheckTransformer extends TransformerAbstract
      */
     protected $simple;
 
-    public function __construct($simple)
+    public function __construct($simple = false)
     {
         $this->simple = $simple;
     }
@@ -34,7 +34,7 @@ class CheckTransformer extends TransformerAbstract
      */
     public function transform(Check $check)
     {
-        if ($this->simple && $check->isSimple()) {
+        if ($this->simple && $check->simple()) {
             return [
                 'id'          => (int) $check->id,
                 'type'        => $check->type,

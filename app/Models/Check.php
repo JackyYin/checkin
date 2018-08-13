@@ -78,7 +78,7 @@ class Check extends Model
         return $this->type != Check::TYPE_NORMAL;
     }
 
-    public function isSimple()
+    public function simple()
     {
         return $this->isLeave() && $this->type != Check::TYPE_ONLINE && $this->type != Check::TYPE_OFFICIAL_LEAVE;
     }
