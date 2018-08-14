@@ -69,10 +69,10 @@ class AutoCheck extends Command
             $noon_start_random_time = $noon_start->copy()->subMinutes(10)->addMinutes(rand(0,20))->addSeconds(rand(0,60));
             //12:50~13:10
             $noon_end_random_time = $noon_end->copy()->subMinutes(10)->addMinutes(rand(0,20))->addSeconds(rand(0,60));
-            $leaves = $staff->checks->isLeave()
+            $leaves = $staff->checks()->isLeave()
                 ->where('checkin_at', '>=', $checkin_start)
                 ->where('checkin_at', '<=', $checkout_end)
-                ->where('checkout_at', '<=', $checkout_end);
+                ->where('checkout_at', '<=', $checkout_end)->get();
             if ($leaves->isEmpty()) {
                     Check::create([
                             'staff_id'    => $staff->id,
