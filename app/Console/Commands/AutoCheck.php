@@ -41,11 +41,11 @@ class AutoCheck extends Command
      */
     public function handle()
     {
+        //$fakeTime = Carbon::create(2018,8,14);
+        //Carbon::setTestNow($fakeTime);
         if (Carbon::now()->isWeekend()) {
             return;
         }
-        //$fakeTime = Carbon::create(2018,6,1,8);
-        //Carbon::setTestNow($fakeTime);
         $staffs = Staff::with(['checks'])
             ->whereHas('profile', function ($query) {
                 $query->where('identity', Profile::ID_FULL_TIME);
@@ -87,8 +87,8 @@ class AutoCheck extends Command
                     $leave_from = Carbon::createFromFormat('Y-m-d H:i:s', $leave->checkin_at);
                     $leave_to   = Carbon::createFromFormat('Y-m-d H:i:s', $leave->checkout_at);
                     //正負10分鐘
-                    $leave_from_random_time = $leave_from->subMinutes(10)->addMinutes(rand(0,20));
-                    $leave_to_random_time = $leave_to->subMinutes(10)->addMinutes(rand(0,20));
+                    $leave_from_random_time = $leave_from->copy()->subMinutes(10)->addMinutes(rand(0,20));
+                    $leave_to_random_time = $leave_to->copy()->subMinutes(10)->addMinutes(rand(0,20));
                     //不用打開頭
                     if ($leave_from->between($checkin_start, $checkin_end)) {
                         //不用打結尾
