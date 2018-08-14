@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Auth;
-use App\Helpers\StrideHelper;
 use App\Helpers\LeaveHelper;
 use App\Transformers\CheckTransformer;
 use App\Models\Staff;
@@ -15,13 +14,6 @@ use App\Models\LeaveReason;
 
 class LeaveController extends Controller
 {
-    protected $StrideHelper;
-
-    public function __construct()
-    {
-        $this->StrideHelper = new StrideHelper();
-    }
-
     /**
      * @SWG\Tag(name="Leave", description="請假")
      */
@@ -201,8 +193,8 @@ class LeaveController extends Controller
             'reason'   => $request->reason,
         ]);
 
-        $this->StrideHelper->roomNotification($check, "Create");
-        $this->StrideHelper->personalNotification($check, "Create");
+        \App\Jobs\Stride\RoomNotification::dispatch($check, "Create");
+        \App\Jobs\Stride\PersonalNotification::dispatch($check, "Create");
 
         if ($request->header('Accept') == 'text/plain') {
             $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
@@ -301,8 +293,8 @@ class LeaveController extends Controller
             ]);
         }
 
-        $this->StrideHelper->roomNotification($leave, "Edit");
-        $this->StrideHelper->personalNotification($leave, "Edit");
+        \App\Jobs\Stride\RoomNotification::dispatch($leave, "Edit");
+        \App\Jobs\Stride\PersonalNotification::dispatch($leave, "Edit");
 
         if ($request->header('Accept') == 'text/plain') {
             $reply_message =

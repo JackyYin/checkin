@@ -41,6 +41,9 @@ RUN touch /var/log/cron.log \
     && crontab /etc/cron.d/laravel-cron \
     && chmod 600 /etc/crontab
 
+#php workers log file
+RUN touch /var/log/laravel-worker.log
+
 # configurations
 COPY ./Dockerconfig/apache2.conf       /etc/apache2/apache2.conf
 COPY ./Dockerconfig/www.conf           /etc/php/7.2/fpm/pool.d/www.conf
