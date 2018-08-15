@@ -92,12 +92,12 @@ class StatController extends Controller
     }
     /**
      *
-     * @SWG\Get(path="/api/v2/leave/stat",
+     * @SWG\Get(path="/api/v2/leave/stat/me",
      *   tags={"Leave", "V2"},
      *   security={
      *      {"api-user": {}}
      *   },
-     *   summary="取得請假統計時數",
+     *   summary="取得個人請假統計時數",
      *   operationId="get-leave-stat",
      *   produces={"application/json"},
      *   @SWG\Parameter(
@@ -122,7 +122,7 @@ class StatController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function index(\App\Http\Requests\Api\V2\Leave\Stat\IndexRequest $request)
+    public function me(\App\Http\Requests\Api\V2\Leave\Stat\MeRequest $request)
     {
         $staff = Auth::guard('api')->user();
 

@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\V2\Leave\Stat;
 
 use App\Http\Requests\FormRequest;
 
-class IndexRequest extends FormRequest
+class MeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
