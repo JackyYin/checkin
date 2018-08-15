@@ -8,7 +8,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Staff;
 
-class AuthenticationEmail extends Mailable
+class AuthenticationEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
