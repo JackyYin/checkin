@@ -29,6 +29,7 @@ class LeaveController extends Controller
      *   tags={"Leave"},
      *   summary="取得假別列表",
      *   operationId="get-leave-type",
+     *   deprecated=true,
      *   produces={"text/plain"},
      *   @SWG\Parameter(
      *       name="line_id",
@@ -108,6 +109,7 @@ class LeaveController extends Controller
      *   tags={"Leave"},
      *   summary="申請請假",
      *   operationId="request-leave",
+     *   deprecated=true,
      *   produces={"application/json"},
      *   @SWG\Parameter(
      *       name="line_id",
@@ -265,6 +267,7 @@ class LeaveController extends Controller
      *   tags={"Leave"},
      *   summary="申請晚到",
      *   operationId="request-late",
+     *   deprecated=true,
      *   produces={"application/json"},
      *   @SWG\Parameter(
      *       name="line_id",
@@ -372,6 +375,7 @@ class LeaveController extends Controller
      *   tags={"Leave"},
      *   summary="申請online",
      *   operationId="request-online",
+     *   deprecated=true,
      *   produces={"application/json"},
      *   @SWG\Parameter(
      *       name="line_id",

@@ -22,6 +22,7 @@ class RegisterController extends Controller
      *   tags={"Auth"},
      *   summary="註冊手續",
      *   operationId="register",
+     *   deprecated=true,
      *   produces={"text/plain"},
      *   @SWG\Parameter(
      *       name="email",
@@ -97,6 +98,7 @@ class RegisterController extends Controller
      *   tags={"Auth"},
      *   summary="註冊驗證手續",
      *   operationId="active",
+     *   deprecated=true,
      *   produces={"text/plain"},
      *   @SWG\Parameter(
      *       name="auth_code",
