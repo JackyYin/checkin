@@ -84,8 +84,8 @@ class AutoCheck extends Command
             else {
                 if ($leaves->count() == 1) {
                     $leave = $leaves->first();
-                    $leave_from = Carbon::createFromFormat('Y-m-d H:i:s', $leave->checkin_at);
-                    $leave_to   = Carbon::createFromFormat('Y-m-d H:i:s', $leave->checkout_at);
+                    $leave_from = $leave->checkin_at;
+                    $leave_to   = $leave->checkout_at;
                     //正負10分鐘
                     $leave_from_random_time = $leave_from->copy()->subMinutes(10)->addMinutes(rand(0,20));
                     $leave_to_random_time = $leave_to->copy()->subMinutes(10)->addMinutes(rand(0,20));

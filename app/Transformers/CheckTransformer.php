@@ -38,8 +38,8 @@ class CheckTransformer extends TransformerAbstract
             return [
                 'id'          => (int) $check->id,
                 'type'        => $check->type,
-                'checkin_at'  => $check->checkin_at,
-                'checkout_at' => $check->checkout_at,
+                'checkin_at'  => $check->checkin_at->toDateTimeString(),
+                'checkout_at' => $check->checkout_at->toDateTimeString(),
                 'name'        => $check->staff->name,
             ];
         }
@@ -47,8 +47,8 @@ class CheckTransformer extends TransformerAbstract
         return [
             'id'          => (int) $check->id,
             'type'        => $check->type,
-            'checkin_at'  => $check->checkin_at,
-            'checkout_at' => $check->checkout_at,
+            'checkin_at'  => $check->checkin_at->toDateTimeString(),
+            'checkout_at' => $check->checkout_at->toDateTimeString(),
             'reason'      => $check->leave_reason ? $check->leave_reason->reason : '' ,
             'name'        => $check->staff->name,
             

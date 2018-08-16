@@ -115,12 +115,12 @@ class Check extends Model
         }
     }
 
-    public function getNoonStartAttribute($date)
+    public function getNoonStartAttribute()
     {
         return Carbon::createFromFormat('Y-m-d H:i:s', $this->checkin_at->toDateString()." ".config('check.noon.start'));
     }
 
-    public function getNoonEndAttribute($date)
+    public function getNoonEndAttribute()
     {
         return Carbon::createFromFormat('Y-m-d H:i:s', $this->checkout_at->toDateString()." ".config('check.noon.end'));
     }
