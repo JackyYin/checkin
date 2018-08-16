@@ -71,7 +71,7 @@ class Check extends Model
      */
     protected $hidden = [];
 
-    protected $appends = ['minutes'];
+    protected $appends = [];
 
     public $timestamps = false;
 

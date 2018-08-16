@@ -235,7 +235,9 @@ class StatController extends Controller
 
     private function statisticHelper($checks, $EnumTypes, $staff_ids = [])
     {
-        $results = $checks->groupBy('staff_id')->map(function ($collection) use ($EnumTypes) {
+        $results = $checks->map(function ($item) {
+            return $item->append('minutes');
+        })->groupBy('staff_id')->map(function ($collection) use ($EnumTypes) {
             $result = (object) [
                 'name' => '',
                 'stat' => (object)[],
