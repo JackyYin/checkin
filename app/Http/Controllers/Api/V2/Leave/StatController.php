@@ -230,10 +230,10 @@ class StatController extends Controller
                 }
         })->whereNotNull('checkin_at')->whereNotNull('checkout_at')->get();
 
-        return $this->response(200, $this->statisticHelper($checks, $EnumTypes, $request->staff_ids));
+        return $this->response(200, $this->statisticHelper($checks, $EnumTypes, $request->filled('staff_ids') ? $request->staff_ids : []));
     }
 
-    private function statisticHelper($checks, $EnumTypes, $staff_ids)
+    private function statisticHelper($checks, $EnumTypes, $staff_ids = [])
     {
         $results = $checks->groupBy('staff_id')->map(function ($collection) use ($EnumTypes) {
             $result = (object) [
