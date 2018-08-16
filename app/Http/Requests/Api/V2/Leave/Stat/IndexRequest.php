@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Api\V2\Leave\Record;
+namespace App\Http\Requests\Api\V2\Leave\Stat;
 
 use App\Http\Requests\FormRequest;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class IndexRequest extends FormRequest
 {
@@ -30,7 +28,6 @@ class IndexRequest extends FormRequest
             'end_date'   => 'date_format:Y-m-d',
         ];
     }
-
     /**
      * Configure the validator instance.
      *

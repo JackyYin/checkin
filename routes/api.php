@@ -56,6 +56,7 @@ Route::group(['namespace' => 'Api'], function () {
                 Route::delete('/{id}', ['uses' => 'LeaveController@destroy'])->where('id', '[0-9]+');
                 //統計相關
                 Route:: group(['prefix' => 'stat', 'namespace' => 'Leave'], function () {
+                    Route::get('/', ['uses' => 'StatController@index']);
                     Route::get('/me', ['uses' => 'StatController@me']);
                     Route::get('/annual', ['uses' => 'StatController@getAnnualStat']);
                 });

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 use App\Traits\Enums;
 
 class Check extends Model
@@ -35,6 +36,20 @@ class Check extends Model
         self::TYPE_MARRIAGE_LEAVE   => '婚假',
     ];
 
+    protected $enumEngTypes = [
+        self::TYPE_NORMAL           => "normal",
+        self::TYPE_PERSONAL_LEAVE   => "personal",
+        self::TYPE_ANNUAL_LEAVE     => "annual",
+        self::TYPE_OFFICIAL_LEAVE   => "official",
+        self::TYPE_SICK_LEAVE       => "sick",
+        self::TYPE_ONLINE           => "online",
+        self::TYPE_LATE             => "late",
+        self::TYPE_MOURNING_LEAVE   => "mourning",
+        self::TYPE_MATERNITY_LEAVE  => "maternity",
+        self::TYPE_PATERNITY_LEAVE  => "paternity",
+        self::TYPE_MARRIAGE_LEAVE   => "marriage",
+    ];
+
     protected $casts = [
         'type' => 'integer',
     ];
@@ -56,6 +71,8 @@ class Check extends Model
      */
     protected $hidden = [];
 
+    protected $appends = ['minutes'];
+
     public $timestamps = false;
 
     public function leave_reason()
@@ -75,11 +92,26 @@ class Check extends Model
 
     public function isLeave()
     {
-        return $this->type != Check::TYPE_NORMAL;
+        return $this->type != self::TYPE_NORMAL;
     }
 
     public function simple()
     {
-        return $this->isLeave() && $this->type != Check::TYPE_ONLINE && $this->type != Check::TYPE_OFFICIAL_LEAVE;
+        return $this->isLeave() && $this->type != self::TYPE_ONLINE && $this->type != self::TYPE_OFFICIAL_LEAVE;
+    }
+
+    public function getMinutesAttribute()
+    {
+        $checkin_at = Carbon::createFromFormat('Y-m-d H:i:s', $this->checkin_at);
+        $checkout_at = Carbon::createFromFormat('Y-m-d H:i:s', $this->checkout_at);
+        $noon_start = Carbon::createFromFormat('Y-m-d H:i:s', $checkin_at->toDateString()." ".config('check.noon.start'));
+        $noon_end = Carbon::createFromFormat('Y-m-d H:i:s', $checkout_at->toDateString()." ".config('check.noon.end'));
+
+        if ($checkin_at->lte($noon_start) && $checkout_at->gte($noon_end)) {
+            return $checkin_at->diffInMinutes($checkout_at) - ($noon_start->diffInMinutes($noon_end));
+        }
+        else {
+            return $checkin_at->diffInMinutes($checkout_at);
+        }
     }
 }

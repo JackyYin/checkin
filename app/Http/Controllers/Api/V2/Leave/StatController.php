@@ -98,7 +98,7 @@ class StatController extends Controller
      *      {"api-user": {}}
      *   },
      *   summary="取得個人請假統計時數",
-     *   operationId="get-leave-stat",
+     *   operationId="get-my-leave-stat",
      *   produces={"application/json"},
      *   @SWG\Parameter(
      *       name="start_date",
@@ -126,18 +126,7 @@ class StatController extends Controller
     {
         $staff = Auth::guard('api')->user();
 
-        $EnumTypes = array (
-            Check::TYPE_PERSONAL_LEAVE  => "personal",
-            Check::TYPE_ANNUAL_LEAVE    => "annual",
-            Check::TYPE_OFFICIAL_LEAVE  => "official",
-            Check::TYPE_SICK_LEAVE      => "sick",
-            Check::TYPE_ONLINE          => "online",
-            Check::TYPE_LATE            => "late",
-            Check::TYPE_MOURNING_LEAVE  => "mourning",
-            Check::TYPE_MATERNITY_LEAVE => "maternity",
-            Check::TYPE_PATERNITY_LEAVE => "paternity",
-            Check::TYPE_MARRIAGE_LEAVE  => "marriage",
-        );
+        $EnumTypes = array_except(Check::getEnum('engType'), Check::TYPE_NORMAL);
 
         if ($request->filled('types')) {
             $EnumTypes = array_only($EnumTypes, $request->types);
@@ -173,5 +162,107 @@ class StatController extends Controller
         return response()->json([
             'reply_message' => $array
         ]);
+    }
+    /**
+     *
+     * @SWG\Get(path="/api/v2/leave/stat",
+     *   tags={"Leave", "V2"},
+     *   security={
+     *      {"api-user": {}}
+     *   },
+     *   summary="取得請假統計時數總覽",
+     *   operationId="get-all-leave-stat",
+     *   produces={"application/json"},
+     *   @SWG\Parameter(
+     *       name="start_date",
+     *       in="query",
+     *       type="string",
+     *   ),
+     *   @SWG\Parameter(
+     *       name="end_date",
+     *       in="query",
+     *       type="string",
+     *   ),
+     *   @SWG\Parameter(
+     *       name="staff_ids[]",
+     *       in="query",
+     *       type="array",
+     *       collectionFormat="multi",
+     *       @SWG\Items(
+     *          type="integer",
+     *       ),
+     *   ),
+     *   @SWG\Parameter(
+     *       name="types[]",
+     *       in="query",
+     *       type="array",
+     *       collectionFormat="multi",
+     *       @SWG\Items(
+     *          type="integer",
+     *       ),
+     *   ),
+     *   @SWG\Response(response="default", description="操作成功")
+     * )
+     */
+    public function index(\App\Http\Requests\Api\V2\Leave\Stat\IndexRequest $request)
+    {
+        $EnumTypes = array_except(Check::getEnum('engType'), Check::TYPE_NORMAL);
+
+        if ($request->filled('types')) {
+            $EnumTypes = array_only($EnumTypes, $request->types);
+        }
+
+        $checks = Check::with('staff')->whereHas('staff', function ($query) use ($request) {
+            if ($request->filled('staff_ids')) {
+                $query->whereIn('id', $request->staff_ids);
+            }
+        })->isLeave()->where(function ($query) use ($request) {
+                if ($request->filled('start_date')) {
+                    $query->where('checkin_at', ">=", $request->start_date);
+                }
+
+                if ($request->filled('end_date')) {
+                    $query->where('checkout_at', "<=", $request->end_date);
+                }
+
+                if ($request->filled('types')) {
+                    $query->whereIn('type', $request->types);
+                }
+        })->whereNotNull('checkin_at')->whereNotNull('checkout_at')->get();
+
+        return $this->response(200, $this->statisticHelper($checks, $EnumTypes, $request->staff_ids));
+    }
+
+    private function statisticHelper($checks, $EnumTypes, $staff_ids)
+    {
+        $results = $checks->groupBy('staff_id')->map(function ($collection) use ($EnumTypes) {
+            $result = (object) [
+                'name' => '',
+                'stat' => (object)[],
+            ];
+            $result->name = $collection->first()->staff->name;
+            foreach ($EnumTypes as $type) {
+                $result->stat->$type = 0;
+            }
+
+            $collection->each(function ($check) use ($EnumTypes, $result) {
+                $result->stat->{$EnumTypes[$check->type]} += ($check->minutes / 60);
+            });
+
+            return $result;
+        })->values();
+
+        foreach(array_diff($staff_ids, $checks->pluck('staff_id')->toArray()) as $id) {
+            $new = (object) [
+                'name' => Staff::find($id)->name,
+                'stat' => (object)[],
+            ];
+
+            foreach ($EnumTypes as $type) {
+                $new->stat->$type = 0;
+            }
+            $results[] = $new;
+        }
+        return $results;
     }
 }
