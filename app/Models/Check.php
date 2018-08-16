@@ -73,6 +73,8 @@ class Check extends Model
 
     protected $appends = [];
 
+    protected $dates = ['checkin_at', 'checkout_at'];
+
     public $timestamps = false;
 
     public function leave_reason()
@@ -102,16 +104,24 @@ class Check extends Model
 
     public function getMinutesAttribute()
     {
-        $checkin_at = Carbon::createFromFormat('Y-m-d H:i:s', $this->checkin_at);
-        $checkout_at = Carbon::createFromFormat('Y-m-d H:i:s', $this->checkout_at);
-        $noon_start = Carbon::createFromFormat('Y-m-d H:i:s', $checkin_at->toDateString()." ".config('check.noon.start'));
-        $noon_end = Carbon::createFromFormat('Y-m-d H:i:s', $checkout_at->toDateString()." ".config('check.noon.end'));
+        $checkin_at = $this->checkin_at;
+        $checkout_at = $this->checkout_at;
 
-        if ($checkin_at->lte($noon_start) && $checkout_at->gte($noon_end)) {
-            return $checkin_at->diffInMinutes($checkout_at) - ($noon_start->diffInMinutes($noon_end));
+        if ($checkin_at->lte($this->noon_start) && $checkout_at->gte($this->noon_end)) {
+            return $checkin_at->diffInMinutes($checkout_at) - ($this->noon_start->diffInMinutes($this->noon_end));
         }
         else {
             return $checkin_at->diffInMinutes($checkout_at);
         }
+    }
+
+    public function getNoonStartAttribute($date)
+    {
+        return Carbon::createFromFormat('Y-m-d H:i:s', $this->checkin_at->toDateString()." ".config('check.noon.start'));
+    }
+
+    public function getNoonEndAttribute($date)
+    {
+        return Carbon::createFromFormat('Y-m-d H:i:s', $this->checkout_at->toDateString()." ".config('check.noon.end'));
     }
 }
