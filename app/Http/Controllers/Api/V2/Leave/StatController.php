@@ -124,24 +124,13 @@ class StatController extends Controller
      */
     public function me(\App\Http\Requests\Api\V2\Leave\Stat\MeRequest $request)
     {
-        $staff = Auth::guard('api')->user();
-
         $EnumTypes = array_except(Check::getEnum('engType'), Check::TYPE_NORMAL);
 
         if ($request->filled('types')) {
             $EnumTypes = array_only($EnumTypes, $request->types);
         }
 
-        $noon_start = explode(":", config('check.noon.start'))[0];
-        $noon_end = explode(":", config('check.noon.end'))[0];
-        $select_string = "";
-
-        foreach( $EnumTypes as $key => $value) {
-            $select_string .= "SUM(IF(type = ".$key.",  IF(checkin_at <= DATE_ADD(DATE(checkin_at), INTERVAL ".$noon_start."  HOUR) && checkout_at >= DATE_ADD(DATE(checkin_at), INTERVAL ".$noon_end." HOUR), TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at) - 60, TIMESTAMPDIFF(MINUTE,checkin_at,checkout_at)), 0) / 60) as ".$value.",";
-        }
-        $select_string = substr($select_string, 0, -1);
-
-        $data = $staff->checks()->isLeave()->where(function ($query) use ($request) {
+        $checks = $request->user()->checks()->isLeave()->where(function ($query) use ($request) {
                 if ($request->filled('start_date')) {
                     $query->where('checkin_at', ">=", $request->start_date);
                 }
@@ -149,19 +138,9 @@ class StatController extends Controller
                 if ($request->filled('end_date')) {
                     $query->where('checkout_at', "<=", $request->end_date);
                 }
-        } )->selectRaw($select_string)->first();
+        } )->get();
 
-        $array = json_decode(json_encode($data), true);
-
-        foreach ($array as $key => $value) {
-            if (is_null($value)) {
-                $array{$key} = 0;
-            }
-        }
-
-        return response()->json([
-            'reply_message' => $array
-        ]);
+        return $this->response(200, $this->statisticHelper($checks, $EnumTypes, [$request->user()->id])->first());
     }
     /**
      *
@@ -217,17 +196,17 @@ class StatController extends Controller
                 $query->whereIn('id', $request->staff_ids);
             }
         })->isLeave()->where(function ($query) use ($request) {
-                if ($request->filled('start_date')) {
-                    $query->where('checkin_at', ">=", $request->start_date);
-                }
+            if ($request->filled('start_date')) {
+                $query->where('checkin_at', ">=", $request->start_date);
+            }
 
-                if ($request->filled('end_date')) {
-                    $query->where('checkout_at', "<=", $request->end_date);
-                }
+            if ($request->filled('end_date')) {
+                $query->where('checkout_at', "<=", $request->end_date);
+            }
 
-                if ($request->filled('types')) {
-                    $query->whereIn('type', $request->types);
-                }
+            if ($request->filled('types')) {
+                $query->whereIn('type', $request->types);
+            }
         })->whereNotNull('checkin_at')->whereNotNull('checkout_at')->get();
 
         return $this->response(200, $this->statisticHelper($checks, $EnumTypes, $request->filled('staff_ids') ? $request->staff_ids : []));
@@ -235,9 +214,7 @@ class StatController extends Controller
 
     private function statisticHelper($checks, $EnumTypes, $staff_ids = [])
     {
-        $results = $checks->map(function ($item) {
-            return $item->append('minutes');
-        })->groupBy('staff_id')->map(function ($collection) use ($EnumTypes) {
+        $results = $checks->groupBy('staff_id')->map(function ($collection) use ($EnumTypes) {
             $result = (object) [
                 'name' => '',
                 'stat' => (object)[],
