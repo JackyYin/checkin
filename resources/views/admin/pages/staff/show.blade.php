@@ -132,7 +132,7 @@
             {{ Form::label('on_board_date', '到職日') }}
             </div>
             <div class="col-8">
-            {{ $staff->profile->on_board_date }}
+            {{ $staff->profile->on_board_date->toDateString() }}
             </div>
         </div>
         <div class="row">

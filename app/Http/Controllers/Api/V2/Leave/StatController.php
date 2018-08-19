@@ -27,38 +27,37 @@ class StatController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function getAnnualStat(Request $request)
+    public function getAnnualStat(\App\Http\Requests\Api\V2\Leave\Stat\AnnualRequest $request)
     {
         $staff = Auth::guard('api')->user();
 
-        $on_board_date = Carbon::createFromFormat('Y-m-d', $staff->profile->on_board_date);
-        $on_board_months = $on_board_date->diffInMonths(Carbon::now());
+        $on_board_months = $staff->profile->on_board_date->diffInMonths(Carbon::now());
 
         if ( $on_board_months < 6) {
             $annual_hours = 0;
-            $used_hours = $this->getUsedHours($staff, 0);
+            $used_hours = LeaveHelper::getUsedHours($staff, 0);
         }
         elseif ( 6 <= $on_board_months && $on_board_months < 12) {
             $annual_hours = 24;
-            $used_hours = $this->getUsedHours($staff, 6);
+            $used_hours = LeaveHelper::getUsedHours($staff, 6);
         }
         elseif ( 12 <= $on_board_months && $on_board_months < 24) {
             $annual_hours = 56;
-            $used_hours = $this->getUsedHours($staff, 12);
+            $used_hours = LeaveHelper::getUsedHours($staff, 12);
         }
         elseif ( 24 <= $on_board_months && $on_board_months < 36) {
             $annual_hours = 80;
-            $used_hours = $this->getUsedHours($staff, 24);
+            $used_hours = LeaveHelper::getUsedHours($staff, 24);
         }
         elseif ( 36 <= $on_board_months && $on_board_months < 60) {
             $annual_hours = 112;
             $which_year = floor(($on_board_months - 36) / 12);
-            $used_hours = $this->getUsedHours($staff, 36 + $which_year * 12);
+            $used_hours = LeaveHelper::getUsedHours($staff, 36 + $which_year * 12);
         }
         elseif ( 60 <= $on_board_months && $on_board_months < 120) {
             $annual_hours = 120;
             $which_year = floor(($on_board_months - 60) / 12);
-            $used_hours = $this->getUsedHours($staff, 60 + $which_year * 12);
+            $used_hours = LeaveHelper::getUsedHours($staff, 60 + $which_year * 12);
         }
         elseif ( 120 <= $on_board_months) {
             $annual_hours = 128 + (floor($on_board_months / 12) - 10) * 8;
@@ -66,7 +65,7 @@ class StatController extends Controller
                 $annual_hours = 240;
             }
             $which_year = floor(($on_board_months - 120) / 12);
-            $used_hours = $this->getUsedHours($staff, 120 + $which_year * 12);
+            $used_hours = LeaveHelper::getUsedHours($staff, 120 + $which_year * 12);
         }
 
         $remained_hours = $annual_hours - $used_hours > 0 ? $annual_hours - $used_hours : 0;
@@ -75,20 +74,7 @@ class StatController extends Controller
                ."已用特休時數: ".$used_hours."\n"
                ."剩下特休時數: ".$remained_hours;
 
-        return response()->json([
-            'reply_message' => $body,
-        ], 200);
-    }
-
-    private function getUsedHours($staff, $added_months)
-    {
-        $on_board_date = Carbon::createFromFormat('Y-m-d', $staff->profile->on_board_date);
-
-        $checks = $staff->checks
-            ->where('type', Check::TYPE_ANNUAL_LEAVE)
-            ->where('checkin_at', ">=", $on_board_date->addMonths($added_months));
-
-        return LeaveHelper::countHours($checks);
+        return $this->response(200, $body);
     }
     /**
      *

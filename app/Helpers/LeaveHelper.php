@@ -8,18 +8,20 @@ use Illuminate\Support\Collection;
 
 class LeaveHelper
 {
-    public static function countHours(Collection $checks)
-    { 
-        return $checks
-        ->sum(function ($item) {
-            $checkin = Carbon::createFromFormat('Y-m-d H:i:s', $item->checkin_at);
-            $checkout = Carbon::createFromFormat('Y-m-d H:i:s', $item->checkout_at);
+    public static function getUsedHours($staff, $added_months)
+    {
+        $checks = $staff->checks
+            ->whereIn('type', [
+                Check::TYPE_ANNUAL_LEAVE, Check::TYPE_PERSONAL_LEAVE, Check::TYPE_LATE, Check::TYPE_SICK_LEAVE
+            ])
+            ->where('checkin_at', ">=", $staff->profile->on_board_date->addMonths($added_months));
 
-            $noon_start = Carbon::createFromFormat('Y-m-d H:i:s', $checkin->toDateString()." ".config('check.noon.start'));
-            $noon_end   = Carbon::createFromFormat('Y-m-d H:i:s', $checkin->toDateString()." ".config('check.noon.end'));
+        return $checks->sum(function ($item) {
+            $checkin = $item->checkin_at;
+            $checkout = $item->checkout_at;
 
             //扣掉午休時間
-            if ($checkin->lte($noon_start) && $checkout->gte($noon_end)) {
+            if ($checkin->lte($item->noon_start) && $checkout->gte($item->noon_end)) {
                 $minutes = $checkin->diffInMinutes($checkout) - 60 ;
             }
             else {

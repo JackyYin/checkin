@@ -47,4 +47,7 @@ class Profile extends Model
      */
     protected $hidden = [];
 
+    protected $dates = [
+        'on_board_date'
+    ];
 }

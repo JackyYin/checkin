@@ -86,7 +86,7 @@
     </div>
     <div class="form-group">
         {{ Form::label('on_board_date', '到職日') }}
-        {{ Form::text('on_board_date', isset($staff->profile) ? $staff->profile->on_board_date : null, ['class' => 'form-control']) }}
+        {{ Form::text('on_board_date', isset($staff->profile) ? $staff->profile->on_board_date->toDateString() : null, ['class' => 'form-control']) }}
     </div>
     <div class="form-group">
         {{ Form::label('birth', '生日') }}

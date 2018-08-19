@@ -25,7 +25,7 @@ class ProfileTransformer extends TransformerAbstract
             'emergency_contact'       => ($profile->emergency_contact) ? $profile->emergency_contact : '',
             'emergency_contact_phone' => ($profile->emergency_contact_phone) ? $profile->emergency_contact_phone : '',
             'position'                => ($profile->position) ? $profile->position : '',
-            'on_board_date'           => ($profile->on_board_date) ? $profile->on_board_date : '',
+            'on_board_date'           => ($profile->on_board_date) ? $profile->on_board_date->toDateString() : '',
             'off_board_date'          => ($profile->off_board_date) ? $profile->off_board_date : '',
             'birth'                   => ($profile->birth) ? $profile->birth : '',
             'salary'                  => ($profile->salary) ? $profile->salary : '',

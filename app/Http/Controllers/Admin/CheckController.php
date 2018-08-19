@@ -299,6 +299,9 @@ class CheckController extends Controller
 
             case 'lookup':
                 $rows = Staff::with(['profile', 'checks'])
+                    ->whereHas('profile', function ($query) {
+                        $query->whereNotNull('on_board_date');
+                    })
                     ->whereIn('id', $request->input('id'))
                     ->get()
                     ->map(function ($item, $key) {
@@ -318,34 +321,33 @@ class CheckController extends Controller
 
     private function getAnnualLeaveStat($staff)
     {
-        $on_board_date = Carbon::createFromFormat('Y-m-d', $staff->profile->on_board_date);
-        $on_board_months = $on_board_date->diffInMonths(Carbon::now());
+        $on_board_months = $staff->profile->on_board_date->diffInMonths(Carbon::now());
 
         if ( $on_board_months < 6) {
             $annual_hours = 0;
-            $used_hours = $this->getUsedHours($staff, 0);
+            $used_hours = LeaveHelper::getUsedHours($staff, 0);
         }
         elseif ( 6 <= $on_board_months && $on_board_months < 12) {
             $annual_hours = 24;
-            $used_hours = $this->getUsedHours($staff, 6);
+            $used_hours = LeaveHelper::getUsedHours($staff, 6);
         }
         elseif ( 12 <= $on_board_months && $on_board_months < 24) {
             $annual_hours = 56;
-            $used_hours = $this->getUsedHours($staff, 12);
+            $used_hours = LeaveHelper::getUsedHours($staff, 12);
         }
         elseif ( 24 <= $on_board_months && $on_board_months < 36) {
             $annual_hours = 80;
-            $used_hours = $this->getUsedHours($staff, 24);
+            $used_hours = LeaveHelper::getUsedHours($staff, 24);
         }
         elseif ( 36 <= $on_board_months && $on_board_months < 60) {
             $annual_hours = 112;
             $which_year = floor(($on_board_months - 36) / 12);
-            $used_hours = $this->getUsedHours($staff, 36 + $which_year * 12);
+            $used_hours = LeaveHelper::getUsedHours($staff, 36 + $which_year * 12);
         }
         elseif ( 60 <= $on_board_months && $on_board_months < 120) {
             $annual_hours = 120;
             $which_year = floor(($on_board_months - 60) / 12);
-            $used_hours = $this->getUsedHours($staff, 60 + $which_year * 12);
+            $used_hours = LeaveHelper::getUsedHours($staff, 60 + $which_year * 12);
         }
         elseif ( 120 <= $on_board_months) {
             $annual_hours = 128 + (floor($on_board_months / 12) - 10) * 8;
@@ -353,7 +355,7 @@ class CheckController extends Controller
                 $annual_hours = 240;
             }
             $which_year = floor(($on_board_months - 120) / 12);
-            $used_hours = $this->getUsedHours($staff, 120 + $which_year * 12);
+            $used_hours = LeaveHelper::getUsedHours($staff, 120 + $which_year * 12);
         }
 
         $remained_hours = $annual_hours - $used_hours > 0 ? $annual_hours - $used_hours : 0;
@@ -364,16 +366,5 @@ class CheckController extends Controller
         $row['remained'] = $remained_hours;
 
         return $row;
-    }
-
-    private function getUsedHours($staff, $months)
-    {
-        $on_board_date = Carbon::createFromFormat('Y-m-d', $staff->profile->on_board_date);
-
-        $checks = $staff->checks
-            ->where('type', Check::TYPE_ANNUAL_LEAVE)
-            ->where('checkin_at', ">=", $on_board_date->addMonths($months));
-
-        return LeaveHelper::countHours($checks);
     }
 }
