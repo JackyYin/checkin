@@ -41,7 +41,7 @@ RUN touch /var/log/cron.log \
     && crontab /etc/cron.d/laravel-cron \
     && chmod 600 /etc/crontab
 
-#php workers log file
+#laravel workers log file
 RUN touch /var/log/laravel-worker.log
 
 # configurations
