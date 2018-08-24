@@ -11,6 +11,12 @@ services:
       - /www/checkin/shared:/www/checkin/shared
     env_file:
       - .env
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "2000k"
+            max-file: "30"
+
 
 networks:
   default:

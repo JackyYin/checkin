@@ -66,7 +66,7 @@ class StaffController extends Controller
         //第一列
         $columns = array(
             '員工編號', '姓名', '身分證字號', '性別', '電話號碼', 'email', '戶籍地址', '通訊地址', '銀行帳號', '緊急聯絡人',
-            '緊急聯絡電話', '職稱', '到職日', '離職日', '生日', '月支薪俸', '加保日期', '退保日期', '最高學歷', '經歷', '組別'
+            '緊急聯絡電話', '職稱', '到職日', '離職日', '生日', '月支薪俸', '加保日期', '退保日期', '最高學歷', '經歷', '組別', '備註'
         );
 
         $all_rows  = $this->getStaffRows();
@@ -271,11 +271,7 @@ class StaffController extends Controller
 
     private function getFormOptions()
     {
-        $options['identity'] = array(
-            Profile::ID_FULL_TIME => '全職',
-            Profile::ID_PART_TIME => '工讀',
-            Profile::ID_RESIGNED  => '離職',
-        );
+        $options['identity'] = Profile::getEnum('identity');
         $options['subscribed'] = array(
             STAFF::SUBSCRIBED     => '已訂閱',
             STAFF::NOT_SUBSCRIBED => '未訂閱',

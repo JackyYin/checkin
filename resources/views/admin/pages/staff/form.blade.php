@@ -118,6 +118,10 @@
         {{ Form::label('group', '組別') }}
         {{ Form::text('group', isset($staff->profile) ? $staff->profile->group : null, ['class' => 'form-control']) }}
     </div>
+    <div class="form-group">
+        {{ Form::label('note', '備註') }}
+        {{ Form::text('note', isset($staff->profile) ? $staff->profile->note : null, ['class' => 'form-control']) }}
+    </div>
 
     <nav class="navbar navbar-expand-lg bottom-navbar">
         <div class="collapse navbar-collapse">
