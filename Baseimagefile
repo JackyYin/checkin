@@ -19,7 +19,7 @@ ENV LC_ALL en_US.UTF-8
 CMD ["/sbin/my_init"]
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends netcat vim sudo software-properties-common apache2 wget\
+    && apt-get install -y --no-install-recommends netcat vim sudo software-properties-common nginx wget\
     && add-apt-repository -y ppa:ondrej/php \
     && apt-get update \
     && apt-get install -y php7.2 \
@@ -37,17 +37,13 @@ COPY crontab /etc/cron.d/laravel-cron
 RUN touch /var/log/cron.log
 
 # configurations
-COPY ./Dockerconfig/apache2.conf /etc/apache2/apache2.conf
-COPY ./Dockerconfig/www.conf     /etc/php/7.2/fpm/pool.d/www.conf
-RUN sed -i '/DocumentRoot/ s#/html#/html/public#g' /etc/apache2/sites-available/000-default.conf \
-    && sed -i '/DocumentRoot/ s#/html#/html/public#g' /etc/apache2/sites-available/default-ssl.conf \
-    && a2enmod rewrite \
-    && service apache2 restart
+COPY ./Dockerconfig/nginx.conf /etc/nginx/nginx.conf
+COPY ./Dockerconfig/www.conf   /etc/php/7.2/fpm/pool.d/www.conf
 
-# Adding additional apache2 daemon
-RUN mkdir /etc/service/apache2
-COPY ./Dockerconfig/service/apache2.sh /etc/service/apache2/run
-RUN chmod +x /etc/service/apache2/run
+# Adding additional nginx daemon
+RUN mkdir /etc/service/nginx
+COPY ./Dockerconfig/service/nginx.sh /etc/service/nginx/run
+RUN chmod +x /etc/service/nginx/run
 
 # Adding additional php-fpm daemon
 RUN mkdir /etc/service/php-fpm /run/php
