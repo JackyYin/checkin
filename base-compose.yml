@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+
+  base:
+    image: base
+    container_name: base
+    restart: always
+    volumes:
+      - ./:/var/www/html
+    env_file:
+      - .env
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "2000k"
+            max-file: "30"
+
+
+networks:
+  default:
+    external:
+      name: proxy_network
