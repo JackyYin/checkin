@@ -4,7 +4,7 @@ namespace :docker do
   task :build do
     on roles(:app) do
       within release_path do
-        execute :docker, "build -f BaseImagefile --rm -t #{fetch(:application)} ."
+        execute :docker, "build -f Baseimagefile --rm -t #{fetch(:application)} ."
       end
     end
   end
