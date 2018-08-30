@@ -34,7 +34,7 @@ RUN wget https://getcomposer.org/composer.phar -O /usr/local/bin/composer \
 
 #cronjobs
 COPY crontab /etc/cron.d/laravel-cron
-RUN touch /var/log/cron.log
+RUN touch /var/log/cron.log && chmod -R 600 /etc/crontab /etc/cron.d
 
 # configurations
 COPY ./Dockerconfig/nginx.conf /etc/nginx/nginx.conf
