@@ -20,7 +20,7 @@ class TokenGenerate extends Command
      *
      * @var string
      */
-    protected $description = 'Generate Oath Token for Bot';
+    protected $description = 'Generate Oauth Token for Bot';
 
     /**
      * Create a new command instance.
