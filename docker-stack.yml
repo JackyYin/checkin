@@ -1,0 +1,53 @@
+version: "3.5"
+
+services:
+  web:
+    image: registry.larvata.tw/checkin
+    networks:
+      - traefik_proxy_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s      
+      labels:
+        - "traefik.port=80"
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik_proxy_network"
+        - "traefik.frontend.rule=Host:checkin.larvata.tw"
+    environment:
+      - APP_ENV=$APP_ENV
+      - APP_KEY=$APP_KEY
+      - APP_DEBUG=$APP_DEBUG
+      - APP_LOG_LEVEL=$APP_LOG_LEVEL
+      - LOG_CHANNEL=$LOG_CHANNEL
+      - DB_CONNECTION=$DB_CONNECTION
+      - DB_HOST=$DB_HOST
+      - DB_PORT=$DB_PORT
+      - DB_DATABASE=$DB_DATABASE
+      - DB_USERNAME=$DB_USERNAME
+      - DB_PASSWORD=$DB_PASSWORD
+      - BROADCAST_DRIVER=$BROADCAST_DRIVER
+      - CACHE_DRIVER=$CACHE_DRIVER
+      - SESSION_DRIVER=$SESSION_DRIVER
+      - QUEUE_DRIVER=$QUEUE_DRIVER
+      - MAIL_DRIVER=$MAIL_DRIVER
+      - MAIL_HOST=$MAIL_HOST
+      - MAIL_PORT=$MAIL_PORT
+      - MAIL_USERNAME=$MAIL_USERNAME
+      - MAIL_PASSWORD=$MAIL_PASSWORD
+      - MAIL_ENCRYPTION=$MAIL_ENCRYPTION
+      - MAIL_FROM_ADDRESS=$MAIL_FROM_ADDRESS
+      - MAIL_FROM_NAME=$MAIL_FROM_NAME
+      - STRIDE_BOT_BASE_URL=$STRIDE_BOT_BASE_URL
+
+networks:
+  traefik_proxy_network:
+    external: true
+    name: traefik_proxy_network

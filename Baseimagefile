@@ -5,6 +5,7 @@
 FROM phusion/baseimage:master
 USER root
 MAINTAINER jackyyin
+EXPOSE 80 443
 
 # ...put your own build instructions here...
 RUN apt-get update \
@@ -55,7 +56,6 @@ RUN mkdir /etc/service/laravel-worker && touch /var/log/laravel-worker.log
 COPY ./Dockerconfig/service/laravel-worker.sh /etc/service/laravel-worker/run
 RUN chmod +x /etc/service/laravel-worker/run
 
-EXPOSE 80
-
+COPY . /var/www/html
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
