@@ -27,7 +27,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends php7.2-fpm php7.2-gd php7.2-mysql php7.2-mbstring php7.2-xml\
     && apt-get remove -y --purge software-properties-common
 
-# composer install
+# composer
 WORKDIR /var/www/html
 RUN wget https://getcomposer.org/composer.phar -O /usr/local/bin/composer \
     && chmod 755 /usr/local/bin/composer \
@@ -40,6 +40,8 @@ RUN touch /var/log/cron.log && chmod -R 600 /etc/crontab /etc/cron.d
 # configurations
 COPY ./Dockerconfig/nginx.conf /etc/nginx/nginx.conf
 COPY ./Dockerconfig/www.conf   /etc/php/7.2/fpm/pool.d/www.conf
+
+### Additional Deamon ###
 
 # Adding additional nginx daemon
 RUN mkdir /etc/service/nginx
@@ -55,6 +57,13 @@ RUN chmod +x /etc/service/php-fpm/run
 RUN mkdir /etc/service/laravel-worker && touch /var/log/laravel-worker.log
 COPY ./Dockerconfig/service/laravel-worker.sh /etc/service/laravel-worker/run
 RUN chmod +x /etc/service/laravel-worker/run
+
+### Additional Startup Process ###
+RUN mkdir -p /etc/my_init.d
+
+# Laravel
+COPY ./Dockerconfig/startup/artisan.sh /etc/my_init.d/artisan.sh
+RUN chmod +x /etc/my_init.d/artisan.sh
 
 COPY . /var/www/html
 # Clean up APT when done.
