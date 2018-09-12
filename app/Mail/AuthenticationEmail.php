@@ -32,7 +32,7 @@ class AuthenticationEmail extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        return $this->from(env('MAIL_FROM_ADDRESS'),env('MAIL_FROM_NAME'))
+        return $this->from(config('mail.from.address'),env('mail.from.name'))
             ->to($this->staff->email, $this->staff->name)
             ->subject("您好,請點擊連結以啟用帳號")
             ->view('emails.registration')
