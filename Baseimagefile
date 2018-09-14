@@ -20,7 +20,7 @@ ENV LC_ALL en_US.UTF-8
 CMD ["/sbin/my_init"]
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends netcat vim sudo software-properties-common nginx wget\
+    && apt-get install -y --no-install-recommends netcat vim sudo software-properties-common nginx wget git unzip\
     && add-apt-repository -y ppa:ondrej/php \
     && apt-get update \
     && apt-get install -y php7.2 \
