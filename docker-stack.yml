@@ -48,6 +48,7 @@ services:
       - STRIDE_BOT_BASE_URL=$STRIDE_BOT_BASE_URL
       - MEMCACHED_HOST=$MEMCACHED_HOST
       - MEMCACHED_PORT=$MEMCACHED_PORT
+      - REDIS_HOST=$REDIS_HOST
     volumes:
       - data-log:/var/www/html/storage/logs
   
