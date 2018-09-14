@@ -24,7 +24,8 @@ RUN apt-get update \
     && add-apt-repository -y ppa:ondrej/php \
     && apt-get update \
     && apt-get install -y php7.2 \
-    && apt-get install -y --no-install-recommends php7.2-fpm php7.2-gd php7.2-mysql php7.2-mbstring php7.2-xml\
+    && apt-get install -y --no-install-recommends php7.2-fpm php7.2-gd php7.2-mysql php7.2-mbstring php7.2-xml \
+    php7.2-memcached \
     && apt-get remove -y --purge software-properties-common
 
 # composer
