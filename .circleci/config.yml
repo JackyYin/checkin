@@ -92,7 +92,7 @@ jobs:
           command: docker build -f Baseimagefile --rm -t registry.larvata.tw/checkin:0.0.$CIRCLE_BUILD_NUM .
       - run:
           name: Push image
-          command: docker push registry.larvata.tw/checkin:0.0.$CIRCLE_NUILD_NUM
+          command: docker push registry.larvata.tw/checkin:0.0.$CIRCLE_BUILD_NUM
       # notification to stride
       - run:
           name: Notify To Stride When Test Success
