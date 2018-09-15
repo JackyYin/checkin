@@ -83,11 +83,7 @@ jobs:
     machine:
         image: circleci/classic:latest
     steps:
-      - add-ssh-keys
       - checkout
-      - run:
-          name: Copy Env File
-          command: cp .env.circleci .env
       - run:
           name: Login larvata registry
           command: echo $REGISTRY_PASSWORD | docker login registry.larvata.tw -u larvata --password-stdin
@@ -128,3 +124,5 @@ workflows:
           filters:
             branches:
               only: develop
+          environment:
+            IMAGE_VERSION: 0.0.$CIRCLE_BUILD_NUM
