@@ -74,11 +74,12 @@ services:
 
   redis:
     image: redis
+    command: redis-server --appendonly yes
     networks:
       - traefik_proxy_network
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 3
       placement:
         constraints:
           - node.role == manager
