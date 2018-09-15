@@ -88,7 +88,7 @@ jobs:
       - run:
           name: Copy Env File
           command: cp .env.circleci .env
-	  - run:
+      - run:
           name: Login larvata registry
           command: echo $REGISTRY_PASSWORD | docker login registry.larvata.tw -u larvata --password-stdin
       - run:
