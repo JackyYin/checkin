@@ -81,7 +81,7 @@ jobs:
 
   prod-deploy:
     machine:
-      - image: circleci/classic:latest
+      image: circleci/classic:latest
     environment:
       IMAGE_VERSION: 0.0.$CIRCLE_BUILD_NUM
     steps:
