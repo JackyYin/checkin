@@ -85,13 +85,18 @@ jobs:
     steps:
       - add-ssh-keys
       - checkout
-      - run: cp .env.circleci .env
       - run:
-          name: Bundle Install
-          command: bundle check || bundle install
+          name: Copy Env File
+          command: cp .env.circleci .env
+	  - run:
+          name: Login larvata registry
+          command: echo $REGISTRY_PASSWORD | docker login registry.larvata.tw -u larvata --password-stdin
       - run:
-          name: Deploy if tests pass and branch is Master
-          command: bundle exec cap production deploy
+          name: Build docker image
+          command: docker build -f Baseimagefile --rm -t registry.larvata.tw/checkin:$IMAGE_VERSION .
+      - run:
+          name: Push image
+          command: docker push registry.larvata.tw/checkin:$IMAGE_VERSION
       # notification to stride
       - run:
           name: Notify To Stride When Test Success
