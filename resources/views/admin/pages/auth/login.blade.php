@@ -9,6 +9,7 @@
                         <h1 class="text-center">登入</h1>
                     </div>
                     <div class="modal-body">
+                        @csrf
                         <div>
                             <div>
                                 <p>Email</p>
@@ -33,7 +34,6 @@
                                 <input type="checkbox" name="remember" value=1>
                             </div>
                         </div>
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     </div>
                     <div class="modal-footer">
                         <div class="form-group">
