@@ -1,3 +1,4 @@
 #!/bin/bash
-exec php /var/www/html/artisan config:cache &&
-    php /var/www/html/artisan route:cache
+set -e
+exec php /var/www/html/artisan config:cache
+exec php /var/www/html/artisan route:cache

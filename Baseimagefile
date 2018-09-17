@@ -15,6 +15,7 @@ RUN apt-get update \
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
+ENV HOME /root
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
@@ -61,6 +62,10 @@ RUN chmod +x /etc/service/laravel-worker/run
 
 ### Additional Startup Process ###
 RUN mkdir -p /etc/my_init.d
+
+# Composer
+COPY ./Dockerconfig/startup/composer.sh /etc/my_init.d/composer.sh
+RUN chmod +x /etc/my_init.d/composer.sh
 
 # Laravel
 COPY ./Dockerconfig/startup/artisan.sh /etc/my_init.d/artisan.sh
