@@ -2,5 +2,5 @@
 set -e
 export HOME=/root
 export COMPOSER_HOME=/root
-exec sudo -H composer self-update
+cd /var/www/html
 exec composer install
