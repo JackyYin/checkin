@@ -85,12 +85,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Add Oauth Public Key
-          command: echo $OAUTH_PUB >> storage/oauth-public.key
-      - run:
-          name: Add Oauth Private Key
-          command: echo $OAUTH_PRIVATE >> storage/oauth-private.key
-      - run:
           name: Login larvata registry
           command: echo $REGISTRY_PASSWORD | docker login registry.larvata.tw -u larvata --password-stdin
       - run:

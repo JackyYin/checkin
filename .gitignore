@@ -2,7 +2,6 @@
 /public/hot
 /public/storage
 /public/swagger-ui/index.html
-/storage/*.key
 /storage/api-docs
 /storage/debugbar
 /vendor
