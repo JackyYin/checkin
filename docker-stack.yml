@@ -2,7 +2,7 @@ version: "3.5"
 
 services:
   web:
-    image: registry.larvata.tw/checkin
+    image: registry.larvata.tw/checkin:latest
     networks:
       - traefik_proxy_network
     deploy:
@@ -36,6 +36,8 @@ services:
       - BROADCAST_DRIVER=$BROADCAST_DRIVER
       - CACHE_DRIVER=$CACHE_DRIVER
       - SESSION_DRIVER=$SESSION_DRIVER
+      - SESSION_SECURE_COOKIE=$SESSION_SECURE_COOKIE
+      - SESSION_CONNECTION=$SESSION_CONNECTION
       - QUEUE_DRIVER=$QUEUE_DRIVER
       - MAIL_DRIVER=$MAIL_DRIVER
       - MAIL_HOST=$MAIL_HOST
@@ -74,12 +76,11 @@ services:
 
   redis:
     image: redis
-    command: redis-server --appendonly yes
     networks:
       - traefik_proxy_network
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 1
       placement:
         constraints:
           - node.role == manager
