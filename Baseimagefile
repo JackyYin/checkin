@@ -61,19 +61,19 @@ COPY ./Dockerconfig/service/laravel-worker.sh /etc/service/laravel-worker/run
 RUN chmod +x /etc/service/laravel-worker/run
 
 ### Additional Startup Process ###
-RUN mkdir -p /etc/my_init.d
+RUN mkdir -p /etc/my_init.d /etc/rc.local
 
 # Composer
 COPY ./Dockerconfig/startup/composer.sh /etc/my_init.d/composer.sh
 RUN chmod +x /etc/my_init.d/composer.sh
 
-# Laravel
-COPY ./Dockerconfig/startup/artisan.sh /etc/my_init.d/artisan.sh
-RUN chmod +x /etc/my_init.d/artisan.sh
-
 # Change File Permission
 COPY ./Dockerconfig/startup/chmod.sh /etc/my_init.d/chmod.sh
 RUN chmod +x /etc/my_init.d/chmod.sh
+
+# Laravel
+COPY ./Dockerconfig/startup/artisan.sh /etc/rc.local
+RUN chmod +x /etc/rc.local
 
 COPY . /var/www/html
 # Clean up APT when done.
