@@ -61,7 +61,7 @@ COPY ./Dockerconfig/service/laravel-worker.sh /etc/service/laravel-worker/run
 RUN chmod +x /etc/service/laravel-worker/run
 
 ### Additional Startup Process ###
-RUN mkdir -p /etc/my_init.d /etc/rc.local
+RUN mkdir -p /etc/my_init.d
 
 # Composer
 COPY ./Dockerconfig/startup/composer.sh /etc/my_init.d/composer.sh
