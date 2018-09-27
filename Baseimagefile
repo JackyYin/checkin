@@ -30,18 +30,6 @@ RUN apt-get update \
 COPY ./Dockerconfig/nginx.conf /etc/nginx/nginx.conf
 COPY ./Dockerconfig/www.conf   /etc/php/7.2/fpm/pool.d/www.conf
 
-COPY . /var/www/html
-WORKDIR /var/www/html
-
-# Setup crontab
-RUN crontab /var/www/html/Dockerconfig/service/crontab
-
-# composer
-RUN wget https://getcomposer.org/composer.phar -O /usr/local/bin/composer \
-    && chmod 755 /usr/local/bin/composer \
-    && composer install --optimize-autoloader \
-    && composer dump-autoload --optimize
-
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
 
@@ -74,6 +62,21 @@ RUN chmod +x /etc/my_init.d/chmod.sh
 # Laravel
 COPY ./Dockerconfig/startup/artisan.sh /etc/rc.local
 RUN chmod +x /etc/rc.local
+
+WORKDIR /var/www/html
+
+# composer
+COPY composer.json .
+COPY composer.lock .
+RUN wget https://getcomposer.org/composer.phar -O /usr/local/bin/composer \
+    && chmod 755 /usr/local/bin/composer \
+    && composer install --no-scripts --no-autoloader
+COPY . .
+RUN composer dump-autoload --optimize
+
+# Setup crontab
+RUN touch /var/log/cron.log \
+    && crontab /var/www/html/Dockerconfig/service/crontab
 
 RUN chown -R www-data:www-data /var/www/html
 # Clean up APT when done.
