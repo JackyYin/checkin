@@ -26,19 +26,21 @@ RUN apt-get update \
     php7.2-memcached \
     && apt-get remove -y --purge software-properties-common
 
-# composer
-WORKDIR /var/www/html
-RUN wget https://getcomposer.org/composer.phar -O /usr/local/bin/composer \
-    && chmod 755 /usr/local/bin/composer \
-    && mkdir -p /var/www/html/vendor
-
-#cronjobs
-COPY crontab /etc/cron.d/laravel-cron
-RUN touch /var/log/cron.log && chmod -R 600 /etc/crontab /etc/cron.d
-
 # configurations
 COPY ./Dockerconfig/nginx.conf /etc/nginx/nginx.conf
 COPY ./Dockerconfig/www.conf   /etc/php/7.2/fpm/pool.d/www.conf
+
+COPY . /var/www/html
+WORKDIR /var/www/html
+
+# Setup crontab
+RUN crontab /var/www/html/Dockerconfig/service/crontab
+
+# composer
+RUN wget https://getcomposer.org/composer.phar -O /usr/local/bin/composer \
+    && chmod 755 /usr/local/bin/composer \
+    && composer install --optimize-autoloader \
+    && composer dump-autoload --optimize
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
@@ -56,26 +58,23 @@ COPY ./Dockerconfig/service/php-fpm.sh /etc/service/php-fpm/run
 RUN chmod +x /etc/service/php-fpm/run
 
 # Adding additional laravel-worker daemon
-RUN mkdir /etc/service/laravel-worker && touch /var/log/laravel-worker.log
+RUN mkdir /etc/service/laravel-worker
 COPY ./Dockerconfig/service/laravel-worker.sh /etc/service/laravel-worker/run
 RUN chmod +x /etc/service/laravel-worker/run
 
-### Additional Startup Process ###
+### First Level Startup Process ###
+
 RUN mkdir -p /etc/my_init.d
-
-# Composer
-COPY ./Dockerconfig/startup/composer.sh /etc/my_init.d/composer.sh
-RUN chmod +x /etc/my_init.d/composer.sh
-
 # Change File Permission
 COPY ./Dockerconfig/startup/chmod.sh /etc/my_init.d/chmod.sh
 RUN chmod +x /etc/my_init.d/chmod.sh
+
+### Second Level Startup Process ###
 
 # Laravel
 COPY ./Dockerconfig/startup/artisan.sh /etc/rc.local
 RUN chmod +x /etc/rc.local
 
-COPY . /var/www/html
 RUN chown -R www-data:www-data /var/www/html
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

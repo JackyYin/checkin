@@ -1,4 +1,5 @@
 #!/bin/bash
-set -e
-exec php /var/www/html/artisan config:cache
-exec php /var/www/html/artisan route:cache
+cd /var/www/html && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:clear

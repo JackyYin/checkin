@@ -1,24 +1,66 @@
-version: '3'
+version: "3.5"
 
 services:
 
-  checkin:
+  backend:
     image: checkin
-    container_name: checkin
+    container_name: checkin_backend
     restart: always
-    volumes:
-      - ./:/var/www/html
-      - /www/checkin/shared:/www/checkin/shared
     env_file:
       - .env
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - backend_network
+      - proxy_network
     logging:
         driver: "json-file"
         options:
             max-size: "2000k"
             max-file: "30"
 
+  db:
+    image: mysql:5.7
+    container_name: checkin_backend_db
+    environment:
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_USER: "${DB_USERNAME}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - ./database/init/:/docker-entrypoint-initdb.d
+      - db_data:/var/lib/mysql
+    networks:
+      - backend_network
+
+  redis:
+    image: redis
+    container_name: checkin_backend_redis
+    networks:
+      - backend_network
+
+  adminer:
+    image: clue/adminer
+    container_name: checkin_backend_adminer
+    restart: always
+    environment:
+      VIRTUAL_HOST: "${ADMINER_HOST}"
+      VIRTUAL_PORT: "${ADMINER_PORT}"
+    networks:
+      - backend_network
+      - proxy_network
+
+volumes:
+  db_data:
+    name: checkin_database
 
 networks:
-  default:
+  backend_network:
+    driver: bridge
+  proxy_network:
     external:
       name: proxy_network
+
