@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Auth;
+use Log;
 use App\Helpers\LeaveHelper;
 use App\Transformers\CheckTransformer;
 use App\Models\Staff;
@@ -196,6 +197,8 @@ class LeaveController extends Controller
         \App\Jobs\Stride\RoomNotification::dispatch($check, "Create");
         \App\Jobs\Stride\PersonalNotification::dispatch($check, "Create");
 
+        Log::info('A Leave is Created.', $this->checkTransformer->transform($check));
+
         if ($request->header('Accept') == 'text/plain') {
             $reply_message = $check->checkin_at." 至 ".$check->checkout_at." 請假成功,\n"
                     ."姓名： ".$staff->name."\n"
@@ -207,7 +210,7 @@ class LeaveController extends Controller
         }
 
         return response()->json([
-            'reply_message' => fractal($check, new CheckTransformer(), new \League\Fractal\Serializer\ArraySerializer()),
+            'reply_message' => fractal($check, $this->checkTransformer, new \League\Fractal\Serializer\ArraySerializer()),
             'subscribers'   => $this->getSubscribersExcept($staff->id),
         ], 200);
     }
@@ -296,6 +299,8 @@ class LeaveController extends Controller
         \App\Jobs\Stride\RoomNotification::dispatch($leave, "Edit");
         \App\Jobs\Stride\PersonalNotification::dispatch($leave, "Edit");
 
+        Log::info('A Leave is Updated.', $this->checkTransformer->transform($check));
+
         if ($request->header('Accept') == 'text/plain') {
             $reply_message =
                 "編號: ".$leave->id." 編輯成功\n"
@@ -308,7 +313,7 @@ class LeaveController extends Controller
         }
 
         return response()->json([
-            'reply_message' => fractal($leave, new CheckTransformer(), new \League\Fractal\Serializer\ArraySerializer()),
+            'reply_message' => fractal($leave, $this->checkTransformer, new \League\Fractal\Serializer\ArraySerializer()),
             'subscribers'   => $this->getSubscribersExcept($staff->id),
         ]);
     }
@@ -353,7 +358,7 @@ class LeaveController extends Controller
             ]);
         }
 
-        return $this->response(200, fractal($leave, new CheckTransformer(), new \League\Fractal\Serializer\ArraySerializer()));
+        return $this->response(200, fractal($leave, $this->checkTransformer, new \League\Fractal\Serializer\ArraySerializer()));
     }
     /**
      *
