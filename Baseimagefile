@@ -18,12 +18,24 @@ ENV LC_ALL en_US.UTF-8
 ENV HOME /root
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends netcat vim sudo software-properties-common nginx wget git unzip\
+    && apt-get install -y --no-install-recommends \
+    git \
+    netcat \
+    nginx \
+    software-properties-common \
+    sudo \
+    unzip\
+    vim \
+    wget \
     && add-apt-repository -y ppa:ondrej/php \
-    && apt-get update \
     && apt-get install -y php7.2 \
-    && apt-get install -y --no-install-recommends php7.2-fpm php7.2-gd php7.2-mysql php7.2-mbstring php7.2-xml \
+    && apt-get install -y --no-install-recommends \
+    php7.2-fpm \
+    php7.2-gd \
+    php7.2-mbstring \
     php7.2-memcached \
+    php7.2-mysql \
+    php7.2-xml \
     && apt-get remove -y --purge software-properties-common
 
 # configurations
