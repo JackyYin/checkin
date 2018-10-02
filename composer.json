@@ -14,10 +14,12 @@
         "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "5.6.*",
         "laravel/passport": "^6.0",
+        "laravel/socialite": "^3.1",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "^5.2.0",
         "predis/predis": "^1.1",
         "ramsey/uuid": "^3.7",
+        "schedula/laravel-passport-socialite": "^1.0",
         "spatie/laravel-fractal": "^5.4",
         "zircote/swagger-php": "^2.0"
     },
