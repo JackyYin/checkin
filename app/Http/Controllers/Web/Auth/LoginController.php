@@ -4,18 +4,25 @@ namespace App\Http\Controllers\Web\Auth;
 
 use App\Http\Controllers\Controller;
 use Socialite;
+use App\Service\SocialService;
+use App\Transformer\StaffTransformer;
+use App\Models\Social;
 
 class LoginController extends Controller
 {
-    public function redirectToProvider()
+    public function redirectToProvider($provider)
     {
-        return Socialite::driver('facebook')->redirect();
+        return Socialite::driver($provider)->redirect();
     }
 
-    public function handleProviderCallback()
+    public function handleProviderCallback($provider, SocialService $service, StaffTransformer $transformer)
     {
-        $user = Socialite::driver('facebook')->user();
+        $staff = $service->createOrGetStaff(Socialite::driver($provider)->user(), $provider);
 
-        dd($user);
+        if (!$staff) {
+            return "不存在的使用者";
+        }
+
+        return fractal($staff, $transformer, new \League\Fractal\Serializer\ArraySerializer());
     }
 }

@@ -70,6 +70,11 @@ class Staff extends Authenticatable
         return $this->hasMany(Check::class,'staff_id','id');
     }
 
+    public function socials()
+    {
+        return $this->hasMany(Social::class,'staff_id','id');
+    }
+
     public function bots()
     {
         return $this->belongsToMany(Bot::class)->using(BotStaff::class)->withPivot('email_auth_token');

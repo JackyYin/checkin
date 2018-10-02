@@ -14,8 +14,8 @@ Route::group(['prefix' => 'web'], function () {
     Route::group(['namespace' => 'Auth'], function () {
         Route::get('login',  ['as' => 'login', 'uses' => 'AuthController@login']);
         Route::post('login', ['as' => 'authenticate', 'uses' => 'AuthController@authenticate']);
-        Route::get('login/facebook', 'LoginController@redirectToProvider');
-        Route::get('login/facebook/callback', 'LoginController@handleProviderCallback');
+        Route::get('login/{provider}', 'LoginController@redirectToProvider');
+        Route::get('login/{provider}/callback', 'LoginController@handleProviderCallback');
     });
 });
 
