@@ -79,7 +79,7 @@ jobs:
             -d '{"body":{"version":1,"type":"doc","content":[{"type":"applicationCard","attrs": {"text": "test message","collapsible":true,"title":{"text":"Circle CI Report","user":{"icon":{"url":"https://a.slack-edge.com/7f1a0/plugins/circleci/assets/service_512.png","label":"Circle CI"}}},"description":{"text":"'"${CIRCLE_USERNAME}"' built '"${CIRCLE_PROJECT_REPONAME}"' '"${CIRCLE_BRANCH}"'"},"details":[{"lozenge": {"text": "Build Failed","appearance": "removed"}}],"link":{"url":"'"${CIRCLE_BUILD_URL}"'"}}}]}}' \
             --url "${STRIDE_URL}"
 
-  prod-deploy:
+  push-image:
     machine:
       image: circleci/classic:latest
     steps:
@@ -118,9 +118,6 @@ workflows:
   build-deploy:
     jobs:
       - build
-      - prod-deploy:
+      - push-image:
           requires:
             - build
-          filters:
-            branches:
-              only: develop
