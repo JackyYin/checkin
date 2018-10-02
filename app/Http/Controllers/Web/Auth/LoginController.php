@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Web\Auth;
 use App\Http\Controllers\Controller;
 use Socialite;
 use App\Service\SocialService;
-use App\Transformer\StaffTransformer;
+use App\Transformers\StaffTransformer;
 use App\Models\Social;
 
 class LoginController extends Controller
