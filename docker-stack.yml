@@ -5,6 +5,7 @@ services:
     image: registry.larvata.tw/checkin:latest
     networks:
       - traefik_proxy_network
+      - backend
     deploy:
       mode: replicated
       replicas: 1
@@ -51,33 +52,34 @@ services:
       - MEMCACHED_HOST=$MEMCACHED_HOST
       - MEMCACHED_PORT=$MEMCACHED_PORT
       - REDIS_HOST=$REDIS_HOST
+      - FACEBOOK_ID=$FACEBOOK_ID
+      - FACEBOOK_SECRET=$FACEBOOK_SECRET
+      - FACEBOOK_URL=$FACEBOOK_URL
     volumes:
       - data-log:/var/www/html/storage/logs
   
   memcached:
     image: memcached
-    command: memcached -p 11211 -vvv
     networks:
-      - traefik_proxy_network
+      - backend
+    command: memcached -p 11211 -vvv
     deploy:
       mode: replicated
       replicas: 1
       placement:
         constraints:
           - node.role == manager
+          - node.hostname == bao.larvata.tw
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
         window: 120s
-      labels:
-        - "traefik.enable=true"
-        - "traefik.docker.network=traefik_proxy_network"
 
   redis:
     image: redis
     networks:
-      - traefik_proxy_network
+      - backend
     deploy:
       mode: replicated
       replicas: 1
@@ -89,9 +91,6 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
-      labels:
-        - "traefik.enable=true"
-        - "traefik.docker.network=traefik_proxy_network"
     volumes:
       - data-redis:/data
 
@@ -110,6 +109,9 @@ volumes:
       device: :/docker_volumes/checkin/logs
 
 networks:
+  backend:
+    driver: overlay
+    attachable: true
   traefik_proxy_network:
     external: true
     name: traefik_proxy_network
