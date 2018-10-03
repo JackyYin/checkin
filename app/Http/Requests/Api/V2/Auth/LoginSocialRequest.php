@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\V2\Auth;
 
 use App\Http\Requests\FormRequest;
 
-class AuthRequest extends FormRequest
+class LoginSocialRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

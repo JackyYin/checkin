@@ -312,7 +312,12 @@ class AuthController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function loginSocial(Request $request, $bot_name, $provider, SocialService $service)
+    public function loginSocial(
+        \App\Http\Requests\Api\V2\Auth\LoginSocialRequest $request,
+        $bot_name,
+        $provider,
+        SocialService $service
+    )
     {
         $staff = $service->createOrGetStaff(
             Socialite::driver($provider)->userFromToken($request->social_access_token),
