@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
-use App\Traits\Enums;
+use Carbon\Carbon;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
+use Schedula\Laravel\PassportSocialite\User\UserSocialAccount;
+use App\Traits\Enums;
+use App\Models\Social;
 
-class Staff extends Authenticatable
+class Staff extends Authenticatable implements UserSocialAccount
 {
     use HasApiTokens;
 
@@ -34,6 +36,24 @@ class Staff extends Authenticatable
      * @var array
      */
     protected $hidden = [];
+
+    /**
+    * Find user using social provider's id
+    *
+    * @param string $provider Provider name as requested from oauth e.g. facebook
+    * @param string $id User id of social provider
+    *
+    * @return User
+    */
+    public static function findForPassportSocialite($provider, $id) {
+        $account = Social::where('provider', $provider)->where('provider_user_id', $id)->first();
+        if($account) {
+            if($account->staff){
+                return $account->staff;
+            }
+        }
+        return;
+    }
 
     public function line()
     {
