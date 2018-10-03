@@ -2,9 +2,9 @@
 namespace App\Providers\Oauth;
 
 use Laravel\Socialite\Two\InvalidStateException;
-use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\ProviderInterface;
-use Laravel\Socialite\Two\User;
+use SocialiteProviders\Manager\OAuth2\AbstractProvider;
+use SocialiteProviders\Manager\OAuth2\User;
 
 class LineProvider extends AbstractProvider implements ProviderInterface
 {
@@ -59,12 +59,17 @@ class LineProvider extends AbstractProvider implements ProviderInterface
      */
     protected function getUserByToken($token)
     {
-        $response = $this->getHttpClient()->get(
-            'https://api.line.me/v2/profile', [
-            'headers' => [
-                'Authorization' => 'Bearer '.$token,
-            ],
-        ]);
+        try {
+            $response = $this->getHttpClient()->get(
+                'https://api.line.me/v2/profile', [
+                'headers' => [
+                    'Authorization' => 'Bearer '.$token,
+                ],
+            ]);
+        } catch(\Exception $e) {
+            return [];
+        }
+
         return json_decode($response->getBody()->getContents(), true);
     }
     /**
