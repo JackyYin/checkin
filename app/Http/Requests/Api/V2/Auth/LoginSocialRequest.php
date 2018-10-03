@@ -25,6 +25,19 @@ class LoginSocialRequest extends FormRequest
     {
         return [
             'social_access_token' => 'required',
+            'provider'            => 'in: facebook,line'
         ];
+    }
+
+    /**
+     * Add route parameters to validation
+     */
+    protected function getValidatorInstance()
+    {
+        $this->merge($this->route()->parameters);
+
+        /*modify data before send to validator*/
+
+        return parent::getValidatorInstance();
     }
 }
