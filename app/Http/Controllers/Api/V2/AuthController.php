@@ -7,18 +7,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\App;
 use Ramsey\Uuid\Uuid;
-use Validator;
-use Mail;
-use DB;
-use Auth;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
+use Auth;
+use DB;
+use Mail;
+use Socialite;
+use Validator;
+use App\Service\SocialService;
 use App\Mail\AuthenticationEmail;
-use App\Models\Staff;
-use App\Models\Line;
 use App\Models\Bot;
+use App\Models\Line;
+use App\Models\Staff;
+use App\Models\Social;
 
 class AuthController extends Controller
 {
@@ -257,5 +260,53 @@ class AuthController extends Controller
         return $this->response(200, [
             'access_token' => $response->access_token,
         ]);
+    }
+    /**
+     *
+     * @SWG\Post(path="/api/v2/auth/login/{provider}",
+     *   tags={"Auth", "V2"},
+     *   summary="測試功能-社群登入",
+     *   operationId="app-login",
+     *   produces={"application/json"},
+     *   @SWG\Parameter(
+     *       name="provider",
+     *       in="path",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Parameter(
+     *       name="social_access_token",
+     *       in="formData",
+     *       type="string",
+     *       required=true,
+     *   ),
+     *   @SWG\Response(response="default", description="操作成功")
+     * )
+     */
+    public function loginSocial(Request $request, $provider, SocialService $service)
+    {
+        $staff = $service->createOrGetStaff(
+            Socialite::driver($provider)->userFromToken($request->social_access_token),
+            $provider
+        );
+
+        if (!$staff) {
+            return $this->response(400, [
+                'account' => '您尚未成為本公司的成員'
+            ]);
+        }
+
+        $object = $service->issueToken($provider, $request->social_access_token);
+
+        if ($object['success']) {
+            return $this->response(200, [
+                'access_token' => $oject['message']->access_token,
+                'refresh_token' => $oject['message']->refresh_token,
+            ]);
+        } else {
+            return $this->response(400, [
+                'error' => $object['message']
+            ]);
+        }
     }
 }

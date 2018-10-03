@@ -28,6 +28,8 @@ Route::group(['namespace' => 'Api'], function () {
     Route::post('request-online', ['uses' => 'LeaveController@requestOnline']);
     //api v2
     Route::group(['prefix' => 'v2', 'namespace' => 'V2'], function () {
+        //測試功能-社群登入
+        Route::post('auth/login/{provider}', 'AuthController@loginSocial');
         Route::group(['prefix' => 'bot'], function () {
             //App登入
             Route::post('auth/login', ['uses' => 'AuthController@login']);

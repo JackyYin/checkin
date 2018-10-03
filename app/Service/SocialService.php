@@ -3,6 +3,8 @@
 namespace App\Service;
 
 use Laravel\Socialite\Contracts\User as ProviderUser;
+use DB;
+use GuzzleHttp\Client;
 use App\Models\Staff;
 use App\Models\Social;
 
@@ -30,8 +32,36 @@ class SocialService
             ]);
 
             return $staff;
+        }
+    }
 
+    public function issueToken($provider, $social_access_token, Client $http)
+    {
+        $oauth_client = DB::table('oauth_clients')->where('name', 'App User')->first();
+
+        $form_params = [
+            'grant_type' => 'social',
+            'client_id' => $oauth_client->id,
+            'client_secret' => $oauth_client->secret,
+            'accessToken' => $social_access_token,
+            'provider' => $provider,
+        ];
+
+        try {
+            $response = $http->request('POST', url('/oauth/token'), [
+                'form_params' => $form_params
+            ]);
+        }
+        catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
         }
 
+        return [
+            'success' => true,
+            'message' => json_decode((string) $response->getBody()),
+        ];
     }
 }
