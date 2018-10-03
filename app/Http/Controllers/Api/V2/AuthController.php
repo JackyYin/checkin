@@ -286,11 +286,17 @@ class AuthController extends Controller
     }
     /**
      *
-     * @SWG\Post(path="/api/v2/auth/login/{provider}",
+     * @SWG\Post(path="/api/v2/bot/{bot_name}/auth/login/{provider}",
      *   tags={"Auth", "V2"},
-     *   summary="測試功能-社群登入",
+     *   summary="測試功能-以機器人使用者身份做社群登入",
      *   operationId="app-login",
      *   produces={"application/json"},
+     *   @SWG\Parameter(
+     *       name="bot_name",
+     *       in="path",
+     *       type="string",
+     *       required=true,
+     *   ),
      *   @SWG\Parameter(
      *       name="provider",
      *       in="path",
@@ -306,7 +312,7 @@ class AuthController extends Controller
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
-    public function loginSocial(Request $request, $provider, SocialService $service)
+    public function loginSocial(Request $request, $bot_name, $provider, SocialService $service)
     {
         $staff = $service->createOrGetStaff(
             Socialite::driver($provider)->userFromToken($request->social_access_token),
@@ -319,7 +325,7 @@ class AuthController extends Controller
             ]);
         }
 
-        $object = $service->issueToken($provider, $request->social_access_token);
+        $object = $service->issueToken($provider, $bot_name, $request->social_access_token);
 
         if ($object['success']) {
             return $this->response(200, [

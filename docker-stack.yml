@@ -55,6 +55,10 @@ services:
       - FACEBOOK_ID=$FACEBOOK_ID
       - FACEBOOK_SECRET=$FACEBOOK_SECRET
       - FACEBOOK_URL=$FACEBOOK_URL
+      - LINE_KEY=$LINE_KEY
+      - LINE_SECRET=$LINE_SECRET
+      - LINE_REDIRECT_URI=$LINE_REDIRECT_URI
+
     volumes:
       - data-log:/var/www/html/storage/logs
   

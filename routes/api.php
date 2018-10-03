@@ -28,8 +28,6 @@ Route::group(['namespace' => 'Api'], function () {
     Route::post('request-online', ['uses' => 'LeaveController@requestOnline']);
     //api v2
     Route::group(['prefix' => 'v2', 'namespace' => 'V2'], function () {
-        //測試功能-社群登入
-        Route::post('auth/login/{provider}', 'AuthController@loginSocial');
         Route::group(['prefix' => 'bot'], function () {
             //App登入
             Route::post('auth/login', ['uses' => 'AuthController@login']);
@@ -38,6 +36,8 @@ Route::group(['namespace' => 'Api'], function () {
             //機器人新增
             Route::post('/', ['uses' => 'BotController@store']);
             Route::group(['middleware' => ['auth.api.bot']], function () {
+                //測試功能-以機器人使用者身份做社群登入
+                Route::post('{bot_name}/auth/login/{provider}', 'AuthController@loginSocial');
                 //寄發驗證信件
                 Route::post('/auth', ['uses' => 'AuthController@auth']);
                 //重發token機制

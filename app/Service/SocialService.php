@@ -35,9 +35,16 @@ class SocialService
         }
     }
 
-    public function issueToken($provider, $social_access_token)
+    public function issueToken($provider, $bot_name, $social_access_token)
     {
-        $oauth_client = DB::table('oauth_clients')->where('name', 'App User')->first();
+        $oauth_client = DB::table('oauth_clients')->where('name', $bot_name.' User')->first();
+
+        if (!$oauth_client) {
+            return [
+                'success' => false,
+                'message' => "不存在的 oauth client (Bot User)",
+            ];
+        }
 
         $form_params = [
             'grant_type' => 'social',
