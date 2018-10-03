@@ -20,7 +20,7 @@ class LoginController extends Controller
         $staff = $service->createOrGetStaff(Socialite::driver($provider)->user(), $provider);
 
         if (!$staff) {
-            return "不存在的使用者";
+            return "您尚未成為本公司的員工";
         }
 
         return fractal($staff, $transformer, new \League\Fractal\Serializer\ArraySerializer());
