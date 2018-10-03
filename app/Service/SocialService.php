@@ -35,7 +35,7 @@ class SocialService
         }
     }
 
-    public function issueToken($provider, $social_access_token, Client $http)
+    public function issueToken($provider, $social_access_token)
     {
         $oauth_client = DB::table('oauth_clients')->where('name', 'App User')->first();
 
@@ -48,6 +48,7 @@ class SocialService
         ];
 
         try {
+            $http = new Client;
             $response = $http->request('POST', url('/oauth/token'), [
                 'form_params' => $form_params
             ]);

@@ -205,7 +205,6 @@ class AuthController extends Controller
 
     private function getRefreshToken(Bot $bot, $refresh_token)
     {
-        $http = new Client;
         $oauth_client = DB::table('oauth_clients')->where('name', $bot->name." User")->first();
 
         $form_params = [
@@ -217,6 +216,7 @@ class AuthController extends Controller
         ];
 
         try {
+            $http = new Client;
             $response = $http->post(url('/oauth/token'), [
                 'form_params' => $form_params
             ]);
@@ -257,7 +257,6 @@ class AuthController extends Controller
      */
     public function login(\App\Http\Requests\Api\V2\Auth\LoginRequest $request)
     {
-        $http = new Client;
         $oauth_client = DB::table('oauth_clients')->where('name', 'App User')->first();
 
         $form_params = [
@@ -270,6 +269,7 @@ class AuthController extends Controller
         ];
 
         try {
+            $http = new Client;
             $response = $http->request('POST', url('/oauth/token'), [
                 'form_params' => $form_params
             ]);
