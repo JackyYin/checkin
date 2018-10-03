@@ -323,8 +323,8 @@ class AuthController extends Controller
 
         if ($object['success']) {
             return $this->response(200, [
-                'access_token' => $oject['message']->access_token,
-                'refresh_token' => $oject['message']->refresh_token,
+                'access_token' => $object['message']->access_token,
+                'refresh_token' => $object['message']->refresh_token,
             ]);
         } else {
             return $this->response(400, [
