@@ -20,7 +20,6 @@
         "predis/predis": "^1.1",
         "ramsey/uuid": "^3.7",
         "schedula/laravel-passport-socialite": "^1.0",
-        "socialiteproviders/line": "^2.1",
         "socialiteproviders/manager": "^3.3",
         "spatie/laravel-fractal": "^5.4",
         "zircote/swagger-php": "^2.0"

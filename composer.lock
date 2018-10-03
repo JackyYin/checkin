@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c7b5f23457f896a827c97d381b76f253",
+    "content-hash": "95661e5fb2fdf7260b66ada395bdfcf0",
     "packages": [
         {
             "name": "caouecs/laravel-lang",
@@ -2697,43 +2697,6 @@
                 "oauth2 social login"
             ],
             "time": "2018-08-07T06:47:35+00:00"
-        },
-        {
-            "name": "socialiteproviders/line",
-            "version": "v2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/SocialiteProviders/Line.git",
-                "reference": "c32d86d3293adf42590aa9c7c53051deadcbba12"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/SocialiteProviders/Line/zipball/c32d86d3293adf42590aa9c7c53051deadcbba12",
-                "reference": "c32d86d3293adf42590aa9c7c53051deadcbba12",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.6 || ^7.0",
-                "socialiteproviders/manager": "~2.0 || ~3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "SocialiteProviders\\Line\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Sorrawut Kittikeereechaikun",
-                    "email": "mix5003@gmail.com"
-                }
-            ],
-            "description": "Line Provider for Laravel Socialite",
-            "time": "2018-09-03T10:32:12+00:00"
         },
         {
             "name": "socialiteproviders/manager",
