@@ -185,11 +185,20 @@ class AuthController extends Controller
 
         $object = $this->getRefreshToken($bot, $request->refresh_token);
 
+        if (!$object['success']) {
+            return response()->json([
+                'action' => 'User Token Refresh Failed',
+                'reply_message' => [
+                    'error' => $object['message']
+                ]
+            ], 401);
+        }
+
         return response()->json([
             'action' => 'User Token Refreshed',
             'reply_message' => [
-                'access_token' => $object->access_token,
-                'refresh_token' => $object->refresh_token,
+                'access_token'  => $object['message']->access_token,
+                'refresh_token' => $object['message']->refresh_token,
             ]
         ], 200);
     }
@@ -198,17 +207,31 @@ class AuthController extends Controller
     {
         $http = new Client;
         $oauth_client = DB::table('oauth_clients')->where('name', $bot->name." User")->first();
-        $response = $http->post(url('/oauth/token'), [
-            'form_params' => [
-                'grant_type' => 'refresh_token',
-                'refresh_token' => $refresh_token,
-                'client_id' => $oauth_client->id,
-                'client_secret' => $oauth_client->secret,
-                'scope' => '',
-            ],
-        ]);
 
-        return json_decode((string) $response->getBody());
+        $form_params = [
+            'grant_type' => 'refresh_token',
+            'refresh_token' => $refresh_token,
+            'client_id' => $oauth_client->id,
+            'client_secret' => $oauth_client->secret,
+            'scope' => '',
+        ];
+
+        try {
+            $response = $http->post(url('/oauth/token'), [
+                'form_params' => $form_params
+            ]);
+        }
+        catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+
+        return [
+            'success' => true,
+            'message' => json_decode((string) $response->getBody()),
+        ];
     }
     /**
      *
