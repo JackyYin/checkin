@@ -286,17 +286,14 @@ class AuthController extends Controller
     }
     /**
      *
-     * @SWG\Post(path="/api/v2/bot/{bot_name}/auth/login/{provider}",
+     * @SWG\Post(path="/api/v2/bot/auth/login/{provider}",
      *   tags={"Auth", "V2"},
+     *   security={
+     *      {"bot": {}},
+     *   },
      *   summary="測試功能-以機器人使用者身份做社群登入",
      *   operationId="app-login",
      *   produces={"application/json"},
-     *   @SWG\Parameter(
-     *       name="bot_name",
-     *       in="path",
-     *       type="string",
-     *       required=true,
-     *   ),
      *   @SWG\Parameter(
      *       name="provider",
      *       in="path",
@@ -313,9 +310,8 @@ class AuthController extends Controller
      * )
      */
     public function loginSocial(
-        \App\Http\Requests\Api\V2\Auth\LoginSocialRequest $request,
-        $bot_name,
         $provider,
+        \App\Http\Requests\Api\V2\Auth\LoginSocialRequest $request,
         SocialService $service
     )
     {
@@ -330,7 +326,7 @@ class AuthController extends Controller
             ]);
         }
 
-        $object = $service->issueToken($provider, $bot_name, $request->social_access_token);
+        $object = $service->issueToken($provider, $request->user()->name, $request->social_access_token);
 
         if ($object['success']) {
             return $this->response(200, [
