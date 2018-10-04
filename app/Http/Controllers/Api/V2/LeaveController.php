@@ -196,6 +196,7 @@ class LeaveController extends Controller
 
         \App\Jobs\Stride\RoomNotification::dispatch($check, "Create");
         \App\Jobs\Stride\PersonalNotification::dispatch($check, "Create");
+        \App\Jobs\Discord\RoomNotification::dispatch($check, "Create");
 
         Log::info('A Leave is Created.', $this->checkTransformer->transform($check));
 
@@ -298,6 +299,7 @@ class LeaveController extends Controller
 
         \App\Jobs\Stride\RoomNotification::dispatch($leave, "Edit");
         \App\Jobs\Stride\PersonalNotification::dispatch($leave, "Edit");
+        \App\Jobs\Discord\RoomNotification::dispatch($leave, "Edit");
 
         Log::info('A Leave is Updated.', $this->checkTransformer->transform($leave));
 
