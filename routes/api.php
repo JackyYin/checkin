@@ -22,10 +22,6 @@ Route::group(['namespace' => 'Api'], function () {
     Route::post('checkin', ['uses' => 'CheckController@checkIn']);
     Route::post('checkout', ['uses' => 'CheckController@checkOut']);
     Route::post('get-check-list', ['uses' => 'CheckController@getCheckList']);
-    Route::post('get-leave-type', ['uses' => 'LeaveController@getLeaveType']);
-    Route::post('request-leave', ['uses' => 'LeaveController@requestLeave']);
-    Route::post('request-late', ['uses' => 'LeaveController@requestLate']);
-    Route::post('request-online', ['uses' => 'LeaveController@requestOnline']);
     //api v2
     Route::group(['prefix' => 'v2', 'namespace' => 'V2'], function () {
         Route::group(['prefix' => 'bot'], function () {
