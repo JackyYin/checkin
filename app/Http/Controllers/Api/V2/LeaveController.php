@@ -299,7 +299,7 @@ class LeaveController extends Controller
         \App\Jobs\Stride\RoomNotification::dispatch($leave, "Edit");
         \App\Jobs\Stride\PersonalNotification::dispatch($leave, "Edit");
 
-        Log::info('A Leave is Updated.', $this->checkTransformer->transform($check));
+        Log::info('A Leave is Updated.', $this->checkTransformer->transform($leave));
 
         if ($request->header('Accept') == 'text/plain') {
             $reply_message =
