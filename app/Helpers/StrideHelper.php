@@ -14,20 +14,7 @@ class StrideHelper
 
     private static function CHECK_TYPE($type)
     {
-        $mapping = [
-                1  => "事假",
-                2  => "特休",
-                3  => "出差",
-                4  => '病假',
-                5  => 'Online',
-                6  => '晚到',
-                7  => '喪假',
-                8  => '產假',
-                9  => '陪產假',
-                10 => '婚假',
-            ];
-
-        return $mapping[$type];
+        return Check::getEnum('type')[$type];
     }
  
     private static function WEEK_DAY($day)
