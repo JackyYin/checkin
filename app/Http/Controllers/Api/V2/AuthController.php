@@ -162,7 +162,7 @@ class AuthController extends Controller
             'reply_message' => [
                 'access_token'  => $object['message']->access_token,
                 'refresh_token' => $object['message']->refresh_token,
-                'expired_in'    => $object['message']->expired_in,
+                'expires_in'    => $object['message']->expires_in,
             ]
         ], 200);
     }

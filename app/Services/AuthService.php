@@ -55,7 +55,7 @@ class AuthService
                         'email' => $staff->email,
                         'access_token' => $object->access_token,
                         'refresh_token' => $object->refresh_token,
-                        'expired_in' => $object->expired_in,
+                        'expires_in' => $object->expires_in,
                     ]
                 ]
             ]);
