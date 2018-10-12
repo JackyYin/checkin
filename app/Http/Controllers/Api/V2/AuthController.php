@@ -16,7 +16,7 @@ use DB;
 use Mail;
 use Socialite;
 use Validator;
-use App\Service\SocialService;
+use App\Services\SocialService;
 use App\Mail\AuthenticationEmail;
 use App\Models\Bot;
 use App\Models\Line;
@@ -101,7 +101,7 @@ class AuthController extends Controller
             return json_decode(json_encode($object), true);
         }
 
-        return $this->sendToken($staff, $bot, $object->access_token, $object->refresh_token);
+        return $this->sendToken($staff, $bot, $object);
     }
 
     private function getToken(Staff $staff, Bot $bot, $email_auth_token)
@@ -122,7 +122,7 @@ class AuthController extends Controller
         return json_decode((string) $response->getBody());
     }
 
-    private function sendToken(Staff $staff, Bot $bot, $access_token, $refresh_token)
+    private function sendToken(Staff $staff, Bot $bot, $object)
     {
         //送token給line-bot
         $client = new Client([
@@ -137,8 +137,9 @@ class AuthController extends Controller
                     'action' => 'User Authorized',
                     'reply_message' => [
                         'email' => $staff->email,
-                        'access_token' => $access_token,
-                        'refresh_token' => $refresh_token,
+                        'access_token' => $object->access_token,
+                        'refresh_token' => $object->refresh_token,
+                        'expired_in' => $object->expired_in,
                     ]
                 ]
             ]);
@@ -199,6 +200,7 @@ class AuthController extends Controller
             'reply_message' => [
                 'access_token'  => $object['message']->access_token,
                 'refresh_token' => $object['message']->refresh_token,
+                'expired_in'    => $object['message']->expired_in,
             ]
         ], 200);
     }

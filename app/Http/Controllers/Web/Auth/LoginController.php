@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Web\Auth;
 
 use App\Http\Controllers\Controller;
 use Socialite;
-use App\Service\SocialService;
+use App\Services\SocialService;
 use App\Transformers\StaffTransformer;
 use App\Models\Social;
 

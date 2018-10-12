@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Services;
 
 use Laravel\Socialite\Contracts\User as ProviderUser;
 use DB;
