@@ -17,6 +17,7 @@ use Mail;
 use Socialite;
 use Validator;
 use App\Services\SocialService;
+use App\Services\AuthService;
 use App\Mail\AuthenticationEmail;
 use App\Models\Bot;
 use App\Models\Line;
@@ -25,6 +26,12 @@ use App\Models\Social;
 
 class AuthController extends Controller
 {
+    private $auth_service;
+
+    public function __construct()
+    {
+        $this->auth_service = new AuthService();
+    }
     /**
      * @SWG\Tag(name="Auth", description="使用者認證")
      */
@@ -94,65 +101,20 @@ class AuthController extends Controller
             return "帳號驗證失敗";
         }
 
-        $object = $this->getToken($staff, $bot, $token);
+        $object = $this->auth_service->getToken($staff, $bot, $token);
+
+        if (!$object) {
+            return "Token申請失敗";
+        }
 
         if (App::environment('local')) {
             $staff->bots()->detach($bot->id);
             return json_decode(json_encode($object), true);
         }
 
-        return $this->sendToken($staff, $bot, $object);
+        return $this->auth_service->sendToken($staff, $bot, $object);
     }
 
-    private function getToken(Staff $staff, Bot $bot, $email_auth_token)
-    {
-        $http = new Client;
-        $oauth_client = DB::table('oauth_clients')->where('name', $bot->name." User")->first();
-        $response = $http->post(url('/oauth/token'), [
-            'form_params' => [
-                'grant_type' => 'password',
-                'client_id' => $oauth_client->id,
-                'client_secret' => $oauth_client->secret,
-                'username' => $staff->email,
-                'password' => $email_auth_token,
-                'scope' => '',
-            ],
-        ]);
-
-        return json_decode((string) $response->getBody());
-    }
-
-    private function sendToken(Staff $staff, Bot $bot, $object)
-    {
-        //送token給line-bot
-        $client = new Client([
-            'headers' => [
-                'Content-Type'  => 'application/json',
-            ]
-        ]);
-
-        try {
-            $response = $client->request('POST', $bot->auth_hook_url, [
-                'json' => [
-                    'action' => 'User Authorized',
-                    'reply_message' => [
-                        'email' => $staff->email,
-                        'access_token' => $object->access_token,
-                        'refresh_token' => $object->refresh_token,
-                        'expired_in' => $object->expired_in,
-                    ]
-                ]
-            ]);
-        }
-        catch (ClientException $e) {
-            return "無法與機器人: ".$bot->name." 連結";
-        }
-
-        if ($response->getStatusCode() == 200) {
-            $staff->bots()->detach($bot->id);
-            return "帳號驗證成功";
-        }
-    }
     /**
      *
      * @SWG\Post(path="/api/v2/bot/auth/refresh",
