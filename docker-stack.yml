@@ -8,7 +8,7 @@ services:
       - backend
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 3
       placement:
         constraints:
           - node.role == manager
@@ -16,7 +16,7 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-        window: 120s      
+        window: 120s
       labels:
         - "traefik.port=80"
         - "traefik.enable=true"
@@ -63,6 +63,38 @@ services:
     volumes:
       - data-log:/var/www/html/storage/logs
   
+  cron:
+    image: registry.larvata.tw/checkin-cron:latest
+    networks:
+      - backend
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      - APP_ENV=$APP_ENV
+      - APP_KEY=$APP_KEY
+      - APP_DEBUG=$APP_DEBUG
+      - APP_LOG_LEVEL=$APP_LOG_LEVEL
+      - LOG_CHANNEL=$LOG_CHANNEL
+      - DB_CONNECTION=$DB_CONNECTION
+      - DB_HOST=$DB_HOST
+      - DB_PORT=$DB_PORT
+      - DB_DATABASE=$DB_DATABASE
+      - DB_USERNAME=$DB_USERNAME
+      - DB_PASSWORD=$DB_PASSWORD
+      - QUEUE_DRIVER=$QUEUE_DRIVER
+      - STRIDE_BOT_BASE_URL=$STRIDE_BOT_BASE_URL
+      - DISCORD_URL=$DISCORD_URL
+      - REDIS_HOST=$REDIS_HOST
+
   memcached:
     image: memcached
     networks:
