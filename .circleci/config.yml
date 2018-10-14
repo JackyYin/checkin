@@ -88,11 +88,17 @@ jobs:
           name: Login larvata registry
           command: echo $REGISTRY_PASSWORD | docker login registry.larvata.tw -u larvata --password-stdin
       - run:
-          name: Build docker image
-          command: docker build -f Baseimagefile --rm -t registry.larvata.tw/checkin:0.0.$CIRCLE_BUILD_NUM .
+          name: Build serve image
+          command: docker build --rm -t registry.larvata.tw/checkin:0.0.$CIRCLE_BUILD_NUM .
       - run:
-          name: Push image
+          name: Push serve image
           command: docker push registry.larvata.tw/checkin:0.0.$CIRCLE_BUILD_NUM
+      - run:
+          name: Build cron image
+          command: docker build -f Dockerfile.cron --rm -t registry.larvata.tw/checkin-cron:0.0.$CIRCLE_BUILD_NUM .
+      - run:
+          name: Push cron image
+          command: docker push registry.larvata.tw/checkin-cron:0.0.$CIRCLE_BUILD_NUM
       # notification to stride
       - run:
           name: Notify To Stride When Test Success
