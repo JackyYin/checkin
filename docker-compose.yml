@@ -22,6 +22,24 @@ services:
             max-size: "2000k"
             max-file: "30"
 
+  cron:
+    image: checkin-cron
+    container_name: checkin_backend_cron
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - backend_network
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "2000k"
+            max-file: "30"
   db:
     image: mysql:5.7
     container_name: checkin_backend_db
