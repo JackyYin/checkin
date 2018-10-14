@@ -1,8 +1,13 @@
-FROM ubuntu:16.04
-EXPOSE 80
+#Use phusion/baseimage as base image. To make your builds reproducible, make
+# sure you lock down to a specific version, not to `latest`!
+# See https://github.com/phusion/baseimage-docker/blob/master/Changelog.md for
+# a list of version numbers.
+FROM phusion/baseimage:master
 USER root
 MAINTAINER jackyyin
+EXPOSE 80 443
 
+# ...put your own build instructions here...
 RUN apt-get update \
     && apt-get install -y locales  \
     && locale-gen en_US.UTF-8
@@ -10,50 +15,77 @@ RUN apt-get update \
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
+ENV HOME /root
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git vim tmux sudo software-properties-common apache2 supervisor cron wget inkscape \
+    && apt-get install -y --no-install-recommends \
+    git \
+    netcat \
+    nginx \
+    software-properties-common \
+    sudo \
+    unzip\
+    vim \
+    wget \
     && add-apt-repository -y ppa:ondrej/php \
-    && add-apt-repository -y ppa:inkscape.dev/stable \
-    && apt-get update \
     && apt-get install -y php7.2 \
-    && apt-get install -y --no-install-recommends php7.2-pdo php7.2-bcmath php7.2-fpm php7.2-gd php7.2-mysql \
-       php7.2-pgsql php7.2-imap php7.2-memcached php7.2-mbstring php7.2-xml php7.2-zip php7.2-curl php-pear php7.2-dev \
-    && mkdir /run/php \
-    && apt-get remove -y --purge software-properties-common \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && mkdir -p /var/www/html/vendor /var/log/supervisor /var/log/php-fpm
-
-#install Xdebug
-RUN apt-get update \
-    && apt-get install -y gcc libc6-dev make \
-    && pecl install xdebug
-
-# composer install
-WORKDIR /var/www/html
-RUN wget https://getcomposer.org/composer.phar -O /usr/local/bin/composer \
-    && chmod 755 /usr/local/bin/composer
-
-#cronjobs
-COPY crontab /etc/cron.d/laravel-cron
-RUN touch /var/log/cron.log \
-    && crontab /etc/cron.d/laravel-cron \
-    && chmod 600 /etc/crontab
-
-#laravel workers log file
-RUN touch /var/log/laravel-worker.log
+    && apt-get install -y --no-install-recommends \
+    php7.2-fpm \
+    php7.2-gd \
+    php7.2-mbstring \
+    php7.2-memcached \
+    php7.2-mysql \
+    php7.2-xml \
+    && apt-get remove -y --purge software-properties-common
 
 # configurations
-COPY ./Dockerconfig/apache2.conf       /etc/apache2/apache2.conf
-COPY ./Dockerconfig/www.conf           /etc/php/7.2/fpm/pool.d/www.conf
-COPY ./Dockerconfig/supervisord1.conf  /etc/supervisor/supervisord.conf
-COPY ./Dockerconfig/supervisord2.conf  /etc/supervisor/conf.d/supervisord.conf
-COPY ./Dockerconfig/xdebug.ini         /etc/php/7.2/mods-available/xdebug.ini
-RUN sed -i '/DocumentRoot/ s#/html#/html/public#g' /etc/apache2/sites-available/000-default.conf \
-    && sed -i '/DocumentRoot/ s#/html#/html/public#g' /etc/apache2/sites-available/default-ssl.conf \
-    && a2enmod rewrite \
-    && phpenmod xdebug \
-    && service apache2 restart
+COPY ./Dockerconfig/nginx.conf /etc/nginx/nginx.conf
+COPY ./Dockerconfig/www.conf   /etc/php/7.2/fpm/pool.d/www.conf
 
-CMD ["sh", "-c", "composer install ; /usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisord.conf"]
+# Use baseimage-docker's init system.
+CMD ["/sbin/my_init"]
+
+### Additional Deamon ###
+
+# Adding additional nginx daemon
+RUN mkdir /etc/service/nginx
+COPY ./Dockerconfig/service/nginx.sh /etc/service/nginx/run
+RUN chmod +x /etc/service/nginx/run
+
+# Adding additional php-fpm daemon
+RUN mkdir /etc/service/php-fpm /run/php
+COPY ./Dockerconfig/service/php-fpm.sh /etc/service/php-fpm/run
+RUN chmod +x /etc/service/php-fpm/run
+
+# Adding additional laravel-worker daemon
+RUN mkdir /etc/service/laravel-worker
+COPY ./Dockerconfig/service/laravel-worker.sh /etc/service/laravel-worker/run
+RUN chmod +x /etc/service/laravel-worker/run
+
+### First Level Startup Process ###
+
+RUN mkdir -p /etc/my_init.d
+# Change File Permission
+COPY ./Dockerconfig/startup/chmod.sh /etc/my_init.d/chmod.sh
+RUN chmod +x /etc/my_init.d/chmod.sh
+
+### Second Level Startup Process ###
+
+# Laravel
+COPY ./Dockerconfig/startup/artisan.sh /etc/rc.local
+RUN chmod +x /etc/rc.local
+
+WORKDIR /var/www/html
+
+# composer
+COPY composer.json .
+COPY composer.lock .
+RUN wget https://getcomposer.org/composer.phar -O /usr/local/bin/composer \
+    && chmod 755 /usr/local/bin/composer \
+    && composer install --no-scripts --no-autoloader
+COPY . .
+RUN composer dump-autoload --optimize
+
+RUN chown -R www-data:www-data /var/www/html
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

@@ -21,7 +21,6 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     git \
     netcat \
-    nginx \
     software-properties-common \
     sudo \
     unzip\
@@ -47,15 +46,10 @@ CMD ["/sbin/my_init"]
 
 ### Additional Deamon ###
 
-# Adding additional nginx daemon
-RUN mkdir /etc/service/nginx
-COPY ./Dockerconfig/service/nginx.sh /etc/service/nginx/run
-RUN chmod +x /etc/service/nginx/run
-
 # Adding additional php-fpm daemon
-RUN mkdir /etc/service/php-fpm /run/php
-COPY ./Dockerconfig/service/php-fpm.sh /etc/service/php-fpm/run
-RUN chmod +x /etc/service/php-fpm/run
+#RUN mkdir /etc/service/php-fpm /run/php
+#COPY ./Dockerconfig/service/php-fpm.sh /etc/service/php-fpm/run
+#RUN chmod +x /etc/service/php-fpm/run
 
 # Adding additional laravel-worker daemon
 RUN mkdir /etc/service/laravel-worker
