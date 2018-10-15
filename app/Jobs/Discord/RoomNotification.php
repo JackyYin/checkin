@@ -34,7 +34,7 @@ class RoomNotification implements ShouldQueue
      */
     public function handle()
     {
-        $StrideHelper = new DiscordHelper();
-        $StrideHelper->roomNotification($this->check, $this->action);
+        $DiscordHelper = new DiscordHelper();
+        $DiscordHelper->roomNotification($this->check, $this->action);
     }
 }
