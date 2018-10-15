@@ -59,6 +59,7 @@ services:
       - LINE_KEY=$LINE_KEY
       - LINE_SECRET=$LINE_SECRET
       - LINE_REDIRECT_URI=$LINE_REDIRECT_URI
+      - RESPONSE_CACHE_DRIVER=$RESPONSE_CACHE_DRIVER
 
     volumes:
       - data-log:/var/www/html/storage/logs

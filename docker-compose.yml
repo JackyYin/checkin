@@ -60,6 +60,13 @@ services:
     networks:
       - backend_network
 
+  memcached:
+    image: memcached
+    command: memcached -p 11211 -vvv
+    container_name: checkin_backend_memcached
+    networks:
+      - backend_network
+
   adminer:
     image: clue/adminer
     container_name: checkin_backend_adminer
