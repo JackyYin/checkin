@@ -44,18 +44,6 @@ COPY ./Dockerconfig/www.conf   /etc/php/7.2/fpm/pool.d/www.conf
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
 
-### Additional Deamon ###
-
-# Adding additional php-fpm daemon
-#RUN mkdir /etc/service/php-fpm /run/php
-#COPY ./Dockerconfig/service/php-fpm.sh /etc/service/php-fpm/run
-#RUN chmod +x /etc/service/php-fpm/run
-
-# Adding additional laravel-worker daemon
-RUN mkdir /etc/service/laravel-worker
-COPY ./Dockerconfig/service/laravel-worker.sh /etc/service/laravel-worker/run
-RUN chmod +x /etc/service/laravel-worker/run
-
 ### First Level Startup Process ###
 
 RUN mkdir -p /etc/my_init.d
