@@ -62,7 +62,7 @@ services:
 
   memcached:
     image: memcached
-    command: memcached -p 11211 -vvv
+    command: memcached -p 11211 -vv
     container_name: checkin_backend_memcached
     networks:
       - backend_network

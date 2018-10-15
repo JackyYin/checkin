@@ -100,7 +100,7 @@ services:
     image: memcached
     networks:
       - backend
-    command: memcached -p 11211 -vvv
+    command: memcached -p 11211 -vv
     deploy:
       mode: replicated
       replicas: 1
