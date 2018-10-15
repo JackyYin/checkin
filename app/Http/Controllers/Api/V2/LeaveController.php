@@ -395,8 +395,8 @@ class LeaveController extends Controller
             ]);
         }
 
-        \App\Jobs\Stride\RoomNotification::dispatch($leave, "Delete");
-        \App\Jobs\Discord\RoomNotification::dispatch($leave, "Delete");
+        \App\Jobs\Stride\DeleteNotification::dispatch($leave);
+        \App\Jobs\Discord\DeleteNotification::dispatch($leave);
 
         $leave->delete();
 
