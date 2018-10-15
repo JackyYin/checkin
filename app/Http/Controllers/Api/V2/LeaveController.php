@@ -395,6 +395,9 @@ class LeaveController extends Controller
             ]);
         }
 
+        \App\Jobs\Stride\RoomNotification::dispatch($leave, "Delete");
+        \App\Jobs\Discord\RoomNotification::dispatch($leave, "Delete");
+
         $leave->delete();
 
         return $this->response(200, "刪除假單成功");

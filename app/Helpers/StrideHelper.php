@@ -51,6 +51,9 @@ class StrideHelper
         elseif ($action == 'Edit') {
             $this->editNotification($check);
         }
+        elseif ($action == 'Delete') {
+            $this->deleteNotification($check);
+        }
     }
 
     private function createNotification(Check $check)
@@ -103,6 +106,32 @@ class StrideHelper
         $response = $this->client->request('POST', Bot::where('name', $this->bot)->first()->notify_hook_url , [
             'json' => [
                 'action' => 'Leave Edit Notification',
+                'reply_message' => $body,
+            ]
+        ]);
+    }
+
+    private function deleteNotification(Check $check)
+    {
+        $checkin_at = Carbon::createFromFormat('Y-m-d H:i:s', $check->checkin_at);
+        $checkout_at = Carbon::createFromFormat('Y-m-d H:i:s', $check->checkout_at);
+
+        $body = $check->staff->name." 偷偷刪除假單囉！\n";
+
+        if ($checkin_at->isSameDay($checkout_at)) {
+            $body .= "時間: ".$checkin_at->toDateString()." (".self::WEEK_DAY($checkin_at->format('l')).") ".$checkin_at->format('H:i')." ~ ".$checkout_at->format('H:i')."\n";
+        }
+        else {
+            $body .= "時間: ".$checkin_at->toDateString()." (".self::WEEK_DAY($checkin_at->format('l')).") ".$checkin_at->format('H:i')." ~ ".$checkout_at->toDateString()." (".self::WEEK_DAY($checkout_at->format('l')).") ".$checkout_at->format('H:i')."\n";
+        }
+
+        if ($check->type == Check::TYPE_ONLINE || $check->type == Check::TYPE_OFFICIAL_LEAVE) {
+            $body .= "假別: ".self::CHECK_TYPE($check->type)."\n"
+                ."原因: ".$check->leave_reason->reason."\n";
+        }
+        $response = $this->client->request('POST', Bot::where('name', $this->bot)->first()->notify_hook_url , [
+            'json' => [
+                'action' => 'Leave Delete Notification',
                 'reply_message' => $body,
             ]
         ]);
