@@ -2,9 +2,9 @@ version: "3.5"
 
 services:
 
-  backend:
+  web:
     image: checkin
-    container_name: checkin_backend
+    container_name: checkin_web
     restart: always
     env_file:
       - .env
@@ -24,7 +24,7 @@ services:
 
   cron:
     image: checkin-cron
-    container_name: checkin_backend_cron
+    container_name: checkin_cron
     restart: always
     env_file:
       - .env
@@ -42,7 +42,7 @@ services:
             max-file: "30"
   db:
     image: mysql:5.7
-    container_name: checkin_backend_db
+    container_name: checkin_db
     environment:
       MYSQL_DATABASE: "${DB_DATABASE}"
       MYSQL_USER: "${DB_USERNAME}"
@@ -56,20 +56,20 @@ services:
 
   redis:
     image: redis
-    container_name: checkin_backend_redis
+    container_name: checkin_redis
     networks:
       - backend_network
 
   memcached:
     image: memcached
+    container_name: checkin_memcached
     command: memcached -p 11211 -vv
-    container_name: checkin_backend_memcached
     networks:
       - backend_network
 
   adminer:
     image: clue/adminer
-    container_name: checkin_backend_adminer
+    container_name: checkin_adminer
     restart: always
     environment:
       VIRTUAL_HOST: "${ADMINER_HOST}"
