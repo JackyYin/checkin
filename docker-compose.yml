@@ -12,7 +12,7 @@ services:
       - redis
       - db
     volumes:
-      - ./:/var/www/html
+      - checkin-sync/:/var/www/html
     networks:
       - backend_network
       - proxy_network
@@ -81,6 +81,8 @@ services:
 volumes:
   db_data:
     name: checkin_database
+  checkin-sync:
+    external: true
 
 networks:
   backend_network:
