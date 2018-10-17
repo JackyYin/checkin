@@ -13,6 +13,7 @@ use App\Helpers\LeaveHelper;
 use App\Models\Staff;
 use App\Models\Check;
 use App\Models\LeaveReason;
+use Cache;
 
 class RecordController extends Controller
 {
@@ -62,25 +63,27 @@ class RecordController extends Controller
      */
     public function index(\App\Http\Requests\Api\V2\Leave\Record\IndexRequest $request)
     {
-        $leaves = Check::with(['leave_reason', 'staff'])
-            ->whereHas('staff', function ($query) use ($request) {
-                if ($request->filled('staff_ids')) {
-                    $query->whereIn('id', $request->staff_ids);
-                }
-            })
-            ->where(function ($query) use ($request) {
-                if ($request->filled('start_date')) {
-                    $query->where('checkin_at', ">=", $request->start_date);
-                }
+        $leaves = Cache::remember('test', 5, function () use ($request) {
+            return Check::with(['leave_reason', 'staff'])
+                ->whereHas('staff', function ($query) use ($request) {
+                    if ($request->filled('staff_ids')) {
+                        $query->whereIn('id', $request->staff_ids);
+                    }
+                })
+                ->where(function ($query) use ($request) {
+                    if ($request->filled('start_date')) {
+                        $query->where('checkin_at', ">=", $request->start_date);
+                    }
 
-                if ($request->filled('end_date')) {
-                    $query->where('checkout_at', "<=", $request->end_date);
-                }
+                    if ($request->filled('end_date')) {
+                        $query->where('checkout_at', "<=", $request->end_date);
+                    }
 
-                if ($request->filled('types')) {
-                    $query->whereIn('type', $request->types);
-                }
-        } )->isLeave()->get();
+                    if ($request->filled('types')) {
+                        $query->whereIn('type', $request->types);
+                    }
+            } )->isLeave()->get();
+        });
 
         return $this->response(200, fractal()->collection($leaves, new CheckTransformer));
     }
