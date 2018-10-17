@@ -27,20 +27,26 @@ RUN apt-get update \
     unzip\
     vim \
     wget \
+    build-essential \
     && add-apt-repository -y ppa:ondrej/php \
     && apt-get install -y php7.2 \
     && apt-get install -y --no-install-recommends \
     php-memcached \
+    php-pear \
     php7.2-fpm \
     php7.2-gd \
     php7.2-mbstring \
     php7.2-mysql \
     php7.2-xml \
+    php7.2-dev \
+    && pecl install redis \
     && apt-get remove -y --purge software-properties-common
 
 # configurations
 COPY ./Dockerconfig/nginx.conf /etc/nginx/nginx.conf
 COPY ./Dockerconfig/www.conf   /etc/php/7.2/fpm/pool.d/www.conf
+COPY ./Dockerconfig/php.ini    /etc/php/7.2/fpm/php.ini
+COPY ./Dockerconfig/php.ini    /etc/php/7.2/cli/php.ini
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]

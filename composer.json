@@ -17,7 +17,6 @@
         "laravel/socialite": "^3.1",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "^5.2.0",
-        "predis/predis": "^1.1",
         "ramsey/uuid": "^3.7",
         "schedula/laravel-passport-socialite": "^1.0",
         "socialiteproviders/manager": "^3.3",
