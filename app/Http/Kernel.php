@@ -39,9 +39,9 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            'throttle:60,1',
+            //'throttle:60,1',
             'bindings',
-            \Spatie\ResponseCache\Middlewares\CacheResponse::class,
+            //\Spatie\ResponseCache\Middlewares\CacheResponse::class,
         ],
 
         'admin' => [
