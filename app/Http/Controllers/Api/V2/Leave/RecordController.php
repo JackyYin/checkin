@@ -58,13 +58,40 @@ class RecordController extends Controller
      *          type="integer",
      *       ),
      *   ),
+     *   @SWG\Parameter(
+     *       name="source",
+     *       in="query",
+     *       type="string",
+     *   ),
      *   @SWG\Response(response="default", description="操作成功")
      * )
      */
     public function index(\App\Http\Requests\Api\V2\Leave\Record\IndexRequest $request)
     {
-        $leaves = Cache::remember('test', 5, function () use ($request) {
-            return Check::with(['leave_reason', 'staff'])
+        if ($request->query('source') == 'cache') {
+            $leaves = Cache::remember($request->fullUrl(), 5, function () use ($request) {
+                return Check::with(['leave_reason', 'staff'])
+                    ->whereHas('staff', function ($query) use ($request) {
+                        if ($request->filled('staff_ids')) {
+                            $query->whereIn('id', $request->staff_ids);
+                        }
+                    })
+                    ->where(function ($query) use ($request) {
+                        if ($request->filled('start_date')) {
+                            $query->where('checkin_at', ">=", $request->start_date);
+                        }
+
+                        if ($request->filled('end_date')) {
+                            $query->where('checkout_at', "<=", $request->end_date);
+                        }
+
+                        if ($request->filled('types')) {
+                            $query->whereIn('type', $request->types);
+                        }
+                })->isLeave()->get();
+            });
+        } else {
+            $leaves = Check::with(['leave_reason', 'staff'])
                 ->whereHas('staff', function ($query) use ($request) {
                     if ($request->filled('staff_ids')) {
                         $query->whereIn('id', $request->staff_ids);
@@ -82,8 +109,8 @@ class RecordController extends Controller
                     if ($request->filled('types')) {
                         $query->whereIn('type', $request->types);
                     }
-            } )->isLeave()->get();
-        });
+                })->isLeave()->get();
+        }
 
         return $this->response(200, fractal()->collection($leaves, new CheckTransformer));
     }
