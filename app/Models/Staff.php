@@ -121,4 +121,60 @@ class Staff extends Authenticatable implements UserSocialAccount
     {
         return $query->where('active', self::ACTIVE);
     }
+
+    public function getConstellationAttribute()
+    {
+        $birthday = Carbon::parse($this->profile->birth);
+
+        switch($birthday->month) {
+
+            case 1: 
+                return ($birthday->day < 20) ? "摩羯座" : "水瓶座"; 
+                break;
+
+            case 2: 
+                return ($birthday->day < 19) ? "水瓶座" : "雙魚座"; 
+                break;
+
+            case 3: 
+                return ($birthday->day < 21) ? "雙魚座" : "白羊座"; 
+                break;
+
+            case 4: 
+                return ($birthday->day < 21) ? "白羊座" : "金牛座"; 
+                break;
+
+            case 5: 
+                return ($birthday->day < 21) ? "金牛座" : "雙子座"; 
+                break;
+
+            case 6: 
+                return ($birthday->day < 22) ? "雙子座" : "巨蟹座"; 
+                break;
+
+            case 7: 
+                return ($birthday->day < 23) ? "巨蟹座" : "獅子座"; 
+                break;
+
+            case 8: 
+                return ($birthday->day < 23) ? "獅子座" : "處女座"; 
+                break;
+
+            case 9: 
+                return ($birthday->day < 23) ? "處女座" : "天秤座"; 
+                break;
+
+            case 10: 
+                return ($birthday->day < 23) ? "天秤座" : "天蠍座"; 
+                break;
+
+            case 11: 
+                return ($birthday->day < 22) ? "天蠍座" : "射手座"; 
+                break;
+
+            case 12: 
+                return ($birthday->day < 22) ? "射手座" : "摩羯座"; 
+                break;
+        }
+    }
 }
