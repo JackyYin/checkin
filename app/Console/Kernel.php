@@ -41,6 +41,12 @@ class Kernel extends ConsoleKernel
 
         //自動發通知到stride
         $schedule->command('stride:notify --daily')->dailyAt('09:00');
+
+        foreach (Staff::all() as $staff) {
+            if ($staff->profile && $staff->profile->birth) {
+                $schedule->job(new \App\Jobs\Line\FortuneNotification($staff))->dailyAt('08:30');
+            }
+        }
     }
 
     /**

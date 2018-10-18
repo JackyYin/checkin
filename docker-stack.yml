@@ -96,6 +96,7 @@ services:
       - STRIDE_BOT_BASE_URL=$STRIDE_BOT_BASE_URL
       - DISCORD_URL=$DISCORD_URL
       - REDIS_HOST=$REDIS_HOST
+      - SHENJIAN_APP_ID=$SHENJIAN_APP_ID
 
   memcached:
     image: memcached
