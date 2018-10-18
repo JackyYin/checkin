@@ -90,7 +90,7 @@ RUN wget https://getcomposer.org/composer.phar -O /usr/local/bin/composer \
     && chmod 755 /usr/local/bin/composer \
     && composer install --no-scripts --no-autoloader
 COPY . .
-#RUN composer dump-autoload --optimize
+RUN composer dump-autoload --optimize
 
 RUN chown -R www-data:www-data /var/www/html
 # Clean up APT when done.
