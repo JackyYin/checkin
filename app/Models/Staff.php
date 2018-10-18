@@ -133,11 +133,11 @@ class Staff extends Authenticatable implements UserSocialAccount
                 break;
 
             case 2: 
-                return ($birthday->day < 19) ? "水瓶座" : "雙魚座"; 
+                return ($birthday->day < 19) ? "水瓶座" : "双鱼座"; 
                 break;
 
             case 3: 
-                return ($birthday->day < 21) ? "雙魚座" : "白羊座"; 
+                return ($birthday->day < 21) ? "双鱼座" : "白羊座"; 
                 break;
 
             case 4: 
@@ -145,31 +145,31 @@ class Staff extends Authenticatable implements UserSocialAccount
                 break;
 
             case 5: 
-                return ($birthday->day < 21) ? "金牛座" : "雙子座"; 
+                return ($birthday->day < 21) ? "金牛座" : "双子座"; 
                 break;
 
             case 6: 
-                return ($birthday->day < 22) ? "雙子座" : "巨蟹座"; 
+                return ($birthday->day < 22) ? "双子座" : "巨蟹座"; 
                 break;
 
             case 7: 
-                return ($birthday->day < 23) ? "巨蟹座" : "獅子座"; 
+                return ($birthday->day < 23) ? "巨蟹座" : "狮子座"; 
                 break;
 
             case 8: 
-                return ($birthday->day < 23) ? "獅子座" : "處女座"; 
+                return ($birthday->day < 23) ? "狮子座" : "处女座"; 
                 break;
 
             case 9: 
-                return ($birthday->day < 23) ? "處女座" : "天秤座"; 
+                return ($birthday->day < 23) ? "处女座" : "天秤座"; 
                 break;
 
             case 10: 
-                return ($birthday->day < 23) ? "天秤座" : "天蠍座"; 
+                return ($birthday->day < 23) ? "天秤座" : "天蝎座"; 
                 break;
 
             case 11: 
-                return ($birthday->day < 22) ? "天蠍座" : "射手座"; 
+                return ($birthday->day < 22) ? "天蝎座" : "射手座"; 
                 break;
 
             case 12: 
