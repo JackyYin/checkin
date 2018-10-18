@@ -60,6 +60,7 @@ services:
       - LINE_SECRET=$LINE_SECRET
       - LINE_REDIRECT_URI=$LINE_REDIRECT_URI
       - RESPONSE_CACHE_DRIVER=$RESPONSE_CACHE_DRIVER
+      - SHENJIAN_APP_ID=$SHENJIAN_APP_ID
 
     volumes:
       - data-log:/var/www/html/storage/logs
