@@ -57,6 +57,26 @@ class LineHelper
         }
     }
 
+    public function fortuneNotification($staff)
+    {
+        $service = new \App\Services\Shenjian\ConstellationService();
+
+        $fortune_result = $service->today($staff->constellation);
+
+        if (!$fortune_result) {
+            $reply = "今日運勢分析: 找不到您的運勢...QQ";
+        } else {
+            $reply = "今日運勢分析: ".$fortune_result->data->analysis;
+        }
+
+            $response = $this->client->request('POST', Bot::where('name', $this->bot)->first()->notify_hook_url, [
+                'json' => [
+                    'subscribers' => [$staff->email],
+                    'reply_message' => $reply
+                ]
+            ]);
+    }
+
     private function createNotification(Check $check)
     {
         $checkin_at = Carbon::createFromFormat('Y-m-d H:i:s', $check->checkin_at);
