@@ -40,13 +40,10 @@ class Kernel extends ConsoleKernel
         $schedule->command('auto:check')->dailyAt('23:59');
 
         //自動發通知到stride
-        $schedule->command('stride:notify --daily')->dailyAt('09:00');
+        $schedule->command('stride:notify --daily')->dailyat('09:00');
 
-        foreach (Staff::all() as $staff) {
-            if ($staff->profile && $staff->profile->birth) {
-                $schedule->job(new \App\Jobs\Line\FortuneNotification($staff))->dailyAt('08:30');
-            }
-        }
+        //星座運勢每日推播
+        $schedule->command('fortune:notify --daily')->dailyAt('08:30');
     }
 
     /**
