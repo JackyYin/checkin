@@ -61,6 +61,7 @@ services:
       - LINE_REDIRECT_URI=$LINE_REDIRECT_URI
       - RESPONSE_CACHE_DRIVER=$RESPONSE_CACHE_DRIVER
       - SHENJIAN_APP_ID=$SHENJIAN_APP_ID
+      - GOOGLE_KEY=$GOOGLE_KEY
 
     volumes:
       - data-log:/var/www/html/storage/logs
@@ -97,6 +98,7 @@ services:
       - DISCORD_URL=$DISCORD_URL
       - REDIS_HOST=$REDIS_HOST
       - SHENJIAN_APP_ID=$SHENJIAN_APP_ID
+      - GOOGLE_KEY=$GOOGLE_KEY
 
   memcached:
     image: memcached
