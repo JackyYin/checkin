@@ -83,6 +83,34 @@ class LineHelper
             ]);
     }
 
+    public function fortuneNotification2($staff)
+    {
+        $service = new \App\Services\HoroscopeService();
+
+        $fortune_result = $service->today($staff->constellation);
+
+        if (!$fortune_result) {
+            $reply = "今日運勢分析:\n 找不到您的運勢...QQ";
+        } else {
+            $reply = "本日金句: \n"
+                .$fortune_result->TODAY_WORD."\n\n"
+                ."整體運勢: \n".$fortune_result->DESC_ENTIRETY."\n\n"
+                ."愛情運勢: \n".$fortune_result->DESC_LOVE."\n\n"
+                ."事業運勢: \n".$fortune_result->DESC_WORK."\n\n"
+                ."財運運勢: \n".$fortune_result->DESC_MONEY."\n\n"
+                ."整體分數: ".mb_convert_encoding(substr($fortune_result->STAR_ENTIRETY, 12, -3), 'UTF-8', 'UTF-8')."\n"
+                ."愛情分數: ".mb_convert_encoding(substr($fortune_result->STAR_LOVE, 12, -3), 'UTF-8', 'UTF-8')."\n"
+                ."事業分數: ".mb_convert_encoding(substr($fortune_result->STAR_WORK, 12, -3), 'UTF-8', 'UTF-8')."\n"
+                ."財運分數: ".mb_convert_encoding(substr($fortune_result->STAR_MONEY, 12, -3), 'UTF-8', 'UTF-8');
+        }
+
+            $response = $this->client->request('POST', Bot::where('name', $this->bot)->first()->notify_hook_url, [
+                'json' => [
+                    'subscribers' => [$staff->email],
+                    'reply_message' => $reply
+                ]
+            ]);
+    }
     private function createNotification(Check $check)
     {
         $checkin_at = Carbon::createFromFormat('Y-m-d H:i:s', $check->checkin_at);

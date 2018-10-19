@@ -33,6 +33,6 @@ class FortuneNotification implements ShouldQueue
     public function handle()
     {
         $LineHelper = new LineHelper();
-        $LineHelper->fortuneNotification($this->staff);
+        $LineHelper->fortuneNotification2($this->staff);
     }
 }
