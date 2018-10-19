@@ -129,51 +129,51 @@ class Staff extends Authenticatable implements UserSocialAccount
         switch($birthday->month) {
 
             case 1: 
-                return ($birthday->day < 20) ? "摩羯座" : "水瓶座"; 
+                return ($birthday->day < 20) ? "capricorn" : "aquarius";
                 break;
 
             case 2: 
-                return ($birthday->day < 19) ? "水瓶座" : "双鱼座"; 
+                return ($birthday->day < 19) ? "aquarius" : "pisces";
                 break;
 
             case 3: 
-                return ($birthday->day < 21) ? "双鱼座" : "白羊座"; 
+                return ($birthday->day < 21) ? "pisces" : "aries";
                 break;
 
             case 4: 
-                return ($birthday->day < 21) ? "白羊座" : "金牛座"; 
+                return ($birthday->day < 21) ? "aries" : "taurus";
                 break;
 
             case 5: 
-                return ($birthday->day < 21) ? "金牛座" : "双子座"; 
+                return ($birthday->day < 21) ? "taurus" : "gemini";
                 break;
 
             case 6: 
-                return ($birthday->day < 22) ? "双子座" : "巨蟹座"; 
+                return ($birthday->day < 22) ? "gemini" : "cancer";
                 break;
 
             case 7: 
-                return ($birthday->day < 23) ? "巨蟹座" : "狮子座"; 
+                return ($birthday->day < 23) ? "cancer" : "leo";
                 break;
 
             case 8: 
-                return ($birthday->day < 23) ? "狮子座" : "处女座"; 
+                return ($birthday->day < 23) ? "leo" : "virgo";
                 break;
 
             case 9: 
-                return ($birthday->day < 23) ? "处女座" : "天秤座"; 
+                return ($birthday->day < 23) ? "virgo" : "libra";
                 break;
 
             case 10: 
-                return ($birthday->day < 23) ? "天秤座" : "天蝎座"; 
+                return ($birthday->day < 23) ? "libra" : "scorpio";
                 break;
 
             case 11: 
-                return ($birthday->day < 22) ? "天蝎座" : "射手座"; 
+                return ($birthday->day < 22) ? "scorpio" : "sagittarius";
                 break;
 
             case 12: 
-                return ($birthday->day < 22) ? "射手座" : "摩羯座"; 
+                return ($birthday->day < 22) ? "sagittarius" : "capricorn";
                 break;
         }
     }

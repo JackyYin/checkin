@@ -2,6 +2,9 @@
 
 namespace App\Services\Shenjian;
 
+use App;
+use Cache;
+use Carbon\Carbon;
 use DB;
 use GuzzleHttp\Client;
 use App\Models\Staff;
@@ -20,13 +23,21 @@ class ConstellationService
         $this->client = new Client;
     }
 
-    public function today($constellation)
+    public function today($en_constellation)
     {
+        $redis_key = Carbon::today()->toDateString().":".$en_constellation;
+
+        if (Cache::has($redis_key)) {
+            return Cache::get($redis_key);
+        }
+
         try {
+            App::setLocale('zh_CN');
+
             $response = $this->client->get($this->base_url.'/today', [
                 'query' => [
                     'appid'         => $this->app_id,
-                    'constellation' => $constellation
+                    'constellation' => __('constellation.'.$en_constellation)
                 ],
             ]);
         } catch (\Exception $e) {
@@ -38,6 +49,8 @@ class ConstellationService
         if ($result->error_code != 0) {
             return false;
         }
+
+        Cache::put($redis_key, $result, Carbon::tomorrow());
 
         return $result;
     }
