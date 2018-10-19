@@ -77,4 +77,21 @@ class ConstellationService
 
         return $analysis;
     }
+
+    public function today_stars($en_constellation)
+    {
+        $result = $this->today($en_constellation);
+
+        if (!$result) {
+            return false;
+        }
+
+        $stars = [];
+
+        foreach ($result->data->fate_data as $fate) {
+            $stars[] = $fate->value[0];
+        }
+
+        return $stars;
+    }
 }

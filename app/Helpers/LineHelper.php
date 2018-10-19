@@ -61,12 +61,18 @@ class LineHelper
     {
         $service = new \App\Services\Shenjian\ConstellationService();
 
-        $fortune_result = $service->today_analysis($staff->constellation);
+        $fortune_analysis = $service->today_analysis($staff->constellation);
+        $fortune_stars = $service->today_stars($staff->constellation);
 
-        if (!$fortune_result) {
+        if (!$fortune_analysis) {
             $reply = "今日運勢分析: 找不到您的運勢...QQ";
         } else {
-            $reply = "今日運勢分析: ".$fortune_result;
+            $reply = "今日運勢分析: \n"
+                .$fortune_analysis."\n\n"
+                ."綜合分數: ".str_repeat('⭐',  $fortune_stars[0])."\n"
+                ."愛情分數: ".str_repeat('⭐',  $fortune_stars[1])."\n"
+                ."工作分數: ".str_repeat('⭐',  $fortune_stars[2])."\n"
+                ."財運分數: ".str_repeat('⭐',  $fortune_stars[3])."\n";
         }
 
             $response = $this->client->request('POST', Bot::where('name', $this->bot)->first()->notify_hook_url, [
