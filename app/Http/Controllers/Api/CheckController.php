@@ -27,6 +27,7 @@ class CheckController extends Controller
      * @SWG\Post(path="/api/checkin",
      *   tags={"Check"},
      *   summary="打卡上班",
+     *   deprecated=true,
      *   operationId="checkin",
      *   produces={"text/plain"},
      *   @SWG\Parameter(
@@ -92,6 +93,7 @@ class CheckController extends Controller
      * @SWG\Post(path="/api/checkout",
      *   tags={"Check"},
      *   summary="打卡下班",
+     *   deprecated=true,
      *   operationId="checkout",
      *   produces={"text/plain"},
      *   @SWG\Parameter(
