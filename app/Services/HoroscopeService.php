@@ -35,19 +35,19 @@ class HoroscopeService
         $this->client = new Client;
     }
 
-    public function today($en_constellation)
+    public function today($engConstellation)
     {
         $data = $this->get();
 
-        return $data[$en_constellation];
+        return $data[$engConstellation];
     }
 
     private function get()
     {
-        $redis_key = Carbon::today()->toDateString().":horoscope";
+        $redisKey = Carbon::today()->toDateString().":horoscope";
 
-        if (Cache::has($redis_key)) {
-            return Cache::get($redis_key);
+        if (Cache::has($redisKey)) {
+            return Cache::get($redisKey);
         }
 
         try {
@@ -64,7 +64,7 @@ class HoroscopeService
             $data[$this->mapping[$object->name]] = $object;
         }
 
-        Cache::put($redis_key, $data, Carbon::tomorrow());
+        Cache::put($redisKey, $data, Carbon::tomorrow());
 
         return $data;
     }
