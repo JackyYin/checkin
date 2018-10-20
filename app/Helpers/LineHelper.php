@@ -61,8 +61,8 @@ class LineHelper
     {
         $service = new \App\Services\Shenjian\ConstellationService();
 
-        $fortune_analysis = $service->today_analysis($staff->constellation);
-        $fortune_stars = $service->today_stars($staff->constellation);
+        $fortune_analysis = $service->analysisToday($staff->constellation);
+        $fortune_stars = $service->starsToday($staff->constellation);
 
         if (!$fortune_analysis) {
             $reply = "今日運勢分析: 找不到您的運勢...QQ";

@@ -12,34 +12,34 @@ use App\Models\Bot;
 
 class ConstellationService
 {
-    protected $base_url;
-    protected $app_id;
+    protected $baseUrl;
+    protected $appId;
     protected $client;
-    protected $translation_service;
+    protected $translationService;
 
     public function __construct()
     {
-        $this->base_url = "https://api.shenjian.io/constellation";
-        $this->app_id = config('shenjian.appid');
+        $this->baseUrl = "https://api.shenjian.io/constellation";
+        $this->appId = config('shenjian.appid');
         $this->client = new Client;
-        $this->translation_service = new \App\Services\Google\TranslationService();
+        $this->translationService = new \App\Services\Google\TranslationService();
     }
 
-    public function today($en_constellation)
+    public function today($engConstellation)
     {
-        $redis_key = Carbon::today()->toDateString().":".$en_constellation;
+        $redisKey = Carbon::today()->toDateString().":".$engConstellation;
 
-        if (Cache::has($redis_key)) {
-            return Cache::get($redis_key);
+        if (Cache::has($redisKey)) {
+            return Cache::get($redisKey);
         }
 
         try {
             App::setLocale('zh_CN');
 
-            $response = $this->client->get($this->base_url.'/today', [
+            $response = $this->client->get($this->baseUrl.'/today', [
                 'query' => [
-                    'appid'         => $this->app_id,
-                    'constellation' => __('constellation.'.$en_constellation)
+                    'appid'         => $this->appId,
+                    'constellation' => __('constellation.'.$engConstellation)
                 ],
             ]);
         } catch (\Exception $e) {
@@ -52,35 +52,35 @@ class ConstellationService
             return false;
         }
 
-        Cache::put($redis_key, $result, Carbon::tomorrow());
+        Cache::put($redisKey, $result, Carbon::tomorrow());
 
         return $result;
     }
 
-    public function today_analysis($en_constellation)
+    public function analysisToday($engConstellation)
     {
-        $redis_key = Carbon::today()->toDateString().":translated_analysis:".$en_constellation;
+        $redisKey = Carbon::today()->toDateString().":translated_analysis:".$engConstellation;
 
-        if (Cache::has($redis_key)) {
-            return Cache::get($redis_key);
+        if (Cache::has($redisKey)) {
+            return Cache::get($redisKey);
         }
 
-        $result = $this->today($en_constellation);
+        $result = $this->today($engConstellation);
 
         if (!$result) {
             return false;
         }
 
-        $analysis = $this->translation_service->translate($result->data->analysis);
+        $analysis = $this->translationService->translate($result->data->analysis);
 
-        Cache::put($redis_key, $analysis, Carbon::tomorrow());
+        Cache::put($redisKey, $analysis, Carbon::tomorrow());
 
         return $analysis;
     }
 
-    public function today_stars($en_constellation)
+    public function starsToday($engConstellation)
     {
-        $result = $this->today($en_constellation);
+        $result = $this->today($engConstellation);
 
         if (!$result) {
             return false;
