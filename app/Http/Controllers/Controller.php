@@ -9,20 +9,12 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
-use App\Transformers\CheckTransformer;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     const PAGER = 30;
-
-    protected $checkTransformer;
-
-    public function __construct()
-    {
-        $this->checkTransformer = new CheckTransformer();
-    }
 
     public $CHECK_TYPE = [
         1  => "事假",

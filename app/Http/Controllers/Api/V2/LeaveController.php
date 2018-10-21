@@ -15,6 +15,14 @@ use App\Models\LeaveReason;
 
 class LeaveController extends Controller
 {
+
+    private $checkTransformer;
+
+    public function __construct()
+    {
+        $this->checkTransformer = new CheckTransformer();
+    }
+
     /**
      * @SWG\Tag(name="Leave", description="請假")
      */
