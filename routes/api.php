@@ -68,11 +68,10 @@ Route::group(['namespace' => 'Api'], function () {
             Route::group(['prefix' => 'staff'], function () {
                 Route::get('/me', ['uses' => 'StaffController@me']);
             });
-        //    Route::group(['prefix' => 'check'], function () {
-        //        Route::post('/', ['uses' => 'CheckController@index']);
-        //        Route::get('start', ['uses' => 'CheckController@start']);
-        //        Route::get('end', ['uses' => 'CheckController@end']);
-        //    });
+
+            Route::group(['prefix' => 'check'], function () {
+                Route::post('in/location', ['uses' => 'CheckController@locationCheckIn']);
+            });
         });
     });
 });
