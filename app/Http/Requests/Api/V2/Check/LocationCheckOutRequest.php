@@ -7,7 +7,7 @@ use App\Helpers\GeoHelper;
 use App\Helpers\LeaveHelper;
 use Carbon\Carbon;
 
-class LocationCheckinRequest extends FormRequest
+class LocationCheckoutRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -47,13 +47,8 @@ class LocationCheckinRequest extends FormRequest
             }
 
             // 檢查今日是否已打上班卡
-            if ($this->user()->canCheckOutToday()) {
-                $validator->errors()->add('checked', '您已打過上班卡');
-            }
-
-            // 檢查打卡開始時間是否在其他請假或打卡區間內
-            if($this->user()->illegalCheckinTime(Carbon::now())) {
-                $validator->errors()->add('repeat', '已存在重複的請假或打卡時間');
+            if (!$this->user()->canCheckOutToday()) {
+                $validator->errors()->add('not_checked', '您尚未打上班卡');
             }
         });
     }

@@ -106,6 +106,14 @@ class Check extends Model
     {
         return $query->where('type', self::TYPE_NORMAL);
     }
+
+    public function scopeReadyForCheckoutToday($query)
+    {
+        return $query->isCheck()
+            ->where('checkin_at', '>=', Carbon::parse(config('check.checkin.start')))
+            ->whereNull('checkout_at');
+     }
+
     public function getMinutesAttribute()
     {
         $checkin_at = $this->checkin_at;

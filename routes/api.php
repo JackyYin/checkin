@@ -71,6 +71,7 @@ Route::group(['namespace' => 'Api'], function () {
 
             Route::group(['prefix' => 'check'], function () {
                 Route::post('in/location', ['uses' => 'CheckController@locationCheckIn']);
+                Route::post('out/location', ['uses' => 'CheckController@locationCheckOut']);
             });
         });
     });
