@@ -2,9 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Carbon\Carbon;
+use App\Models\Profile;
 use App\Models\Staff;
+use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class FortuneNotify extends Command
 {
@@ -43,41 +44,29 @@ class FortuneNotify extends Command
     {
         if ($this->option('daily')) {
             $staffs = Staff::whereHas('profile', function ($query) {
-                    $query->where('identity', Profile::ID_FULL_TIME);
+                    $query->whereIn('identity', [Profile::ID_FULL_TIME, Profile::ID_PART_TIME])
+                        ->whereNotNull('birth');
                 })->get();
-    
-            $bar = $this->output->createProgressBar(count($staffs));
-
-            foreach ($staffs as $staff) {
-                if ($staff->profile->birth) {
-                    \App\Jobs\Line\FortuneNotification::dispatch($staff);
-                }
-                $bar->advance();
-            }
-
-            $bar->finish();
         } else {
             $staffs = Staff::whereIn('email', $this->argument('emails'))
                 ->whereHas('profile', function ($query) {
-                    $query->where('identity', Profile::ID_FULL_TIME);
+                    $query->whereIn('identity', [Profile::ID_FULL_TIME, Profile::ID_PART_TIME])
+                        ->whereNotNull('birth');
                 })->get();
-
-            if ($staffs->isEmpty()) {
-                $this->error('Check Not Found!');
-                return;
-            }
-
-            $bar = $this->output->createProgressBar(count($staffs));
-
-            foreach ($staffs as $staff) {
-                if ($staff->profile->birth) {
-                    \App\Jobs\Line\FortuneNotification::dispatch($staff);
-                }
-                $bar->advance();
-            }
-
-            $bar->finish();
-            
         }
+
+        if ($staffs->isEmpty()) {
+            $this->error('Staff Not Existed');
+            return;
+        }
+
+        $bar = $this->output->createProgressBar(count($staffs));
+
+        foreach ($staffs as $staff) {
+            \App\Jobs\Line\FortuneNotification::dispatch($staff);
+            $bar->advance();
+        }
+
+        $bar->finish();
     }
 }
