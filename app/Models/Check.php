@@ -87,11 +87,6 @@ class Check extends Model
         return $this->belongsTo(Staff::class, 'staff_id', 'id');
     }
 
-    public function scopeIsLeave($query)
-    {
-        return $query->where('type', '!=', self::TYPE_NORMAL);
-    }
-
     public function isLeave()
     {
         return $this->type != self::TYPE_NORMAL;
@@ -99,9 +94,18 @@ class Check extends Model
 
     public function simple()
     {
-        return $this->isLeave() && $this->type != self::TYPE_ONLINE && $this->type != self::TYPE_OFFICIAL_LEAVE;
+        return $this->type != self::TYPE_ONLINE && $this->type != self::TYPE_OFFICIAL_LEAVE;
     }
 
+    public function scopeIsLeave($query)
+    {
+        return $query->where('type', '!=', self::TYPE_NORMAL);
+    }
+
+    public function scopeIsCheck($query)
+    {
+        return $query->where('type', self::TYPE_NORMAL);
+    }
     public function getMinutesAttribute()
     {
         $checkin_at = $this->checkin_at;

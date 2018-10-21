@@ -177,4 +177,13 @@ class Staff extends Authenticatable implements UserSocialAccount
                 break;
         }
     }
+
+    public function checkedToday()
+    {
+        return $this->checks()
+            ->isCheck()
+            ->where('checkin_at', '>=', Carbon::parse(config('check.checkin.start')))
+            ->whereNull('checkout_at')->get()
+            ->isNotEmpty();
+    }
 }
