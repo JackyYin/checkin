@@ -42,12 +42,14 @@ class FortuneNotify extends Command
     public function handle()
     {
         if ($this->option('daily')) {
-            $staffs = Staff::all();
+            $staffs = Staff::whereHas('profile', function ($query) {
+                    $query->where('identity', Profile::ID_FULL_TIME);
+                })->get();
     
             $bar = $this->output->createProgressBar(count($staffs));
 
             foreach ($staffs as $staff) {
-                if ($staff->profile && $staff->profile->birth) {
+                if ($staff->profile->birth) {
                     \App\Jobs\Line\FortuneNotification::dispatch($staff);
                 }
                 $bar->advance();
@@ -55,7 +57,10 @@ class FortuneNotify extends Command
 
             $bar->finish();
         } else {
-            $staffs = Staff::whereIn('email', $this->argument('emails'))->get();
+            $staffs = Staff::whereIn('email', $this->argument('emails'))
+                ->whereHas('profile', function ($query) {
+                    $query->where('identity', Profile::ID_FULL_TIME);
+                })->get();
 
             if ($staffs->isEmpty()) {
                 $this->error('Check Not Found!');
@@ -65,7 +70,7 @@ class FortuneNotify extends Command
             $bar = $this->output->createProgressBar(count($staffs));
 
             foreach ($staffs as $staff) {
-                if ($staff->profile && $staff->profile->birth) {
+                if ($staff->profile->birth) {
                     \App\Jobs\Line\FortuneNotification::dispatch($staff);
                 }
                 $bar->advance();
