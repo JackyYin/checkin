@@ -41,8 +41,9 @@ class LocationCheckinRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            // 距離果子云500公尺以上,不符合GPS打卡資格
-            if (!GeoHelper::distanceWithin($this->latitude, $this->longitude, '25.045004', '121.525271', '0.5')) {
+            // 距離公司x公里以上,不符合GPS打卡資格
+            if (!GeoHelper::distanceWithin($this->latitude, $this->longitude,
+                config('company.latitude'), config('company.longitude'), config('company.legal_distance'))) {
                 $validator->errors()->add('location', '距離公司太遠');
             }
 
