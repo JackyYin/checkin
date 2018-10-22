@@ -14,6 +14,11 @@ class StaffController extends Controller
 {
     public function index(Request $request)
     {
+        $service = new \App\Services\Shenjian\ConstellationService();
+
+        $fortune_result = $service->analysisToday(Staff::find(10)->constellation);
+
+        dd($fortune_result);
         if ($request->input('action_type') == 'export') {
             return $this->exportStaff();
         }
