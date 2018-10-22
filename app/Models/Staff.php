@@ -100,6 +100,10 @@ class Staff extends Authenticatable implements UserSocialAccount
         return $this->belongsToMany(Bot::class)->using(BotStaff::class)->withPivot('email_auth_token');
     }
 
+    public function modules()
+    {
+        return $this->hasMany(StaffModule::class, 'staff_id', 'id');
+    }
     public function findForPassport($username)
     {
         return $this->where('email', $username)->first();

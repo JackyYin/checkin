@@ -46,12 +46,16 @@ class FortuneNotify extends Command
             $staffs = Staff::whereHas('profile', function ($query) {
                     $query->whereIn('identity', [Profile::ID_FULL_TIME, Profile::ID_PART_TIME])
                         ->whereNotNull('birth');
-                })->get();
+            })->whereHas('modules', function ($query) {
+                $query->where('module_name', 'fortune');
+            })->get();
         } else {
             $staffs = Staff::whereIn('email', $this->argument('emails'))
                 ->whereHas('profile', function ($query) {
                     $query->whereIn('identity', [Profile::ID_FULL_TIME, Profile::ID_PART_TIME])
                         ->whereNotNull('birth');
+                })->whereHas('modules', function ($query) {
+                    $query->where('module_name', 'fortune');
                 })->get();
         }
 
