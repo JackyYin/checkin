@@ -67,6 +67,12 @@ Route::group(['namespace' => 'Api'], function () {
             });
             Route::group(['prefix' => 'staff'], function () {
                 Route::get('/me', ['uses' => 'StaffController@me']);
+
+                //使用者模組
+                Route::group(['prefix' => 'module', 'namespace' => 'Staff'], function () {
+                    Route::post('on', ['uses' => 'ModuleController@on']);
+                    Route::post('off', ['uses' => 'ModuleController@off']);
+                });
             });
 
             Route::group(['prefix' => 'check'], function () {
