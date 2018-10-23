@@ -70,6 +70,7 @@ Route::group(['namespace' => 'Api'], function () {
 
                 //使用者模組
                 Route::group(['prefix' => 'module', 'namespace' => 'Staff'], function () {
+                    Route::get('/', ['uses' => 'ModuleController@index']);
                     Route::post('on', ['uses' => 'ModuleController@on']);
                     Route::post('off', ['uses' => 'ModuleController@off']);
                 });

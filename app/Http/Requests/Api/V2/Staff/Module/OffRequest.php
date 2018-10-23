@@ -24,7 +24,7 @@ class OffRequest extends FormRequest
     public function rules()
     {
         return [
-            'module_name'   => 'bail|required|in:fortune',
+            'module_name'   => 'bail|required|in:fortune|exists:modules,name',
         ];
     }
 
@@ -37,7 +37,7 @@ class OffRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            if ($this->user()->modules()->where('module_name', $this->module_name)->get()->isEmpty()) {
+            if ($this->user()->modules()->where('name', $this->module_name)->get()->isEmpty()) {
                 $validator->errors()->add('repeat', '此模組未啟用');
             }
         });

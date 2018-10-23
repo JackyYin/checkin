@@ -102,8 +102,9 @@ class Staff extends Authenticatable implements UserSocialAccount
 
     public function modules()
     {
-        return $this->hasMany(StaffModule::class, 'staff_id', 'id');
+        return $this->belongsToMany(Module::class, 'staff_module', 'staff_id', 'module_id');
     }
+
     public function findForPassport($username)
     {
         return $this->where('email', $username)->first();

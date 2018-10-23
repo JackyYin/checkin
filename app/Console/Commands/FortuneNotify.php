@@ -47,7 +47,7 @@ class FortuneNotify extends Command
                     $query->whereIn('identity', [Profile::ID_FULL_TIME, Profile::ID_PART_TIME])
                         ->whereNotNull('birth');
             })->whereHas('modules', function ($query) {
-                $query->where('module_name', 'fortune');
+                $query->where('name', 'fortune');
             })->get();
         } else {
             $staffs = Staff::whereIn('email', $this->argument('emails'))
@@ -55,7 +55,7 @@ class FortuneNotify extends Command
                     $query->whereIn('identity', [Profile::ID_FULL_TIME, Profile::ID_PART_TIME])
                         ->whereNotNull('birth');
                 })->whereHas('modules', function ($query) {
-                    $query->where('module_name', 'fortune');
+                    $query->where('name', 'fortune');
                 })->get();
         }
 
