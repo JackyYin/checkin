@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Module;
 use App\Models\Profile;
 use App\Models\Staff;
 use Carbon\Carbon;
@@ -52,10 +53,16 @@ class SubscribeModule extends Command
 
         $bar = $this->output->createProgressBar(count($staffs));
 
+        $module = Module::where('name', $this->argument('module'))->first();
+
+        if (!$module) {
+            $this->error('Module Not Existed');
+            return;
+        }
+
         foreach ($staffs as $staff) {
-            $staff->modules()->create([
-                'module_name' => $this->argument('module')
-            ]);
+
+            $staff->modules()->attach($module->id);
 
             $bar->advance();
         }
