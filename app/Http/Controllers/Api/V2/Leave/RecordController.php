@@ -178,6 +178,11 @@ class RecordController extends Controller
      *   operationId="get-my-leave-records",
      *   produces={"application/json"},
      *   @SWG\Parameter(
+     *       name="page",
+     *       in="query",
+     *       type="integer",
+     *   ),
+     *   @SWG\Parameter(
      *       name="start_date",
      *       in="query",
      *       type="string",
@@ -203,7 +208,8 @@ class RecordController extends Controller
     {
         $staff = Auth::guard('api')->user();
 
-        $leaves = $staff->checks()->with(['leave_reason', 'staff'])->where(function ($query) use ($request) {
+        $leaves = $staff->checks()->with(['leave_reason', 'staff'])
+            ->where(function ($query) use ($request) {
                 if ($request->filled('start_date')) {
                     $query->where('checkin_at', ">=", $request->start_date);
                 }
@@ -215,8 +221,9 @@ class RecordController extends Controller
                 if ($request->filled('types')) {
                     $query->whereIn('type', $request->types);
                 }
-        } )->isLeave()->get();
+        } )->isLeave()->get()->sortByDesc('id');
 
-        return $this->response(200, fractal()->collection($leaves, new CheckTransformer));
+        return $this->response(200, fractal()->collection(
+            $this->paginate($leaves, 10, $request->query('page'), $request), new CheckTransformer));
     }
 }

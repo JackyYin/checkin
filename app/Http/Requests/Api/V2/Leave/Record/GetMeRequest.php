@@ -26,6 +26,7 @@ class GetMeRequest extends FormRequest
         return [
             'start_date' => 'date_format:Y-m-d',
             'end_date'   => 'date_format:Y-m-d',
+            'page'       => 'integer'
         ];
     }
 
