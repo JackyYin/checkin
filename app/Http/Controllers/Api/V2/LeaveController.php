@@ -41,48 +41,16 @@ class LeaveController extends Controller
      */
     public function getLeaveType(Request $request)
     {
-        return response()->json([
-            array(
-                'id'   => Check::TYPE_PERSONAL_LEAVE,
-                'name' => $this->CHECK_TYPE[Check::TYPE_PERSONAL_LEAVE],
-            ),
-            array(
-                'id'   => Check::TYPE_ANNUAL_LEAVE,
-                'name' => $this->CHECK_TYPE[Check::TYPE_ANNUAL_LEAVE],
-            ),
-            array(
-                'id'   => Check::TYPE_OFFICIAL_LEAVE,
-                'name' => $this->CHECK_TYPE[Check::TYPE_OFFICIAL_LEAVE],
-            ),
-            array(
-                'id'   => Check::TYPE_SICK_LEAVE,
-                'name' => $this->CHECK_TYPE[Check::TYPE_SICK_LEAVE],
-            ),
-            array(
-                'id'   => Check::TYPE_ONLINE,
-                'name' => $this->CHECK_TYPE[Check::TYPE_ONLINE],
-            ),
-            array(
-                'id'   => Check::TYPE_LATE,
-                'name' => $this->CHECK_TYPE[Check::TYPE_LATE],
-            ),
-            array(
-                'id'   => Check::TYPE_MOURNING_LEAVE,
-                'name' => $this->CHECK_TYPE[Check::TYPE_MOURNING_LEAVE],
-            ),
-            array(
-                'id'   => Check::TYPE_MATERNITY_LEAVE,
-                'name' => $this->CHECK_TYPE[Check::TYPE_MATERNITY_LEAVE],
-            ),
-            array(
-                'id'   => Check::TYPE_PATERNITY_LEAVE,
-                'name' => $this->CHECK_TYPE[Check::TYPE_PATERNITY_LEAVE],
-            ),
-            array(
-                'id'   => Check::TYPE_MARRIAGE_LEAVE,
-                'name' => $this->CHECK_TYPE[Check::TYPE_MARRIAGE_LEAVE],
-            ),
-        ], 200);
+        $data = [];
+
+        foreach (array_except(Check::getEnum('type'), Check::TYPE_NORMAL) as $key => $value) {
+            $data[] = [
+                'id' => $key,
+                'name' => $value
+            ];
+        };
+
+        return $this->response(200, $data);
     }
     /**
      *
