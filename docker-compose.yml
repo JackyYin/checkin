@@ -87,6 +87,7 @@ volumes:
 networks:
   backend_network:
     driver: bridge
+    name: checkin_backend
   proxy_network:
     external:
       name: proxy_network
