@@ -111,6 +111,27 @@ class LineHelper
                 ]
             ]);
     }
+
+    public function predictionNotification($staff)
+    {
+        $service = new \App\Services\PredictionService();
+
+        $result = $service->predict($staff);
+
+        if (!$result) {
+            $reply = "今日請假機率:\n 算不出來...QQ";
+        } else {
+            $reply = "今日請假機率: \n".$result->chance;
+        }
+
+            $response = $this->client->request('POST', Bot::where('name', $this->bot)->first()->notify_hook_url, [
+                'json' => [
+                    'subscribers' => [$staff->email],
+                    'reply_message' => $reply
+                ]
+            ]);
+    }
+
     private function createNotification(Check $check)
     {
         $checkin_at = Carbon::createFromFormat('Y-m-d H:i:s', $check->checkin_at);

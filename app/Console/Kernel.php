@@ -44,6 +44,9 @@ class Kernel extends ConsoleKernel
 
         //星座運勢每日推播
         $schedule->command('fortune:notify --daily')->dailyAt('08:30');
+
+        //星座運勢每日推播
+        $schedule->command('prediction:notify --daily')->dailyAt('08:45');
     }
 
     /**

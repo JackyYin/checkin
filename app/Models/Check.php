@@ -112,7 +112,19 @@ class Check extends Model
         return $query->isCheck()
             ->where('checkin_at', '>=', Carbon::parse(config('check.checkin.start')))
             ->whereNull('checkout_at');
-     }
+    }
+
+    public function scopeYesterday($query)
+    {
+        return $query->where('checkin_at', '>=', Carbon::yesterday())
+            ->where('checkin_at', '<=', Carbon::today());
+    }
+
+    public function scopeDaysAgo($query, $days)
+    {
+        return $query->where('checkin_at', '>=', Carbon::yesterday()->subDays($days - 1))
+            ->where('checkin_at', '<=', Carbon::today()->subDays($days - 1));
+    }
 
     public function getMinutesAttribute()
     {
