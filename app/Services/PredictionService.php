@@ -12,7 +12,7 @@ class PredictionService
 
     public function __construct()
     {
-        $this->url = "http://checkin_prediction/predict";
+        $this->url = "http://".config('prediction.host')."/predict";
         $this->client = new Client;
     }
 
