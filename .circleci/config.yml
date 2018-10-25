@@ -54,7 +54,10 @@ jobs:
             - ./vendor
           key: v1-dependencies-{{ checksum "composer.json" }}
 
-      # run tests!
+      - run:
+          name: migrate
+          command: php artisan migrate
+
       - run:
           name: Run php unit tests
           command: vendor/bin/phpunit --testsuite=Api
