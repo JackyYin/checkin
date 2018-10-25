@@ -57,7 +57,7 @@ jobs:
       # run tests!
       - run:
           name: Run php unit tests
-          command: vendor/bin/phpunit --testsuite=Feature --testdox-html report.html
+          command: vendor/bin/phpunit --testsuite=Api
 
       # notification to stride
       - run:
