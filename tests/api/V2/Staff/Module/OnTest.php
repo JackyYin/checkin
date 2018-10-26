@@ -29,5 +29,6 @@ class OnTest extends TestCase
             'staff_id' => $user->id,
             'module_id' => $module->id
         ]);
+        DB::rollBack();
     }
 }

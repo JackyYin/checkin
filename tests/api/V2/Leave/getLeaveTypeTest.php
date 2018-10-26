@@ -29,5 +29,6 @@ class GetLeaveTypeTest extends TestCase
 
         $response = $this->actingAs($user, 'api')->json(self::METHOD, url(self::ROUTE));
         $response->assertStatus(200)->assertExactJson($this->response($data));
+        DB::rollBack();
     }
 }
