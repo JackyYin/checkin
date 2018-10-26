@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Api\V2;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
-use Auth;
-use Log;
+use App\Events\LeaveCreated;
 use App\Helpers\LeaveHelper;
-use App\Transformers\CheckTransformer;
-use App\Models\Staff;
+use App\Http\Controllers\Controller;
 use App\Models\Check;
 use App\Models\LeaveReason;
+use App\Models\Staff;
+use App\Transformers\CheckTransformer;
+use Auth;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Log;
 
 class LeaveController extends Controller
 {
@@ -170,10 +171,7 @@ class LeaveController extends Controller
             'reason'   => $request->reason,
         ]);
 
-        \App\Jobs\Stride\RoomNotification::dispatch($check, "Create");
-        \App\Jobs\Stride\PersonalNotification::dispatch($check, "Create");
-        \App\Jobs\Discord\RoomNotification::dispatch($check, "Create");
-        \App\Jobs\Line\PersonalNotification::dispatch($check, "Create");
+        event(new LeaveCreated($check));
 
         Log::info('A Leave is Created.', $this->checkTransformer->transform($check));
 

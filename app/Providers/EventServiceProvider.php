@@ -17,6 +17,13 @@ class EventServiceProvider extends ServiceProvider
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
             // add your listeners (aka providers) here
         ],
+
+        'App\Events\LeaveCreated' => [
+            'App\Listeners\Stride\RoomNotification',
+            'App\Listeners\Stride\PersonalNotification',
+            'App\Listeners\Discord\RoomNotification',
+            'App\Listeners\Line\PersonalNotification'
+        ]
     ];
 
     /**
