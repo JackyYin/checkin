@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V2;
 
 use App\Events\LeaveCreated;
+use App\Events\LeaveUpdated;
 use App\Helpers\LeaveHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Check;
@@ -272,10 +273,7 @@ class LeaveController extends Controller
             ]);
         }
 
-        \App\Jobs\Stride\RoomNotification::dispatch($leave, "Edit");
-        \App\Jobs\Stride\PersonalNotification::dispatch($leave, "Edit");
-        \App\Jobs\Discord\RoomNotification::dispatch($leave, "Edit");
-        \App\Jobs\Line\PersonalNotification::dispatch($leave, "Edit");
+        event(new LeaveUpdated($leave));
 
         Log::info('A Leave is Updated.', $this->checkTransformer->transform($leave));
 

@@ -23,6 +23,13 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\Stride\PersonalNotification',
             'App\Listeners\Discord\RoomNotification',
             'App\Listeners\Line\PersonalNotification'
+        ],
+
+        'App\Events\LeaveUpdated' => [
+            'App\Listeners\Stride\RoomNotification',
+            'App\Listeners\Stride\PersonalNotification',
+            'App\Listeners\Discord\RoomNotification',
+            'App\Listeners\Line\PersonalNotification'
         ]
     ];
 

@@ -25,7 +25,7 @@ class RoomNotification implements ShouldQueue
      * @param  LeaveCreated  $event
      * @return void
      */
-    public function handle(LeaveCreated $event)
+    public function handle($event)
     {
         $StrideHelper = new StrideHelper();
         $StrideHelper->roomNotification($event->check, $event->action);

@@ -25,7 +25,7 @@ class PersonalNotification implements ShouldQueue
      * @param  LeaveCreated  $event
      * @return void
      */
-    public function handle(LeaveCreated $event)
+    public function handle($event)
     {
         $LineHelper = new LineHelper();
         $LineHelper->personalNotification($event->check, $event->action);

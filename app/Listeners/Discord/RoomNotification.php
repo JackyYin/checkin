@@ -25,7 +25,7 @@ class RoomNotification implements ShouldQueue
      * @param  LeaveCreated  $event
      * @return void
      */
-    public function handle(LeaveCreated $event)
+    public function handle($event)
     {
         $DiscordHelper = new DiscordHelper();
         $DiscordHelper->roomNotification($event->check, $event->action);
