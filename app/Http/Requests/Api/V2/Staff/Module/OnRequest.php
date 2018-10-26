@@ -24,7 +24,7 @@ class OnRequest extends FormRequest
     public function rules()
     {
         return [
-            'module_name'   => 'bail|required|in:fortune|exists:modules,name',
+            'module_name'   => 'bail|required|exists:modules,name',
         ];
     }
 
