@@ -4,16 +4,20 @@ namespace Tests\Api\V2\Staff\Module;
 
 use App\Models\Module;
 use App\Models\Staff;
+use DB;
 use Tests\TestCase;
 
 class IndexTest extends TestCase
 {
-    const PATH = 'api/v2/staff/module';
+    const METHOD = 'GET';
+    const ROUTE = 'api/v2/staff/module';
 
     /** 成功回傳兩百 */
     public function testSuccess()
     {
-        $user = Staff::first();
+        DB::beginTransaction();
+        $user = factory(Staff::class)->create();
+        factory(Module::class)->create();
 
         $data = [];
 
@@ -26,7 +30,7 @@ class IndexTest extends TestCase
             ];
         };
 
-        $response = $this->actingAs($user, 'api')->json('GET', url(self::PATH));
+        $response = $this->actingAs($user, 'api')->json(self::METHOD, url(self::ROUTE));
         $response->assertStatus(200)->assertExactJson($this->response(['data' => $data]));
     }
 }

@@ -4,16 +4,19 @@ namespace Tests\Api\V2\Leave;
 
 use App\Models\Check;
 use App\Models\Staff;
+use DB;
 use Tests\TestCase;
 
 class GetLeaveTypeTest extends TestCase
 {
-    const PATH = 'api/v2/leave/types';
+    const METHOD = 'GET';
+    const ROUTE = 'api/v2/leave/types';
 
     /** 成功回傳兩百 */
     public function testSuccess()
     {
-        $user = Staff::first();
+        DB::beginTransaction();
+        $user = factory(Staff::class)->create();
 
         $data = [];
 
@@ -24,7 +27,7 @@ class GetLeaveTypeTest extends TestCase
             ];
         };
 
-        $response = $this->actingAs($user, 'api')->json('GET', url(self::PATH));
+        $response = $this->actingAs($user, 'api')->json(self::METHOD, url(self::ROUTE));
         $response->assertStatus(200)->assertExactJson($this->response($data));
     }
 }
