@@ -1,0 +1,56 @@
+version: "3.5"
+
+services:
+  web:
+    image: jackyyinyin/checkin:0.0.378
+    networks:
+      - traefik
+      - backend
+    labels:
+      - "traefik.port=80"
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-proxy-network"
+      - "traefik.frontend.rule=Host:checkin.jackyyinomg.work"
+    env_file:
+      - .env
+    volumes:
+      - data-log:/var/www/html/storage/logs
+
+  cron:
+    image: jackyyinyin/checkin-cron:0.0.378
+    networks:
+      - backend
+    env_file:
+      - .env
+  db:
+   image: mysql:5.7
+   container_name: checkin_db
+   networks:
+     - backend
+   environment:
+     MYSQL_DATABASE: "${DB_DATABASE}"
+     MYSQL_USER: "${DB_USERNAME}"
+     MYSQL_PASSWORD: "${DB_PASSWORD}"
+     MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+   volumes:
+     - data-db:/var/lib/mysql
+
+  redis:
+    image: redis
+    networks:
+      - backend
+    volumes:
+      - data-redis:/data
+
+volumes:
+  data-log:
+  data-db:
+  data-redis:
+
+networks:
+  backend:
+    name: checkin-backend-network
+  traefik:
+    external: true
+    name: traefik-proxy-network
+
